@@ -1,0 +1,24 @@
+# permissions for end users to edit kubeeventsrulers.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kubeeventsruler-editor-role
+rules:
+- apiGroups:
+  - logging.kubesphere.io
+  resources:
+  - kubeeventsrulers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - logging.kubesphere.io
+  resources:
+  - kubeeventsrulers/status
+  verbs:
+  - get

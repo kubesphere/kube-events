@@ -1,0 +1,13 @@
+domain: kubesphere.io
+repo: github.com/kubesphere/kube-events
+resources:
+- group: logging
+  kind: KubeEventsRuler
+  version: v1alpha1
+- group: logging
+  kind: KubeEventsExporter
+  version: v1alpha1
+- group: logging
+  kind: KubeEventsRule
+  version: v1alpha1
+version: "2"

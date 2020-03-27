@@ -1,0 +1,7 @@
+apiVersion: logging.kubesphere.io/v1alpha1
+kind: KubeEventsExporter
+metadata:
+  name: kubeeventsexporter-sample
+spec:
+  # Add fields here
+  foo: bar

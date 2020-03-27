@@ -1,0 +1,715 @@
+apiVersion: logging.kubesphere.io/v1alpha1
+kind: KubeEventsRule
+metadata:
+  name: cluster-rules-default
+  namespace: kubesphere-logging-system
+  labels:
+    kubesphere.io/rule-scope: cluster
+spec:
+  rules:
+    - name: ConfigurationValidationFailed
+      summary: Configuration Validation Failed
+      summaryCn: 配置验证失败
+      condition: >
+        event.type="Warning" and event.involvedObject.kind="Pod" and event.reason="FailedValidation"
+      message: >
+        %event.message
+      priority: warning
+      source: k8s_event
+      tags: [k8s_event_alert]
+      enable: true
+      type: alert
+    - name: ContainerCreateOrStartFailed
+      summary: Failed to create/start container
+      summaryCn: 容器创建或启动失败
+      condition: >
+        event.type="Warning" and event.involvedObject.kind="Pod" and event.reason="Failed" and not event.involvedObject.fieldPath=""
+      message: >
+        %event.message
+      priority: warning
+      source: k8s_event
+      tags: [k8s_event_alert]
+      enable: true
+      type: alert
+    - name: ContainerBackoff
+      summary: Back-off restarting failed container
+      summaryCn: 容器回退重启
+      condition: >
+        event.type="Warning" and event.involvedObject.kind="Pod" and reason="BackOff" and not event.involvedObject.fieldPath="" and event.count>3
+      message: >
+        %event.message
+      priority: warning
+      source: k8s_event
+      tags: [k8s_event_alert]
+      enable: true
+      type: alert
+    - name: ContainerPreempting
+      summary: Container is preemting
+      summaryCn: 容器抢占中
+      condition: >
+        type="Warning" and involvedObject.kind="Pod" and reason="Preempting"
+      message: >
+        %event.message
+      priority: warning
+      source: k8s_event
+      tags: [k8s_event_alert]
+      type: alert
+    - name: ContainerUnhealthy
+      summary: Container is unhealthy
+      summaryCn: 容器不健康
+      condition: >
+        event.type="Warning" and event.involvedObject.kind="Pod" and event.reason="Unhealthy" and event.count>3
+      message: >
+        %event.message
+      priority: warning
+      source: k8s_event
+      tags: [k8s_event_alert]
+      enable: true
+      type: alert
+    - name: ContainerProbeWarning
+      summary: Warning to perform a probe to the container
+      summaryCn: 探测容器失败
+      condition: >
+        event.type="Warning" and event.involvedObject.kind="Pod" and event.reason="ProbeWarning" and event.count>3
+      message: >
+        %event.message
+      priority: warning
+      source: k8s_event
+      tags: [k8s_event_alert]
+      enable: true
+      type: alert
+    - name: PodExceededGracePeriod
+      summary: Pod killing exceeded specified grace period
+      summaryCn: pod终止超时
+      condition: >
+        event.type="Warning" and event.involvedObject.kind="Pod" and event.reason="ExceededGracePeriod"
+      message: >
+        %event.message
+      priority: warning
+      source: k8s_event
+      tags: [k8s_event_alert]
+      enable: true
+      type: alert
+    - name: ImageInspectFailed
+      summary: Failed to inspect image
+      summaryCn: 镜像检查失败
+      condition: >
+        event.type="Warning" and event.involvedObject.kind="Pod" and event.reason="InspectFailed"
+      message: >
+        %event.message
+      priority: warning
+      source: k8s_event
+      tags: [k8s_event_alert]
+      enable: true
+      type: alert
+    - name: ImagePullError
+      summary: Failed to pull image
+      summaryCn: 镜像拉取错误
+      condition: >
+        event.type="Warning" and event.involvedObject.kind="Pod" and event.reason="ErrImageNeverPull"
+      message: >
+        %event.message
+      priority: warning
+      source: k8s_event
+      tags: [k8s_event_alert]
+      enable: true
+      type: alert
+    - name: DiskCapacityInvalid
+      summary: Invalid disk capacity
+      summaryCn: 磁盘容量配置不合法
+      condition: >
+        event.type="Warning" and event.involvedObject.kind="Node" and event.reason="InvalidDiskCapacity"
+      message: >
+        %event.message
+      priority: warning
+      source: k8s_event
+      tags: [k8s_event_alert]
+      enable: true
+      type: alert
+    - name: DiskSpaceFreeFailed
+      summary: Failed to free disk space
+      summaryCn: 磁盘空间释放失败
+      condition: >
+        type="Warning" and involvedObject.kind="Node" and reason="FreeDiskSpaceFailed"
+      message: >
+        %event.message
+      priority: warning
+      source: k8s_event
+      tags: [k8s_event_alert]
+      enable: true
+      type: alert
+    - name: VolumeOperateFailed
+      summary: Failed to operate(mount/attach/resize...) volume
+      summaryCn: 存储卷操作失败
+      condition: >
+        event.type="Warning" and event.reason in ("FailedMount","FailedAttachVolume","VolumeResizeFailed","FailedMapVolume","AlreadyMountedVolume")
+      message: >
+        %event.message
+      priority: warning
+      source: k8s_event
+      tags: [k8s_event_alert]
+      enable: true
+      type: alert
+
+    - name: HPASelectorError
+      summary: HPA selector error
+      summaryCn: HPA选择器异常
+      condition: >
+        event.type="Warning" and event.involvedObject.kind="HorizontalPodAutoscaler" and event.reason in ("SelectorRequired","InvalidSelector")
+      message: >
+        %event.message
+      priority: warning
+      source: k8s_event
+      tags: [k8s_event_alert]
+      enable: true
+      type: alert
+    - name: HPAMetricError
+      summary: HPA metric error
+      summaryCn: HPA指标错误
+      condition: >
+        event.type="Warning" and event.involvedObject.kind="HorizontalPodAutoscaler" and event.reason in ("FailedGetObjectMetric","InvalidMetricSourceType")
+      message: >
+        %event.message
+      priority: warning
+      source: k8s_event
+      tags: [k8s_event_alert]
+      enable: true
+      type: alert
+
+    - name: NodeSystemOOM
+      summary: Node system OOM encountered
+      summaryCn: 节点内存溢出
+      condition: >
+        event.type="Warning" and event.involvedObject.kind="Node" and event.reason="SystemOOM"
+      message: >
+        %event.message
+      priority: warning
+      source: k8s_event
+      tags: [k8s_event_alert]
+      enable: true
+      type: alert
+    - name: NodeRebooted
+      summary: Node Rebooted
+      summaryCn: 节点重启
+      condition: >
+        event.type="Warning" and event.involvedObject.kind="Node" and event.reason="Rebooted"
+      message: >
+        %event.message
+      priority: warning
+      source: k8s_event
+      tags: [k8s_event_alert]
+      enable: true
+      type: alert
+    - name: KubeletSetupFailed
+      summary: Failed To Setup Kubelet
+      summaryCn: kubelet安装失败
+      condition: >
+        event.type="Warning" and event.involvedObject.kind="Node" and event.reason="KubeletSetupFailed"
+      message: >
+        %event.message
+      priority: warning
+      source: k8s_event
+      tags: [k8s_event_alert]
+      enable: true
+      type: alert
+    - name: GCFailed
+      summary: GC failed
+      summaryCn: GC失败
+      condition: >
+        event.type="Warning" and event.involvedObject.kind="Node" and event.reason in ("ContainerGCFailed","ImageGCFailed")
+      message: >
+        %event.message
+      priority: warning
+      source: k8s_event
+      tags: [k8s_event_alert]
+      enable: true
+      type: alert
+    - name: NodeAllocatableEnforcementFailed
+      summary: Node allocatable enforcement failed
+      summaryCn: 节点可分配资源更新失败
+      condition: >
+        event.type="Warning" and event.involvedObject.kind="Node" and event.reason="FailedNodeAllocatableEnforcement"
+      message: >
+        %event.message
+      priority: warning
+      source: k8s_event
+      tags: [k8s_event_alert]
+      enable: true
+      type: alert
+
+    - name: FileSystemResizeFailed
+      summary: Failed to resize fileSystem
+      summaryCn: 文件系统扩容或缩容失败
+      condition: >
+        event.type="Warning" and event.involvedObject.kind="Pod" and event.reason="FileSystemResizeFailed"
+      message: >
+        %event.message
+      priority: warning
+      source: k8s_event
+      tags: [k8s_event_alert]
+      enable: true
+      type: alert
+    - name: VolumeOperateFailed
+      summary: Failed to operate(mount/attach/resize...) volume
+      summaryCn: 存储卷操作失败
+      condition: >
+        event.type="Warning" and event.reason in ("FailedMount","FailedAttachVolume","VolumeResizeFailed","FailedMapVolume","AlreadyMountedVolume")
+      message: >
+        %event.message
+      priority: warning
+      source: k8s_event
+      tags: [k8s_event_alert]
+      enable: true
+      type: alert
+
+    - name: VolumeMismatch
+      summary: Volume Mismatch
+      summaryCn: pv与pvc不匹配
+      condition: >
+        event.type="Warning" and event.involvedObject.kind in ("PersistentVolumeClaim","PersistentVolume") and event.reason="VolumeMismatch"
+      message: >
+        %event.message
+      priority: warning
+      source: k8s_event
+      tags: [k8s_event_alert]
+      enable: true
+      type: alert
+    - name: PVDeleteOrRecycleFailed
+      summary: Failed to delete or recycle PV
+      summaryCn: PV删除或回收失败
+      condition: >
+        event.type="Warning" and event.involvedObject.kind="PersistentVolume" and event.reason in ("VolumeFailedRecycle","VolumeFailedDelete")
+      message: >
+        %event.message
+      priority: warning
+      source: k8s_event
+      tags: [k8s_event_alert]
+      enable: true
+      type: alert
+    - name: PVRecyclerPodError
+      summary: PV Recycler pod error
+      summaryCn: PV回收器异常
+      condition: >
+        event.type="Warning" and event.involvedObject.kind="PersistentVolume" and event.reason="RecyclerPod"
+      message: >
+        %event.message
+      priority: warning
+      source: k8s_event
+      tags: [k8s_event_alert]
+      enable: true
+      type: alert
+    - name: PVProvisionOrCleanupFailed
+      summary: Failed to provision or cleanup PV For PVC
+      summaryCn: 申请或清理PV失败
+      condition: >
+        event.type="Warning" and event.involvedObject.kind="PersistentVolumeClaim" and event.reason in ("ProvisioningFailed","ProvisioningCleanupFailed")
+      message: >
+        %event.message
+      priority: warning
+      source: k8s_event
+      tags: [k8s_event_alert]
+      enable: true
+      type: alert
+    - name: PVCExternalExpandingError
+      summary: Error for PVC external expanding
+      summaryCn: PVC外部扩展错误
+      condition: >
+        event.type="Warning" and event.involvedObject.kind="PersistentVolumeClaim" and event.reason="ExternalExpanding"
+      message: >
+        %event.message
+      priority: warning
+      source: k8s_event
+      tags: [k8s_event_alert]
+      enable: true
+      type: alert
+
+    - name: LifecycleHookOperateFailed
+      summary: Failed to postStart or preStop LifecycleHook
+      summaryCn: 生命周期钩子操作失败
+      condition: >
+        event.type="Warning" and event.involvedObject.kind="Deployment" and event.reason in ("FailedPostStartHook","FailedPreStopHook")
+      message: >
+        %event.message
+      priority: warning
+      source: k8s_event
+      tags: [k8s_event_alert]
+      enable: true
+      type: alert
+
+    - name: PodSandboxError
+      summary: Pod sandbox error
+      summaryCn: Pod Sandbox错误
+      condition: >
+        event.type="Warning" and event.involvedObject.kind="Pod" and event.reason in ("FailedCreatePodSandBox","FailedPodSandBoxStatus")
+      message: >
+        %event.message
+      priority: warning
+      source: k8s_event
+      tags: [k8s_event_alert]
+      enable: true
+      type: alert
+    - name: PodStatusSyncFailed
+      summary: Failed To Sync Pod Status
+      summaryCn: Pod状态同步失败
+      condition: >
+        event.type="Warning" and event.involvedObject.kind="Pod" and event.reason="FailedSync"
+      message: >
+        %event.message
+      priority: warning
+      source: k8s_event
+      tags: [k8s_event_alert]
+      enable: true
+      type: alert
+    - name: PodSchedulingFailed
+      summary: Failed to schedule pod
+      summaryCn: 调度pod失败
+      condition: >
+        event.type="Warning" and event.involvedObject.kind="Pod" and event.reason="FailedScheduling"
+      message: >
+        %event.message
+      priority: warning
+      source: k8s_event
+      tags: [k8s_event_alert]
+      enable: true
+      type: alert
+
+    - name: PodOperateFailed
+      summary: Failed to operate(create/delete/kill...) pod
+      summaryCn: 操作pod失败
+      condition: >
+        event.type="Warning" and event.involvedObject.kind in ("Pod","ReplicaSet","DaemonSet","StatefulSet","Job") and event.reason in ("FailedCreate","FailedDelete","FailedKillPod","FailedCreatePodContainer","Failed") and event.involvedObject.fieldPath=""
+      message: >
+        %event.message
+      priority: warning
+      source: k8s_event
+      tags: [k8s_event_alert]
+      enable: true
+      type: alert
+    - name: PodNetworkNotReady
+      summary: Pod network is not ready
+      summaryCn: Pod网络异常
+      condition: >
+        event.type="Warning" and event.involvedObject.kind="Pod" and event.reason="NetworkNotReady"
+      message: >
+        %event.message
+      priority: warning
+      source: k8s_event
+      tags: [k8s_event_alert]
+      enable: true
+      type: alert
+    - name: SelectorError
+      summary: Selector error
+      summaryCn: 选择器配置错误
+      condition: >
+        event.type="Warning" and event.involvedObject.kind in ("Deployment","DaemonSet") and event.reason="SelectingAll"
+      message: >
+        %event.message
+      priority: warning
+      source: k8s_event
+      tags: [k8s_event_alert]
+      enable: true
+      type: alert
+    - name: ReplicaSetCreateError
+      summary: Error to create replica set for deployment
+      summaryCn: 副本集创建错误
+      condition: >
+        event.type="Warning" and event.involvedObject.kind="Deployment" and event.reason="ReplicaSetCreateError"
+      message: >
+        %event.message
+      priority: warning
+      source: k8s_event
+      tags: [k8s_event_alert]
+      enable: true
+      type: alert
+    - name: DeploymentRollbackFailed
+      summary: Failed to rollback deployment
+      summaryCn: 部署回滚失败
+      condition: >
+        event.type="Warning" and event.involvedObject.kind="Deployment" and event.reason in("DeploymentRollbackRevisionNotFound","DeploymentRollbackTemplateUnchanged")
+      message: >
+        %event.message
+      priority: warning
+      source: k8s_event
+      tags: [k8s_event_alert]
+      enable: true
+      type: alert
+    - name: DaemonPodFailed
+      summary: Found failed deamon pod
+      summaryCn: DaemonSet的pod失败
+      condition: >
+        event.type="Warning" and event.involvedObject.kind="DaemonSet" and event.reason in ("FailedPlacement","FailedDaemonPod")
+      message: >
+        %event.message
+      priority: warning
+      source: k8s_event
+      tags: [k8s_event_alert]
+      enable: true
+      type: alert
+    - name: LoadBalancerUnAvailable
+      summary: Load balancer is not available
+      summaryCn: 负载据衡器不可用
+      condition: >
+        event.type="Warning" and event.involvedObject.kind="Service" and event.reason="UnAvailableLoadBalancer"
+      message: >
+        %event.message
+      priority: warning
+      source: k8s_event
+      tags: [k8s_event_alert]
+      enable: true
+      type: alert
+    - name: LoadBalancerOperateFailed
+      summary: Failed to operate(sync/update/delete) load balancer
+      summaryCn: 操作负载均衡器失败
+      condition: >
+        event.type="Warning" and event.involvedObject.kind="Service" and event.reason in ("SyncLoadBalancerFailed","UpdateLoadBalancerFailed","DeleteLoadBalancerFailed")
+      message: >
+        %event.message
+      priority: warning
+      source: k8s_event
+      tags: [k8s_event_alert]
+      enable: true
+      type: alert
+    - name: JobOperateFailed
+      summary: CronJob failed to operate(get/create/delete) job
+      summaryCn: 任务操作失败
+      condition: >
+        event.type="Warning" and event.involvedObject.kind="CronJob" and event.reason in ("FailedGet","FailedCreate","FailedDelete")
+      message: >
+        %event.message
+      priority: warning
+      source: k8s_event
+      tags: [k8s_event_alert]
+      enable: true
+      type: alert
+    - name: JobUnexpected
+      summary: CronJob saw an unexpected job
+      summaryCn: 任务非预期
+      condition: >
+        event.type="Warning" and event.involvedObject.kind="CronJob" and event.reason="UnexpectedJob"
+      message: >
+        %event.message
+      priority: warning
+      source: k8s_event
+      tags: [k8s_event_alert]
+      enable: true
+      type: alert
+    - name: JobScheduleFailed
+      summary: CronJob failed to schedule job
+      summaryCn: 任务调度失败
+      condition: >
+        event.type="Warning" and event.involvedObject.kind="CronJob" and event.reason in ("MissSchedule","FailedNeedsStart")
+      message: >
+        %event.message
+      priority: warning
+      source: k8s_event
+      tags: [k8s_event_alert]
+      enable: true
+      type: alert
+
+    - name: NodeReady
+      summary: Node is ready
+      summaryCn: 节点就绪
+      condition: >
+        event.type="Normal" and event.involvedObject.kind="Node" and event.reason="NodeReady"
+      message: >
+        %event.message
+      priority: normal
+      source: k8s_event
+      tags: [k8s_event_notification]
+      enable: true
+      type: notification
+    - name: NodeNotReady
+      summary: Node is not ready
+      summaryCn: 节点尚未就绪
+      condition: >
+        event.type="Normal" and event.involvedObject.kind="Node" and event.reason="NodeNotReady"
+      message: >
+        %event.message
+      priority: normal
+      source: k8s_event
+      tags: [k8s_event_notification]
+      enable: true
+      type: notification
+    - name: NodeSchedulable
+      summary: Node is schedulable
+      summaryCn: 节点可调度
+      condition: >
+        event.type="Normal" and event.involvedObject.kind="Node" and event.reason="NodeSchedulable"
+      message: >
+        %event.message
+      priority: normal
+      source: k8s_event
+      tags: [k8s_event_notification]
+      enable: true
+      type: notification
+    - name: NodeNotSchedulable
+      summary: Node is not schedulable
+      summaryCn: 节点不可调度
+      condition: >
+        event.type="Normal" and event.involvedObject.kind="Node" and event.reason="NodeNotSchedulable"
+      message: >
+        %event.message
+      priority: normal
+      source: k8s_event
+      tags: [k8s_event_notification]
+      enable: true
+      type: notification
+    - name: NodeAllocatableEnforcedSuccessfull
+      summary: Node allocatable enforcement succeed
+      summaryCn: 节点可分配资源更新成功
+      condition: >
+        event.type="Normal" and event.involvedObject.kind="Node" and event.reason="NodeAllocatableEnforced"
+      message: >
+        %event.message
+      priority: normal
+      source: k8s_event
+      tags: [k8s_event_notification]
+      enable: true
+      type: notification
+    - name: KubeletStarting
+      summary: Kubelet is starting
+      summaryCn: kubelet正在启动
+      condition: >
+        event.type="Normal" and event.involvedObject.kind="Node" and event.reason="Starting"
+      message: >
+        %event.message
+      priority: normal
+      source: k8s_event
+      tags: [k8s_event_notification]
+      enable: true
+      type: notification
+
+    - name: VolumeMountSuccessful
+      summary: 	Volume is successfully mounted.
+      summaryCn: 存储卷挂载成功
+      condition: >
+        event.type="Normal" and event.reason="SuccessfulMountVolume"
+      message: >
+        %event.message
+      priority: normal
+      source: k8s_event
+      tags: [k8s_event_notification]
+      enable: true
+      type: notification
+    - name: VolumeResizeSuccessful
+      summary: Successfully expanded/reduced volume
+      summaryCn: 存储卷扩缩容成功
+      condition: >
+        event.type="Normal" and event.reason="VolumeResizeSuccessful"
+      message: >
+        %event.message
+      priority: normal
+      source: k8s_event
+      tags: [k8s_event_notification]
+      enable: true
+      type: notification
+    - name: FileSystemResizeSuccessful
+      summary: Successfully expanded/reduced file system
+      summaryCn: 文件系统扩缩容成功
+      condition: >
+        event.type="Normal" and event.reason="FileSystemResizeSuccessful"
+      message: >
+        %event.message
+      priority: normal
+      source: k8s_event
+      tags: [k8s_event_notification]
+      enable: true
+      type: notification
+
+    - name: PodSandboxChanged
+      summary: Pod sandbox changed
+      summaryCn: pod沙盒改变
+      condition: >
+        event.type="Normal" and event.involvedObject.kind="Pod" and event.reason="SandboxChanged"
+      message: >
+        %event.message
+      priority: normal
+      source: k8s_event
+      tags: [k8s_event_notification]
+      enable: true
+      type: notification
+
+    - name: ContainerCreated
+      summary: Container was created
+      summaryCn: 容器被创建
+      condition: >
+        event.type="Normal" and event.involvedObject.kind="Pod" and event.reason="Created" and not event.involvedObject.fieldPath=""
+      message: >
+        %event.message
+      priority: normal
+      source: k8s_event
+      tags: [k8s_event_notification]
+      enable: true
+      type: notification
+    - name: ContainerKilling
+      summary: Container are being killed
+      summaryCn: 容器正被终止
+      condition: >
+        event.type="Normal" and event.involvedObject.kind="Pod" and event.reason="Killing" and not event.involvedObject.fieldPath=""
+      message: >
+        %event.message
+      priority: normal
+      source: k8s_event
+      tags: [k8s_event_notification]
+      enable: true
+      type: notification
+    - name: ContainerStarted
+      summary: Container was started
+      summaryCn: 容器被启动
+      condition: >
+        event.type="Normal" and event.involvedObject.kind="Pod" and event.reason="Created" and not event.involvedObject.fieldPath=""
+      message: >
+        %event.message
+      priority: normal
+      source: k8s_event
+      tags: [k8s_event_notification]
+      enable: true
+      type: notification
+    - name: ImagePulled
+      summary: Image was pulled
+      summaryCn: 镜像拉取成功
+      condition: >
+        event.type="Normal" and event.involvedObject.kind="Pod" and event.reason="Pulled"
+      message: >
+        %event.message
+      priority: normal
+      source: k8s_event
+      tags: [k8s_event_notification]
+      enable: true
+      type: notification
+    - name: ImagePulling
+      summary: Image are being pulled
+      summaryCn: 镜像拉取中
+      condition: >
+        event.type="Normal" and event.involvedObject.kind="Pod" and event.reason="Pulling"
+      message: >
+        %event.message
+      priority: normal
+      source: k8s_event
+      tags: [k8s_event_notification]
+      enable: true
+      type: notification
+    - name: PodCreateSuccessfull
+      summary: Pod was created
+      summaryCn: pod被创建
+      condition: >
+        event.type="Normal" and event.involvedObject.kind in ("Pod","ReplicaSet","DaemonSet","StatefulSet","Job") and event.reason="SuccessfulCreate" and event.involvedObject.fieldPath=""
+      message: >
+        %event.message
+      priority: normal
+      source: k8s_event
+      tags: [k8s_event_notification]
+      enable: true
+      type: notification
+    - name: PodDeleteSuccessfull
+      summary: Pod was deleted
+      summaryCn: pod被删除
+      condition: >
+        event.type="Normal" and event.involvedObject.kind in ("Pod","ReplicaSet","DaemonSet","StatefulSet","Job") and event.reason="SuccessfulDelete" and event.involvedObject.fieldPath=""
+      message: >
+        %event.message
+      priority: normal
+      source: k8s_event
+      tags: [k8s_event_notification]
+      enable: true
+      type: notification

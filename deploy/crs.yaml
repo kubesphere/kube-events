@@ -1,0 +1,33 @@
+
+---
+apiVersion: logging.kubesphere.io/v1alpha1
+kind: KubeEventsExporter
+metadata:
+  name: events-exporter
+  namespace: kubesphere-logging-system
+spec:
+  image: kubespheredev/kube-events-exporter:v0.1
+  sinks:
+    stdout: {}
+    webhooks:
+      - service:
+          namespace: kubesphere-logging-system
+          name: events-ruler-svc
+          port: 8443
+          path: /events
+---
+
+
+apiVersion: logging.kubesphere.io/v1alpha1
+kind: KubeEventsRuler
+metadata:
+  name: events-ruler
+  namespace: kubesphere-logging-system
+spec:
+  image: kubespheredev/kube-events-ruler:v0.1
+  sinks:
+    alertmanager:
+      namespace: kubesphere-monitoring-system
+      name: alertmanager-main
+    stdout:
+      type: notification

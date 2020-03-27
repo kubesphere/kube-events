@@ -1,0 +1,713 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kubesphere-logging-system
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.2.5
+  creationTimestamp: null
+  name: kubeeventsexporters.logging.kubesphere.io
+spec:
+  group: logging.kubesphere.io
+  names:
+    kind: KubeEventsExporter
+    listKind: KubeEventsExporterList
+    plural: kubeeventsexporters
+    singular: kubeeventsexporter
+  scope: Namespaced
+  validation:
+    openAPIV3Schema:
+      description: KubeEventsExporter is the Schema for the kubeeventsexporters API
+      properties:
+        apiVersion:
+          description: 'APIVersion defines the versioned schema of this representation
+            of an object. Servers should convert recognized schemas to the latest
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+          type: string
+        kind:
+          description: 'Kind is a string value representing the REST resource this
+            object represents. Servers may infer this from the endpoint the client
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+          type: string
+        metadata:
+          type: object
+        spec:
+          description: KubeEventsExporterSpec defines the desired state of KubeEventsExporter
+          properties:
+            image:
+              type: string
+            resources:
+              description: Resources defines resources requests and limits for single
+                Pod.
+              properties:
+                limits:
+                  additionalProperties:
+                    anyOf:
+                    - type: integer
+                    - type: string
+                    pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                    x-kubernetes-int-or-string: true
+                  description: 'Limits describes the maximum amount of compute resources
+                    allowed. More info: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/'
+                  type: object
+                requests:
+                  additionalProperties:
+                    anyOf:
+                    - type: integer
+                    - type: string
+                    pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                    x-kubernetes-int-or-string: true
+                  description: 'Requests describes the minimum amount of compute resources
+                    required. If Requests is omitted for a container, it defaults
+                    to Limits if that is explicitly specified, otherwise to an implementation-defined
+                    value. More info: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/'
+                  type: object
+              type: object
+            sinks:
+              description: Sinks defines details of events sinks
+              properties:
+                stdout:
+                  description: ExporterStdoutSink defines parameters for stdout sink
+                    of Events Exporter.
+                  type: object
+                webhooks:
+                  items:
+                    description: ExporterWebhookSink defines parameters for webhook
+                      sink of Events Exporter.
+                    properties:
+                      service:
+                        properties:
+                          name:
+                            type: string
+                          namespace:
+                            type: string
+                          path:
+                            type: string
+                          port:
+                            type: integer
+                        type: object
+                      url:
+                        type: string
+                    type: object
+                  type: array
+              type: object
+          type: object
+        status:
+          description: KubeEventsExporterStatus defines the observed state of KubeEventsExporter
+          type: object
+      type: object
+  version: v1alpha1
+  versions:
+  - name: v1alpha1
+    served: true
+    storage: true
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.2.5
+  creationTimestamp: null
+  name: kubeeventsrulers.logging.kubesphere.io
+spec:
+  group: logging.kubesphere.io
+  names:
+    kind: KubeEventsRuler
+    listKind: KubeEventsRulerList
+    plural: kubeeventsrulers
+    singular: kubeeventsruler
+  scope: Namespaced
+  validation:
+    openAPIV3Schema:
+      description: KubeEventsRuler is the Schema for the kubeeventsrulers API
+      properties:
+        apiVersion:
+          description: 'APIVersion defines the versioned schema of this representation
+            of an object. Servers should convert recognized schemas to the latest
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+          type: string
+        kind:
+          description: 'Kind is a string value representing the REST resource this
+            object represents. Servers may infer this from the endpoint the client
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+          type: string
+        metadata:
+          type: object
+        spec:
+          description: KubeEventsRulerSpec defines the desired state of KubeEventsRuler
+          properties:
+            image:
+              type: string
+            replicas:
+              format: int32
+              type: integer
+            resources:
+              description: Resources defines resources requests and limits for single
+                Pod.
+              properties:
+                limits:
+                  additionalProperties:
+                    anyOf:
+                    - type: integer
+                    - type: string
+                    pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                    x-kubernetes-int-or-string: true
+                  description: 'Limits describes the maximum amount of compute resources
+                    allowed. More info: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/'
+                  type: object
+                requests:
+                  additionalProperties:
+                    anyOf:
+                    - type: integer
+                    - type: string
+                    pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                    x-kubernetes-int-or-string: true
+                  description: 'Requests describes the minimum amount of compute resources
+                    required. If Requests is omitted for a container, it defaults
+                    to Limits if that is explicitly specified, otherwise to an implementation-defined
+                    value. More info: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/'
+                  type: object
+              type: object
+            ruleNamespaceSelector:
+              description: Namespaces to be selected for KubeEventsRules discovery.
+                If unspecified, only the same namespace as the KubeEventsRuler object
+                is in is used.
+              properties:
+                matchExpressions:
+                  description: matchExpressions is a list of label selector requirements.
+                    The requirements are ANDed.
+                  items:
+                    description: A label selector requirement is a selector that contains
+                      values, a key, and an operator that relates the key and values.
+                    properties:
+                      key:
+                        description: key is the label key that the selector applies
+                          to.
+                        type: string
+                      operator:
+                        description: operator represents a key's relationship to a
+                          set of values. Valid operators are In, NotIn, Exists and
+                          DoesNotExist.
+                        type: string
+                      values:
+                        description: values is an array of string values. If the operator
+                          is In or NotIn, the values array must be non-empty. If the
+                          operator is Exists or DoesNotExist, the values array must
+                          be empty. This array is replaced during a strategic merge
+                          patch.
+                        items:
+                          type: string
+                        type: array
+                    required:
+                    - key
+                    - operator
+                    type: object
+                  type: array
+                matchLabels:
+                  additionalProperties:
+                    type: string
+                  description: matchLabels is a map of {key,value} pairs. A single
+                    {key,value} in the matchLabels map is equivalent to an element
+                    of matchExpressions, whose key field is "key", the operator is
+                    "In", and the values array contains only "value". The requirements
+                    are ANDed.
+                  type: object
+              type: object
+            ruleSelector:
+              description: A selector to select which KubeEventsRules to use for notifications
+                or alerting.
+              properties:
+                matchExpressions:
+                  description: matchExpressions is a list of label selector requirements.
+                    The requirements are ANDed.
+                  items:
+                    description: A label selector requirement is a selector that contains
+                      values, a key, and an operator that relates the key and values.
+                    properties:
+                      key:
+                        description: key is the label key that the selector applies
+                          to.
+                        type: string
+                      operator:
+                        description: operator represents a key's relationship to a
+                          set of values. Valid operators are In, NotIn, Exists and
+                          DoesNotExist.
+                        type: string
+                      values:
+                        description: values is an array of string values. If the operator
+                          is In or NotIn, the values array must be non-empty. If the
+                          operator is Exists or DoesNotExist, the values array must
+                          be empty. This array is replaced during a strategic merge
+                          patch.
+                        items:
+                          type: string
+                        type: array
+                    required:
+                    - key
+                    - operator
+                    type: object
+                  type: array
+                matchLabels:
+                  additionalProperties:
+                    type: string
+                  description: matchLabels is a map of {key,value} pairs. A single
+                    {key,value} in the matchLabels map is equivalent to an element
+                    of matchExpressions, whose key field is "key", the operator is
+                    "In", and the values array contains only "value". The requirements
+                    are ANDed.
+                  type: object
+              type: object
+            sinks:
+              description: Sinks defines sinks detail of this ruler
+              properties:
+                alertmanager:
+                  properties:
+                    name:
+                      type: string
+                    namespace:
+                      type: string
+                    port:
+                      type: integer
+                    targetPort:
+                      description: TargetPort is the port to access on the backend
+                        instances targeted by the service. If this is not specified,
+                        the value of the 'port' field is used.
+                      type: integer
+                  type: object
+                stdout:
+                  properties:
+                    type:
+                      type: string
+                  type: object
+                webhooks:
+                  items:
+                    properties:
+                      namespace:
+                        type: string
+                      service:
+                        properties:
+                          name:
+                            type: string
+                          namespace:
+                            type: string
+                          path:
+                            type: string
+                          port:
+                            type: integer
+                        type: object
+                      type:
+                        type: string
+                    type: object
+                  type: array
+              type: object
+          type: object
+        status:
+          description: KubeEventsRulerStatus defines the observed state of KubeEventsRuler
+          type: object
+      type: object
+  version: v1alpha1
+  versions:
+  - name: v1alpha1
+    served: true
+    storage: true
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.2.5
+  creationTimestamp: null
+  name: kubeeventsrules.logging.kubesphere.io
+spec:
+  group: logging.kubesphere.io
+  names:
+    kind: KubeEventsRule
+    listKind: KubeEventsRuleList
+    plural: kubeeventsrules
+    singular: kubeeventsrule
+  scope: Namespaced
+  validation:
+    openAPIV3Schema:
+      description: KubeEventsRule is the Schema for the kubeeventsrules API
+      properties:
+        apiVersion:
+          description: 'APIVersion defines the versioned schema of this representation
+            of an object. Servers should convert recognized schemas to the latest
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+          type: string
+        kind:
+          description: 'Kind is a string value representing the REST resource this
+            object represents. Servers may infer this from the endpoint the client
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+          type: string
+        metadata:
+          type: object
+        spec:
+          description: KubeEventsRuleSpec defines the desired state of KubeEventsRule
+          properties:
+            rules:
+              items:
+                description: Rule describes a notification or alerting rule
+                properties:
+                  condition:
+                    description: 'Condition is a string similar with the where part
+                      of sql. The usage is as follows: event.type="Warning" and event.involvedObject.kind="Pod"
+                      and event.reason="FailedMount"'
+                    type: string
+                  enable:
+                    type: boolean
+                  message:
+                    type: string
+                  name:
+                    type: string
+                  priority:
+                    type: string
+                  source:
+                    type: string
+                  summary:
+                    type: string
+                  summaryCn:
+                    type: string
+                  tags:
+                    items:
+                      type: string
+                    type: array
+                  type:
+                    type: string
+                type: object
+              type: array
+          type: object
+        status:
+          description: KubeEventsRuleStatus defines the observed state of KubeEventsRule
+          type: object
+      type: object
+  version: v1alpha1
+  versions:
+  - name: v1alpha1
+    served: true
+    storage: true
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []
+---
+apiVersion: admissionregistration.k8s.io/v1beta1
+kind: MutatingWebhookConfiguration
+metadata:
+  creationTimestamp: null
+  name: events-mutating-webhook-configuration
+webhooks:
+- clientConfig:
+    caBundle: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURaakNDQWs2Z0F3SUJBZ0lKQUpMM3VIb3duRXpHTUEwR0NTcUdTSWIzRFFFQkN3VUFNRWd4Q3pBSkJnTlYKQkFZVEFrTk9NUXN3Q1FZRFZRUUlEQUpJUWpFTE1Ba0dBMVVFQ2d3Q1VVTXhIekFkQmdOVkJBTU1GbVYyWlc1MApjeTEzWldKb2IyOXJMWE5sY25acFkyVXdIaGNOTWpBd016STNNRGd3TnpJMFdoY05ORGN3T0RFek1EZ3dOekkwCldqQklNUXN3Q1FZRFZRUUdFd0pEVGpFTE1Ba0dBMVVFQ0F3Q1NFSXhDekFKQmdOVkJBb01BbEZETVI4d0hRWUQKVlFRRERCWmxkbVZ1ZEhNdGQyVmlhRzl2YXkxelpYSjJhV05sTUlJQklqQU5CZ2txaGtpRzl3MEJBUUVGQUFPQwpBUThBTUlJQkNnS0NBUUVBNnE0bVpidTcyZjMzMFkwZXJWUzROR1FPVURPamNDQ0RzcExRWitjRkZNYjd1c04xCmtSaHdkd2NJeE9RZkFtMFNkUzhRTkk5T0hzNld4UTF4RXJRUjlUcUk1TmgvZnhjdzh2NnJaLy9lQ0htSFNwSzgKcllaVU5OSEJIUmhwUE03NVVrU1RkYXBISVlYU1d0NCtQcDBKMXNnT2RLNDJKZThwOGIyMWRPUi9OM1I0NTExVAp1Y3dCUHR3OHRmM2xYZFV4QkVuZFJoWmV2TitJWDlWTDdzU3BOVXROOU50MmcyU2prY3VZVHJLWHNyU09XOTg4Cm1zOHM2VDJ1MkNZd1c1REJIYVUveXEraDNDLzBnWmprNEJuVUJWUHh2WlFNSTlpK3hDNU9lVFZCUmhyRjJXS1kKclliKzF0YXE1WWIva0RPMERBanI1S3owMmltTzlsSGxTenhTd1FJREFRQUJvMU13VVRBZEJnTlZIUTRFRmdRVQpFZ21TREpLZGxodjhESTJJWkJETkEyZ1I5Zll3SHdZRFZSMGpCQmd3Rm9BVUVnbVNESktkbGh2OERJMklaQkROCkEyZ1I5Zll3RHdZRFZSMFRBUUgvQkFVd0F3RUIvekFOQmdrcWhraUc5dzBCQVFzRkFBT0NBUUVBYmdoMENabkoKcmlKSlZnT1VWOWJ6WW44cEh2M3ExVnVqRThBUU9wRHBidDdmaTlaOE1UVnRTTGtOVFlaQmo4c1RLTklkaVBxMgpUelhKcVNGNTZFUzB1TlNGZmowRU5GVXEvNG9BK29WaVk1cXR1WVZaSVFUQnJrdld4dXg3ZXVybGd6SkFrdWhDCjBpU0NtQ0FvaGp3TTNHc0xMTGxKZjY4WFlNWit3TDhLc1hKb3ZML3h3VGd2bTNxTHlUbDZ0MVpTODRjVzFtZnMKVUR3RWdxTlVNUTFKWWIxV1pzTE1ydjdESktvaGdxcGtzODRuT0drSzV3dnVMQVdjOUUyWXQ4MDJnclVhTFRrcwpaY2w0Y2dMZEhaZWF5UEk5WlRxdGxBNCtDM1dtY1JFb2hIaFZNTUFDZ1pwY0xzeWF2b1hCSmFNL1hpRFpLTXEyCkc3cHp6RmpWTmNWNGZnPT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
+    service:
+      name: events-webhook-service
+      namespace: kubesphere-logging-system
+      path: /mutate-logging-kubesphere-io-v1alpha1-kubeeventsrule
+  failurePolicy: Fail
+  name: mkubeeventsrule.kb.io
+  rules:
+  - apiGroups:
+    - logging.kubesphere.io
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - kubeeventsrules
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: events-operator
+  namespace: kubesphere-logging-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  creationTimestamp: null
+  name: events-operator
+rules:
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - deployments/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - apps
+  resources:
+  - services/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - namespaces
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - serviceaccounts
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - services
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - logging.kubesphere.io
+  resources:
+  - kubeeventsexporters
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - logging.kubesphere.io
+  resources:
+  - kubeeventsexporters/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - logging.kubesphere.io
+  resources:
+  - kubeeventsrulers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - logging.kubesphere.io
+  resources:
+  - kubeeventsrulers/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - logging.kubesphere.io
+  resources:
+  - kubeeventsrules
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - logging.kubesphere.io
+  resources:
+  - kubeeventsrules/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - clusterrolebindings
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - clusterroles
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: events-operator
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: events-operator
+subjects:
+- kind: ServiceAccount
+  name: events-operator
+  namespace: kubesphere-logging-system
+---
+apiVersion: v1
+data:
+  ca.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURaakNDQWs2Z0F3SUJBZ0lKQUpMM3VIb3duRXpHTUEwR0NTcUdTSWIzRFFFQkN3VUFNRWd4Q3pBSkJnTlYKQkFZVEFrTk9NUXN3Q1FZRFZRUUlEQUpJUWpFTE1Ba0dBMVVFQ2d3Q1VVTXhIekFkQmdOVkJBTU1GbVYyWlc1MApjeTEzWldKb2IyOXJMWE5sY25acFkyVXdIaGNOTWpBd016STNNRGd3TnpJMFdoY05ORGN3T0RFek1EZ3dOekkwCldqQklNUXN3Q1FZRFZRUUdFd0pEVGpFTE1Ba0dBMVVFQ0F3Q1NFSXhDekFKQmdOVkJBb01BbEZETVI4d0hRWUQKVlFRRERCWmxkbVZ1ZEhNdGQyVmlhRzl2YXkxelpYSjJhV05sTUlJQklqQU5CZ2txaGtpRzl3MEJBUUVGQUFPQwpBUThBTUlJQkNnS0NBUUVBNnE0bVpidTcyZjMzMFkwZXJWUzROR1FPVURPamNDQ0RzcExRWitjRkZNYjd1c04xCmtSaHdkd2NJeE9RZkFtMFNkUzhRTkk5T0hzNld4UTF4RXJRUjlUcUk1TmgvZnhjdzh2NnJaLy9lQ0htSFNwSzgKcllaVU5OSEJIUmhwUE03NVVrU1RkYXBISVlYU1d0NCtQcDBKMXNnT2RLNDJKZThwOGIyMWRPUi9OM1I0NTExVAp1Y3dCUHR3OHRmM2xYZFV4QkVuZFJoWmV2TitJWDlWTDdzU3BOVXROOU50MmcyU2prY3VZVHJLWHNyU09XOTg4Cm1zOHM2VDJ1MkNZd1c1REJIYVUveXEraDNDLzBnWmprNEJuVUJWUHh2WlFNSTlpK3hDNU9lVFZCUmhyRjJXS1kKclliKzF0YXE1WWIva0RPMERBanI1S3owMmltTzlsSGxTenhTd1FJREFRQUJvMU13VVRBZEJnTlZIUTRFRmdRVQpFZ21TREpLZGxodjhESTJJWkJETkEyZ1I5Zll3SHdZRFZSMGpCQmd3Rm9BVUVnbVNESktkbGh2OERJMklaQkROCkEyZ1I5Zll3RHdZRFZSMFRBUUgvQkFVd0F3RUIvekFOQmdrcWhraUc5dzBCQVFzRkFBT0NBUUVBYmdoMENabkoKcmlKSlZnT1VWOWJ6WW44cEh2M3ExVnVqRThBUU9wRHBidDdmaTlaOE1UVnRTTGtOVFlaQmo4c1RLTklkaVBxMgpUelhKcVNGNTZFUzB1TlNGZmowRU5GVXEvNG9BK29WaVk1cXR1WVZaSVFUQnJrdld4dXg3ZXVybGd6SkFrdWhDCjBpU0NtQ0FvaGp3TTNHc0xMTGxKZjY4WFlNWit3TDhLc1hKb3ZML3h3VGd2bTNxTHlUbDZ0MVpTODRjVzFtZnMKVUR3RWdxTlVNUTFKWWIxV1pzTE1ydjdESktvaGdxcGtzODRuT0drSzV3dnVMQVdjOUUyWXQ4MDJnclVhTFRrcwpaY2w0Y2dMZEhaZWF5UEk5WlRxdGxBNCtDM1dtY1JFb2hIaFZNTUFDZ1pwY0xzeWF2b1hCSmFNL1hpRFpLTXEyCkc3cHp6RmpWTmNWNGZnPT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
+  tls.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURLakNDQWhJQ0NRQ1c5QWIzYjFKRGFqQU5CZ2txaGtpRzl3MEJBUXNGQURCSU1Rc3dDUVlEVlFRR0V3SkQKVGpFTE1Ba0dBMVVFQ0F3Q1NFSXhDekFKQmdOVkJBb01BbEZETVI4d0hRWURWUVFEREJabGRtVnVkSE10ZDJWaQphRzl2YXkxelpYSjJhV05sTUI0WERUSXdNRE15TnpBNE1EY3lORm9YRFRRM01EZ3hNekE0TURjeU5Gb3daakVMCk1Ba0dBMVVFQmhNQ1EwNHhDekFKQmdOVkJBZ01Ba2hDTVFzd0NRWURWUVFLREFKUlF6RTlNRHNHQTFVRUF3dzAKWlhabGJuUnpMWGRsWW1odmIyc3RjMlZ5ZG1salpTNXJkV0psYzNCb1pYSmxMV3h2WjJkcGJtY3RjM2x6ZEdWdApMbk4yWXpDQ0FTSXdEUVlKS29aSWh2Y05BUUVCQlFBRGdnRVBBRENDQVFvQ2dnRUJBTWR5bXo3dU9DSVR5TWlYCldYWEFIMzlaRjhzME1BMlZXckFveHhjSTZiTmtQYW1xbEpnZ01zUGNVWFY1Z2MxMnZEYi9MeUNYM3QzajA3UGcKQmdxa1dSc09CM1lYcGduSFU1NjZGeFBOaVQzaitLOW8yajU2OXk4YmFUdlhyVE03WTBGUlNta2lMZDFySTc0VApvQTVtUlZETGVlakRLbE9ZRFlMOTdzTWwyUHlrc0lTc0Z1SEVVMHlsS0Z2VEVleTRSZWNpV2Q2T3hHTDNNTVBKCm1HQmhKWFR6TFpHRkxmNWt1MnBIQS80SGtWV3RTa09VYlBXSUNkZmU2OWc1Mm9pMnRvVWR0dVArVHI1b2Y4MTUKa3JPM0w0Smh1RkNQMHlLVFlRdUVPZkxjN2tPZ3JjeWUxSDcyNEMrNnErQ1grMW9VVjR6VnlKM2greTNCM0c1eQpnNjZyQVUwQ0F3RUFBVEFOQmdrcWhraUc5dzBCQVFzRkFBT0NBUUVBRVZ2N0ZaSVZiV2Z6ZU9qdWFTRHdYKzY0CllXRjZscmhYdXhhMDNHRGl0Y2RnWkJ0NDk4OFZLcStNR2QxWDZtbGxtOUlyMkhFaUdYZUo3VlNFTHdXN0wyRkYKZFRqb0NXTmI5VUJaaUptR2doSG96WHI0S1FKeDR1YVdIclhWTzF0bTRUbktIa09tZFZjdVdYa09tQllyTVdTVApvSjhWcnprdE5LZFR4b2hVRHpxOUUybk9IMTBwaGVBZmR4Q2xqWlU1cnlDZjhpNXF5Y1dpWThzWmNOMHlldG56CkMxcU5NMHo1a25WMVZaVk8wVGVwT0wvbXZCcFhnNDR2czFwa25ZdlU2K29yTk1hT2JDdW1IaTYvd3gxSThlNm8KcDhrZk9aN3FGd3VWTkV6aFhMS013Q2hzSEUxT3ZFRHhFaEZEUk9DNDV0RC85aE5iejJvaTdCV096ejI2Ymc9PQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
+  tls.key: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFb2dJQkFBS0NBUUVBeDNLYlB1NDRJaFBJeUpkWmRjQWZmMWtYeXpRd0RaVmFzQ2pIRndqcHMyUTlxYXFVCm1DQXl3OXhSZFhtQnpYYThOdjh2SUpmZTNlUFRzK0FHQ3FSWkd3NEhkaGVtQ2NkVG5yb1hFODJKUGVQNHIyamEKUG5yM0x4dHBPOWV0TXp0alFWRkthU0l0M1dzanZoT2dEbVpGVU10NTZNTXFVNWdOZ3YzdXd5WFkvS1N3aEt3Vwo0Y1JUVEtVb1c5TVI3TGhGNXlKWjNvN0VZdmN3dzhtWVlHRWxkUE10a1lVdC9tUzdha2NEL2dlUlZhMUtRNVJzCjlZZ0oxOTdyMkRuYWlMYTJoUjIyNC81T3ZtaC96WG1TczdjdmdtRzRVSS9USXBOaEM0UTU4dHp1UTZDdHpKN1UKZnZiZ0w3cXI0SmY3V2hSWGpOWEluZUg3TGNIY2JuS0RycXNCVFFJREFRQUJBb0lCQUZsQ2J6d2d2THB6aEQ1UgpqZFhtMzdITW01dHpoYlh1aTZHZS9rck8wRmhhbWtZZWMxWUp3dTVvNFlQamx6WHUxNWo5WjRmOHI5ODZJUHExClhiN1JncGRiRmZmQjZhc2lxOGV6bkxSZUhmZTIyUXNYcitTYWY1bHplUXN4SVBCMnVacjMySWRvcG9JYmV1bU0KT3V0MjFicXM5YWczLys5ZGMxNldhbzZubDQ2cEV0MmlDcVgzbWxTTWRnNk9LYVc1b1BJVFZZSGNqeVhvcnRQUwpuZmRPM2YyRXJjUE5PSzNMZlp1a2c5MG1vcE9ibnR4SlZRUllhbDl5dVdBOGIrVzdUZkJWZVVYWThnQTRFNXIvCjAyeHdUSmxZNlR6T21wOHJubnlpcUdXS3BseEliMW1oNDhmZlBuc0QrcVhXWHZmZWJaTkhPaE5EbXA2T0tZR1MKbytHYXhvRUNnWUVBOWtnT2MyaGV0S1Y3ckk4Ui90QmNXM3FoeEVEM1VvSzJEUUF2MzBKTDYvNDJkUFgzb1hhawoxYmhaaitwZzM0TmdlQ29rVnI3WDRIamVLS3F4dzZpbTY0UzVEYWszTm56MW1rMVFjVWxNYklaVDRMQ1I2bmRlCnFpcVhTSDFWeUMzWS9iTzIrK3M4cUFZWkdsWTgyblJJSXA2aFJFaldwTlJlS0htOXorQjVMREVDZ1lFQXoxRnUKK1kxaDZwWnFFVVZ0NUh4QkMxVDhZOGpDME1QK2FoZU54R21jSzJodk9HdU9hdVp1clY3UTRhTUk0OVVTN2tabgplQ1hIRjkwSGtESklDa21nMTVkQjlmM3NIeEl0QlFBUjBvYis3SEpwNHExcTB6dnZsdW5hY3A1REtBeXRvT1JlClBjWk91QkI0NWRKNk9xQmcycHpycUxVVFVPSkcyTVlsNVRBVnk5MENnWUFRRE13Y1MwMzR1ZHdnZDhaMWM4REIKR1hIWFoyQjIyUnZpSndQM3FjdG0yczlUdWYva1h1WUpJNVY2b295anBGMHlGNVQ4cmoxRlhMc2xyVkllYlN4TApwditrVzBYRTRFbmxQMnFocDJRNm9scHZCekxMTS9KUVpxd3JSamZEN3ZENFA3RUtJOTkxRjhpbEJiKzdnTjUrCm14WHBiRkhJdGlwWXV1NWEwTWMwMFFLQmdBZjh6amJGTUxtV0UvNFlXN1NLNlFLandwbWhtWWZybFRqSE1Zb1kKdTVDY2xIUnJDSENyOGlXeDJvQm5CS2VxaFBFek96ZFExVXZoRXpLR0RXcUFEYmRndDRUZnhLSXAxQncyTlhtVQpBK3hlT0NBb3FFMzlLQ3o3VTVSSTdyTnpVWms2VXpzMEVjSmJ1Qnk2c0VUait2ZFJSbThZa3VieDRPTG5OM3lPCkRyanRBb0dBSExkRHNFd2d1YUJrRXJaMVErSStBeEJ2ZFRxT0xhZStmM241NlFDVXU1bm54UmplNUVkWnBCdFQKT2NRaWFTMldYNHA5NDNCbTZmSHk1UEdKSFMybURFRDREQnU1c2xUVHo5NWdJTjdFcUtCSEpRMHFvVTlKaE9TQQpxSkFOSDEyZFFRaW5UM3ZvOGN0YXA4eFo1K0JqWXdJREZpcUc1QU1TTWtzQ3ZxQVVVNnc9Ci0tLS0tRU5EIFJTQSBQUklWQVRFIEtFWS0tLS0tCg==
+kind: Secret
+metadata:
+  name: events-webhook-server-cert
+  namespace: kubesphere-logging-system
+type: Opaque
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: events-webhook-service
+  namespace: kubesphere-logging-system
+spec:
+  ports:
+  - port: 443
+    targetPort: 9443
+  selector:
+    control-plane: events-operator
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: events-operator
+  namespace: kubesphere-logging-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      control-plane: events-operator
+  template:
+    metadata:
+      labels:
+        control-plane: events-operator
+    spec:
+      containers:
+      - image: kubespheredev/kube-events-operator:v0.1
+        name: operator
+        ports:
+        - containerPort: 9443
+          name: webhook-server
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 100m
+            memory: 30Mi
+          requests:
+            cpu: 100m
+            memory: 20Mi
+        volumeMounts:
+        - mountPath: /tmp/k8s-webhook-server/serving-certs
+          name: cert
+          readOnly: true
+      serviceAccountName: events-operator
+      terminationGracePeriodSeconds: 10
+      volumes:
+      - name: cert
+        secret:
+          defaultMode: 420
+          secretName: events-webhook-server-cert
+---
+apiVersion: admissionregistration.k8s.io/v1beta1
+kind: ValidatingWebhookConfiguration
+metadata:
+  creationTimestamp: null
+  name: events-validating-webhook-configuration
+webhooks:
+- clientConfig:
+    caBundle: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURaakNDQWs2Z0F3SUJBZ0lKQUpMM3VIb3duRXpHTUEwR0NTcUdTSWIzRFFFQkN3VUFNRWd4Q3pBSkJnTlYKQkFZVEFrTk9NUXN3Q1FZRFZRUUlEQUpJUWpFTE1Ba0dBMVVFQ2d3Q1VVTXhIekFkQmdOVkJBTU1GbVYyWlc1MApjeTEzWldKb2IyOXJMWE5sY25acFkyVXdIaGNOTWpBd016STNNRGd3TnpJMFdoY05ORGN3T0RFek1EZ3dOekkwCldqQklNUXN3Q1FZRFZRUUdFd0pEVGpFTE1Ba0dBMVVFQ0F3Q1NFSXhDekFKQmdOVkJBb01BbEZETVI4d0hRWUQKVlFRRERCWmxkbVZ1ZEhNdGQyVmlhRzl2YXkxelpYSjJhV05sTUlJQklqQU5CZ2txaGtpRzl3MEJBUUVGQUFPQwpBUThBTUlJQkNnS0NBUUVBNnE0bVpidTcyZjMzMFkwZXJWUzROR1FPVURPamNDQ0RzcExRWitjRkZNYjd1c04xCmtSaHdkd2NJeE9RZkFtMFNkUzhRTkk5T0hzNld4UTF4RXJRUjlUcUk1TmgvZnhjdzh2NnJaLy9lQ0htSFNwSzgKcllaVU5OSEJIUmhwUE03NVVrU1RkYXBISVlYU1d0NCtQcDBKMXNnT2RLNDJKZThwOGIyMWRPUi9OM1I0NTExVAp1Y3dCUHR3OHRmM2xYZFV4QkVuZFJoWmV2TitJWDlWTDdzU3BOVXROOU50MmcyU2prY3VZVHJLWHNyU09XOTg4Cm1zOHM2VDJ1MkNZd1c1REJIYVUveXEraDNDLzBnWmprNEJuVUJWUHh2WlFNSTlpK3hDNU9lVFZCUmhyRjJXS1kKclliKzF0YXE1WWIva0RPMERBanI1S3owMmltTzlsSGxTenhTd1FJREFRQUJvMU13VVRBZEJnTlZIUTRFRmdRVQpFZ21TREpLZGxodjhESTJJWkJETkEyZ1I5Zll3SHdZRFZSMGpCQmd3Rm9BVUVnbVNESktkbGh2OERJMklaQkROCkEyZ1I5Zll3RHdZRFZSMFRBUUgvQkFVd0F3RUIvekFOQmdrcWhraUc5dzBCQVFzRkFBT0NBUUVBYmdoMENabkoKcmlKSlZnT1VWOWJ6WW44cEh2M3ExVnVqRThBUU9wRHBidDdmaTlaOE1UVnRTTGtOVFlaQmo4c1RLTklkaVBxMgpUelhKcVNGNTZFUzB1TlNGZmowRU5GVXEvNG9BK29WaVk1cXR1WVZaSVFUQnJrdld4dXg3ZXVybGd6SkFrdWhDCjBpU0NtQ0FvaGp3TTNHc0xMTGxKZjY4WFlNWit3TDhLc1hKb3ZML3h3VGd2bTNxTHlUbDZ0MVpTODRjVzFtZnMKVUR3RWdxTlVNUTFKWWIxV1pzTE1ydjdESktvaGdxcGtzODRuT0drSzV3dnVMQVdjOUUyWXQ4MDJnclVhTFRrcwpaY2w0Y2dMZEhaZWF5UEk5WlRxdGxBNCtDM1dtY1JFb2hIaFZNTUFDZ1pwY0xzeWF2b1hCSmFNL1hpRFpLTXEyCkc3cHp6RmpWTmNWNGZnPT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
+    service:
+      name: events-webhook-service
+      namespace: kubesphere-logging-system
+      path: /validate-logging-kubesphere-io-v1alpha1-kubeeventsrule
+  failurePolicy: Fail
+  name: vkubeeventsrule.kb.io
+  rules:
+  - apiGroups:
+    - logging.kubesphere.io
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - kubeeventsrules

@@ -1,0 +1,7 @@
+apiVersion: logging.kubesphere.io/v1alpha1
+kind: KubeEventsRule
+metadata:
+  name: kubeeventsrule-sample
+spec:
+  # Add fields here
+  foo: bar
