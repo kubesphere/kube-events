@@ -59,7 +59,7 @@ type KubeEventsExporterList struct {
 // ExporterSinks defines a set of sinks for Events Exporter
 type ExporterSinks struct {
 	Webhooks []*ExporterWebhookSink `json:"webhooks,omitempty"`
-	Stdout  *ExporterStdoutSink  `json:"stdout,omitempty"`
+	Stdout   *ExporterStdoutSink    `json:"stdout,omitempty"`
 }
 
 // ExporterStdoutSink defines parameters for stdout sink of Events Exporter.
@@ -68,7 +68,7 @@ type ExporterStdoutSink struct {
 
 // ExporterWebhookSink defines parameters for webhook sink of Events Exporter.
 type ExporterWebhookSink struct {
-	Url string `json:"url,omitempty"`
+	Url     string            `json:"url,omitempty"`
 	Service *ServiceReference `json:"service,omitempty"`
 }
 

@@ -16,13 +16,12 @@ import (
 )
 
 type KubeEventsRuler struct {
-
 	kcfg *rest.Config
 
 	rulerConds      *rulerConds
 	rulerCondsMutex sync.Mutex
 
-	taskPool            *ants.Pool
+	taskPool *ants.Pool
 
 	evtQueue      workqueue.RateLimitingInterface
 	notificaQueue workqueue.RateLimitingInterface
@@ -89,9 +88,9 @@ func (r *KubeEventsRuler) ReloadConfig(c *config.RulerConfig) error {
 
 	r.rulerConds = &rulerConds{
 		notificationSinkers: notificaSinkers,
-		alertSinkers: alertSinkers,
-		ruleCache: ruleCache,
-		cancel: cancel,
+		alertSinkers:        alertSinkers,
+		ruleCache:           ruleCache,
+		cancel:              cancel,
 	}
 
 	return nil
@@ -226,7 +225,7 @@ func (r *KubeEventsRuler) sinkNotifications(ctx context.Context) {
 			continue
 		}
 
-		func(){
+		func() {
 			postFunc := r.notificaQueue.Forget
 			defer func() {
 				for _, n := range notificas {
@@ -263,7 +262,7 @@ func (r *KubeEventsRuler) sinkAlerts(ctx context.Context) {
 		if len(alerts) == 0 {
 			continue
 		}
-		func(){
+		func() {
 			postFunc := r.alertQueue.Forget
 			defer func() {
 				for _, a := range alerts {
@@ -310,7 +309,7 @@ func (r *KubeEventsRuler) Run(ctx context.Context) error {
 
 func NewKubeEventsRuler(cfg *rest.Config, taskPool *ants.Pool) *KubeEventsRuler {
 	return &KubeEventsRuler{
-		kcfg: cfg,
+		kcfg:          cfg,
 		evtQueue:      workqueue.NewNamedRateLimitingQueue(workqueue.DefaultControllerRateLimiter(), "events"),
 		notificaQueue: workqueue.NewNamedRateLimitingQueue(workqueue.DefaultControllerRateLimiter(), "eventNotifications"),
 		alertQueue:    workqueue.NewNamedRateLimitingQueue(workqueue.DefaultControllerRateLimiter(), "eventAlerts"),
@@ -318,10 +317,9 @@ func NewKubeEventsRuler(cfg *rest.Config, taskPool *ants.Pool) *KubeEventsRuler 
 	}
 }
 
-
 type rulerConds struct {
 	notificationSinkers []types.NotificationSinker
 	alertSinkers        []types.AlertSinker
 	ruleCache           *RuleCache
-	cancel context.CancelFunc
+	cancel              context.CancelFunc
 }

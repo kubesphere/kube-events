@@ -53,9 +53,9 @@ type KubeEventsRuleList struct {
 
 // Rule describes a notification or alerting rule
 type Rule struct {
-	Name      string   `json:"name,omitempty"`
-	Summary   string   `json:"summary,omitempty"`
-	SummaryCn string   `json:"summaryCn,omitempty"`
+	Name      string `json:"name,omitempty"`
+	Summary   string `json:"summary,omitempty"`
+	SummaryCn string `json:"summaryCn,omitempty"`
 	// Condition is a string similar with the where part of sql.
 	// The usage is as follows: event.type="Warning" and event.involvedObject.kind="Pod" and event.reason="FailedMount"
 	Condition string   `json:"condition,omitempty"`
@@ -64,10 +64,11 @@ type Rule struct {
 	Source    string   `json:"source,omitempty"`
 	Tags      []string `json:"tags,omitempty"`
 	Enable    bool     `json:"enable,omitempty"`
-	Type RuleType `json:"type,omitempty"`
+	Type      RuleType `json:"type,omitempty"`
 }
 
 type RuleType string
+
 const (
 	// RuleTypeNotification represents that the rule will used to generate notifications
 	// based on the original event objects.

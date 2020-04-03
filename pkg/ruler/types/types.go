@@ -80,14 +80,14 @@ func (evt *Event) EvalToAlert(evtRules []*loggingv1alpha1.KubeEventsRule) (*Even
 func generateAlert(evt *Event, rule *loggingv1alpha1.Rule) *EventAlert {
 	alert := &amkit.RawAlert{
 		Annotations: map[string]string{
-			"message":   util.FormatMap(rule.Message, evt.Flat()),
+			"message": util.FormatMap(rule.Message, evt.Flat()),
 		},
 		Labels: map[string]string{
 			"alertname":        rule.Name,
 			alertTypeLabelName: alertTypeLabelValueEvent,
 			"namespace":        evt.Event.InvolvedObject.Namespace,
 			strings.ToLower(evt.Event.InvolvedObject.Kind): evt.Event.InvolvedObject.Name,
-			"severity": rule.Priority,
+			"severity":  rule.Priority,
 			"summary":   rule.Summary,
 			"summaryCn": rule.SummaryCn,
 		},

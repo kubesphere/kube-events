@@ -28,32 +28,33 @@ import (
 )
 
 type ruleScopeConfig struct {
-	ScopeLabelKey string
-	ScopeLabelValueCluster string
+	ScopeLabelKey            string
+	ScopeLabelValueCluster   string
 	ScopeLabelValueWorkspace string
 	ScopeLabelValueNamespace string
 
 	ScopeWorkspaceLabelKey string
 
-	NamespaceScopeCluster string
+	NamespaceScopeCluster   string
 	NamespaceScopeWorkspace string
 }
 
 func DefaultRuleScopeConfig() *ruleScopeConfig {
 	return &ruleScopeConfig{
-		ScopeLabelKey: "kubesphere.io/rule-scope",
-		ScopeLabelValueCluster: "cluster",
+		ScopeLabelKey:            "kubesphere.io/rule-scope",
+		ScopeLabelValueCluster:   "cluster",
 		ScopeLabelValueWorkspace: "workspace",
 		ScopeLabelValueNamespace: "namespace",
 
 		ScopeWorkspaceLabelKey: "kubesphere.io/workspace",
 
-		NamespaceScopeCluster: "kubesphere-logging-system",
+		NamespaceScopeCluster:   "kubesphere-logging-system",
 		NamespaceScopeWorkspace: "kubesphere-logging-system",
 	}
 }
 
 var _ruleScopeConfig = DefaultRuleScopeConfig()
+
 func SetRuleScopeConfig(c *ruleScopeConfig) {
 	_ruleScopeConfig = c
 }

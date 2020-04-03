@@ -71,9 +71,8 @@ func main() {
 		os.Exit(1)
 	}
 
-
 	if err = (&controllers.KubeEventsRulerReconciler{
-		Conf: &cfg,
+		Conf:   &cfg,
 		Client: mgr.GetClient(),
 		Log:    ctrl.Log.WithName("controllers").WithName("KubeEventsRuler"),
 		Scheme: mgr.GetScheme(),
@@ -82,7 +81,7 @@ func main() {
 		os.Exit(1)
 	}
 	if err = (&controllers.KubeEventsExporterReconciler{
-		Conf: &cfg,
+		Conf:   &cfg,
 		Client: mgr.GetClient(),
 		Log:    ctrl.Log.WithName("controllers").WithName("KubeEventsExporter"),
 		Scheme: mgr.GetScheme(),

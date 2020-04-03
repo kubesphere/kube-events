@@ -24,7 +24,7 @@ import (
 // KubeEventsRulerSpec defines the desired state of KubeEventsRuler
 type KubeEventsRulerSpec struct {
 	Replicas *int32 `json:"replicas,omitempty"`
-	Image string `json:"image,omitempty"`
+	Image    string `json:"image,omitempty"`
 	// Resources defines resources requests and limits for single Pod.
 	Resources corev1.ResourceRequirements `json:"resources,omitempty"`
 	// Namespaces to be selected for KubeEventsRules discovery. If unspecified, only
@@ -64,22 +64,22 @@ type KubeEventsRulerList struct {
 
 type RulerSinks struct {
 	Alertmanager *RulerAlertmanagerSink `json:"alertmanager,omitempty"`
-	Webhooks []*RulerWebhookSink `json:"webhooks,omitempty"`
-	Stdout *RulerStdoutSink `json:"stdout,omitempty"`
+	Webhooks     []*RulerWebhookSink    `json:"webhooks,omitempty"`
+	Stdout       *RulerStdoutSink       `json:"stdout,omitempty"`
 }
 
 type RulerAlertmanagerSink struct {
 	Namespace string `json:"namespace,omitempty"`
-	Name string `json:"name,omitempty"`
-	Port *int `json:"port,omitempty"`
+	Name      string `json:"name,omitempty"`
+	Port      *int   `json:"port,omitempty"`
 	// TargetPort is the port to access on the backend instances targeted by the service.
 	// If this is not specified, the value of the 'port' field is used.
 	TargetPort *int `json:"targetPort,omitempty"`
 }
 
 type RulerWebhookSink struct {
-	Type RulerSinkType `json:"type,omitempty"`
-	Url string `json:"namespace,omitempty"`
+	Type    RulerSinkType     `json:"type,omitempty"`
+	Url     string            `json:"namespace,omitempty"`
 	Service *ServiceReference `json:"service,omitempty"`
 }
 
@@ -89,12 +89,13 @@ type RulerStdoutSink struct {
 
 type ServiceReference struct {
 	Namespace string `json:"namespace,omitempty"`
-	Name string `json:"name,omitempty"`
-	Port *int `json:"port,omitempty"`
-	Path string `json:"path,omitempty"`
+	Name      string `json:"name,omitempty"`
+	Port      *int   `json:"port,omitempty"`
+	Path      string `json:"path,omitempty"`
 }
 
 type RulerSinkType string
+
 const (
 	// RulerSinkTypeNotification represents event notifications sink.
 	RulerSinkTypeNotification = "notification"

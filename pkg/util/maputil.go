@@ -95,4 +95,3 @@ func FormatMap(format string, m map[string]interface{}) string {
 	}
 	return buf.String()
 }
-

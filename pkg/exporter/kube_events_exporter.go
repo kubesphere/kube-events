@@ -3,12 +3,12 @@ package exporter
 import (
 	"context"
 	"fmt"
-	"github.com/kubesphere/kube-events/pkg/exporter/types"
 	"sync"
 	"time"
 
 	"github.com/kubesphere/kube-events/pkg/config"
 	"github.com/kubesphere/kube-events/pkg/exporter/sinks"
+	"github.com/kubesphere/kube-events/pkg/exporter/types"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/fields"
@@ -107,7 +107,7 @@ func (s *K8sEventSource) sinkEvents(ctx context.Context) {
 			continue
 		}
 
-		func(){
+		func() {
 			postFunc := s.workqueue.Forget
 			defer func() {
 				for _, evt := range evts {

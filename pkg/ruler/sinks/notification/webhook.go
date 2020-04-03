@@ -5,8 +5,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/kubesphere/kube-events/pkg/ruler/types"
 	"net/http"
+
+	"github.com/kubesphere/kube-events/pkg/ruler/types"
 )
 
 type WebhookSinker struct {

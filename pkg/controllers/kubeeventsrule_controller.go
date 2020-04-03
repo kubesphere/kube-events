@@ -41,8 +41,6 @@ func (r *KubeEventsRuleReconciler) Reconcile(req ctrl.Request) (ctrl.Result, err
 	_ = context.Background()
 	_ = r.Log.WithValues("kubeeventsrule", req.NamespacedName)
 
-
-
 	// your logic here
 
 	return ctrl.Result{}, nil

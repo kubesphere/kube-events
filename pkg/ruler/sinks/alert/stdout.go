@@ -4,11 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+
 	"github.com/kubesphere/kube-events/pkg/ruler/types"
 )
 
 type StdoutSinker struct {
-
 }
 
 func (s *StdoutSinker) SinkAlerts(ctx context.Context, evtAlerts []*types.EventAlert) error {

@@ -12,22 +12,22 @@ type ExporterConfig struct {
 
 type ExporterSinks struct {
 	Webhooks []*ExporterSinkWebhook `json:"webhooks,omitempty"`
-	Stdout  *ExporterSinkStdout  `json:"stdout,omitempty"`
+	Stdout   *ExporterSinkStdout    `json:"stdout,omitempty"`
 }
 
 type ExporterSinkStdout struct {
 }
 
 type ExporterSinkWebhook struct {
-	Url string `json:"url,omitempty"`
+	Url     string            `json:"url,omitempty"`
 	Service *ServiceReference `json:"service,omitempty"`
 }
 
 type ServiceReference struct {
 	Namespace string `json:"namespace"`
-	Name string `json:"name"`
-	Port *int `json:"port"`
-	Path string `json:"path"`
+	Name      string `json:"name"`
+	Port      *int   `json:"port"`
+	Path      string `json:"path"`
 }
 
 func NewExporterConfig(filename string) (*ExporterConfig, error) {

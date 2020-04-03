@@ -2,6 +2,7 @@ package alert
 
 import (
 	"context"
+
 	amkit "github.com/kubesphere/alertmanager-kit"
 	"github.com/kubesphere/kube-events/pkg/config"
 	"github.com/kubesphere/kube-events/pkg/ruler/types"
@@ -26,9 +27,9 @@ func NewAlertmanagerSinker(c *config.RulerAlertmanagerSink) (*AlertmanagerSinker
 	s := &AlertmanagerSinker{}
 	cc := amkit.ClientConfig{
 		Service: &amkit.ServiceReference{
-			Namespace: c.Namespace,
-			Name: c.Name,
-			Port: c.Port,
+			Namespace:  c.Namespace,
+			Name:       c.Name,
+			Port:       c.Port,
 			TargetPort: c.TargetPort,
 		},
 	}

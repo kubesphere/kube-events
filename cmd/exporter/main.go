@@ -4,9 +4,9 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"github.com/julienschmidt/httprouter"
 	"net/http"
 
+	"github.com/julienschmidt/httprouter"
 	"github.com/kubesphere/kube-events/pkg/config"
 	"github.com/kubesphere/kube-events/pkg/exporter"
 	"github.com/kubesphere/kube-events/pkg/util"

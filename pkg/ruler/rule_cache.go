@@ -3,6 +3,9 @@ package ruler
 import (
 	"context"
 	"fmt"
+	"strings"
+	"sync"
+
 	"github.com/kubesphere/kube-events/pkg/apis/v1alpha1"
 	"github.com/kubesphere/kube-events/pkg/config"
 	"github.com/kubesphere/kube-events/pkg/ruler/types"
@@ -14,8 +17,6 @@ import (
 	toolscache "k8s.io/client-go/tools/cache"
 	"k8s.io/klog"
 	"sigs.k8s.io/controller-runtime/pkg/cache"
-	"strings"
-	"sync"
 )
 
 type RuleCache struct {
@@ -41,7 +42,7 @@ func (c *RuleCache) Run(ctx context.Context) error {
 	nsHandler = &toolscache.ResourceEventHandlerFuncs{
 		AddFunc: func(obj interface{}) {
 			if ns, ok := obj.(*corev1.Namespace); ok {
-				c.namespaces.Store(ns.Namespace, ns)
+				c.namespaces.Store(ns.Name, ns)
 			}
 		},
 		UpdateFunc: func(oldObj, newObj interface{}) {
@@ -49,7 +50,7 @@ func (c *RuleCache) Run(ctx context.Context) error {
 		},
 		DeleteFunc: func(obj interface{}) {
 			if ns, ok := obj.(*corev1.Namespace); ok {
-				c.namespaces.Delete(ns.Namespace)
+				c.namespaces.Delete(ns.Name)
 			}
 		},
 	}
@@ -150,11 +151,14 @@ func (c *RuleCache) ruleDelete(obj interface{}) {
 }
 
 func (c *RuleCache) selectorMatchesRule(rule *v1alpha1.KubeEventsRule) bool {
-	match := c.ruleSelector.Matches(labels.Set(rule.Labels))
-	if ns, ok := c.namespaces.Load(rule.Namespace); ok {
-		match = c.ruleNamespaceSelector.Matches(labels.Set(ns.(*corev1.Namespace).Labels))
+	if !c.ruleSelector.Matches(labels.Set(rule.Labels)) {
+		return false
 	}
-	return match
+	if ns, ok := c.namespaces.Load(rule.Namespace); ok &&
+		c.ruleNamespaceSelector.Matches(labels.Set(ns.(*corev1.Namespace).Labels)) {
+		return true
+	}
+	return false
 }
 
 func (c *RuleCache) ruleNameFromClusterRule(rule *v1alpha1.KubeEventsRule) string {

@@ -20,11 +20,14 @@ import (
 	"context"
 	"fmt"
 	"k8s.io/apimachinery/pkg/api/resource"
+	"k8s.io/apimachinery/pkg/types"
+	"k8s.io/client-go/util/workqueue"
 	"path"
 	"reflect"
 	"sigs.k8s.io/controller-runtime/pkg/event"
 	"sigs.k8s.io/controller-runtime/pkg/handler"
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
+	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 	"sigs.k8s.io/controller-runtime/pkg/source"
 	"sigs.k8s.io/yaml"
 
@@ -184,13 +187,37 @@ func (r *KubeEventsExporterReconciler) SetupWithManager(mgr ctrl.Manager) error 
 			return meets(event.Meta, event.Object)
 		},
 	}
+	enq := func(meta metav1.Object, q workqueue.RateLimitingInterface) {
+		if ls := meta.GetLabels(); ls != nil {
+			name, ok1 := ls[labelKeyEventsRuler]
+			ns, ok2 := ls[labelKeyEventsRulerNamespace]
+			if ok1 && ok2 {
+				q.Add(reconcile.Request{NamespacedName: types.NamespacedName{
+					Name:      name,
+					Namespace: ns,
+				}})
+			}
+		}
+	}
+	chandler := handler.Funcs{
+		CreateFunc: func(createEvent event.CreateEvent, limitingInterface workqueue.RateLimitingInterface) {
+			if meta := createEvent.Meta; meta != nil {
+				enq(meta, limitingInterface)
+			}
+		},
+		UpdateFunc: func(updateEvent event.UpdateEvent, limitingInterface workqueue.RateLimitingInterface) {
+			if meta := updateEvent.MetaOld; meta != nil {
+				enq(meta, limitingInterface)
+			}
+		},
+	}
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&loggingv1alpha1.KubeEventsExporter{}).
 		Owns(&appsv1.Deployment{}).
 		Owns(&corev1.ConfigMap{}).
 		Owns(&corev1.ServiceAccount{}).
-		Watches(&source.Kind{Type: &rbacv1.ClusterRole{}}, &handler.EnqueueRequestForObject{}).
-		Watches(&source.Kind{Type: &rbacv1.ClusterRoleBinding{}}, &handler.EnqueueRequestForObject{}).
+		Watches(&source.Kind{Type: &rbacv1.ClusterRole{}}, chandler).
+		Watches(&source.Kind{Type: &rbacv1.ClusterRoleBinding{}}, chandler).
 		WithEventFilter(&preficateFuncs).
 		Complete(r)
 }
@@ -212,7 +239,7 @@ func (r *KubeEventsExporterReconciler) clusterRoleMutate(cr *rbacv1.ClusterRole,
 		cr.Rules = []rbacv1.PolicyRule{{
 			APIGroups: []string{""},
 			Resources: []string{"events"},
-			Verbs: []string{"get", "list", "watch"},
+			Verbs:     []string{"get", "list", "watch"},
 		}}
 		return nil
 	}
@@ -226,12 +253,12 @@ func (r *KubeEventsExporterReconciler) clusterRoleBindingMutate(crb *rbacv1.Clus
 		crb.Labels[labelKeyEventsExporterNamespace] = kee.Namespace
 		crb.RoleRef = rbacv1.RoleRef{
 			APIGroup: rbacv1.GroupName,
-			Kind: "ClusterRole",
-			Name: cr.Name,
+			Kind:     "ClusterRole",
+			Name:     cr.Name,
 		}
 		crb.Subjects = []rbacv1.Subject{{
-			Kind: rbacv1.ServiceAccountKind,
-			Name: sa.Name,
+			Kind:      rbacv1.ServiceAccountKind,
+			Name:      sa.Name,
 			Namespace: sa.Namespace,
 		}}
 		return nil
@@ -296,7 +323,7 @@ func (r *KubeEventsExporterReconciler) deployMutate(deploy *appsv1.Deployment,
 		deploy.Spec.Template.Labels = podLabels
 		deploy.Spec.Template.Spec.ServiceAccountName = sa.Name
 
-		shouldConfVol := corev1.Volume{
+		expcConfV := corev1.Volume{
 			Name: "config",
 			VolumeSource: corev1.VolumeSource{
 				ConfigMap: &corev1.ConfigMapVolumeSource{
@@ -306,12 +333,12 @@ func (r *KubeEventsExporterReconciler) deployMutate(deploy *appsv1.Deployment,
 				},
 			},
 		}
-		var confVol corev1.Volume
+		var confV corev1.Volume
 		for _, v := range deploy.Spec.Template.Spec.Volumes {
-			if v.Name == shouldConfVol.Name {
+			if v.Name == expcConfV.Name {
 				if v.ConfigMap != nil {
-					confVol.Name = v.Name
-					confVol.ConfigMap = &corev1.ConfigMapVolumeSource{
+					confV.Name = v.Name
+					confV.ConfigMap = &corev1.ConfigMapVolumeSource{
 						LocalObjectReference: corev1.LocalObjectReference{
 							Name: v.ConfigMap.Name,
 						},
@@ -319,18 +346,18 @@ func (r *KubeEventsExporterReconciler) deployMutate(deploy *appsv1.Deployment,
 				}
 			}
 		}
-		if !reflect.DeepEqual(shouldConfVol, confVol) {
-			deploy.Spec.Template.Spec.Volumes = []corev1.Volume{shouldConfVol}
+		if !reflect.DeepEqual(expcConfV, confV) {
+			deploy.Spec.Template.Spec.Volumes = []corev1.Volume{expcConfV}
 		}
 
-		reloaderResources := corev1.ResourceRequirements{Limits: corev1.ResourceList{}}
+		reloaderRes := corev1.ResourceRequirements{Limits: corev1.ResourceList{}}
 		if r.Conf.ConfigReloaderCPU != "0" {
-			reloaderResources.Limits[corev1.ResourceCPU] = resource.MustParse(r.Conf.ConfigReloaderCPU)
+			reloaderRes.Limits[corev1.ResourceCPU] = resource.MustParse(r.Conf.ConfigReloaderCPU)
 		}
 		if r.Conf.ConfigReloaderMemory != "0" {
-			reloaderResources.Limits[corev1.ResourceMemory] = resource.MustParse(r.Conf.ConfigReloaderMemory)
+			reloaderRes.Limits[corev1.ResourceMemory] = resource.MustParse(r.Conf.ConfigReloaderMemory)
 		}
-		shouldExporterContainer := corev1.Container{
+		expcExporterC := corev1.Container{
 			Name: "exporter",
 			Args: []string{
 				fmt.Sprintf("--config.file=%s", path.Join(configDirEventsExporter, configFileNameEventsExporter)),
@@ -339,44 +366,44 @@ func (r *KubeEventsExporterReconciler) deployMutate(deploy *appsv1.Deployment,
 			Resources: kee.Spec.Resources,
 			VolumeMounts: []corev1.VolumeMount{
 				{
-					Name:      shouldConfVol.Name,
+					Name:      expcConfV.Name,
 					MountPath: configDirEventsExporter,
 				},
 			},
 		}
-		shouldReloaderContainer := corev1.Container{
-			Name:  "config-reloader",
-			Image: r.Conf.ConfigReloaderImage,
-			Resources: reloaderResources,
+		expcReloaderC := corev1.Container{
+			Name:      "config-reloader",
+			Image:     r.Conf.ConfigReloaderImage,
+			Resources: reloaderRes,
 			Args: []string{
 				fmt.Sprintf("--volume-dir=%s", configDirEventsExporter),
 				"--webhook-url=http://127.0.0.1:8443/-/reload",
 			},
 			VolumeMounts: []corev1.VolumeMount{
 				{
-					Name:      shouldConfVol.Name,
+					Name:      expcConfV.Name,
 					MountPath: configDirEventsExporter,
 				},
 			},
 		}
-		var exporterContainer, reloaderContainer corev1.Container
+		var exporterC, reloaderC corev1.Container
 		for _, c := range deploy.Spec.Template.Spec.Containers {
 			simplec := corev1.Container{
-				Name: c.Name,
-				Image: c.Image,
-				Resources: c.Resources,
-				Args: c.Args,
+				Name:         c.Name,
+				Image:        c.Image,
+				Resources:    c.Resources,
+				Args:         c.Args,
 				VolumeMounts: c.VolumeMounts,
 			}
-			if simplec.Name == shouldExporterContainer.Name {
-				exporterContainer = simplec
-			} else if simplec.Name == shouldReloaderContainer.Name {
-				reloaderContainer = simplec
+			if simplec.Name == expcExporterC.Name {
+				exporterC = simplec
+			} else if simplec.Name == expcReloaderC.Name {
+				reloaderC = simplec
 			}
 		}
-		if !reflect.DeepEqual(shouldExporterContainer, exporterContainer) ||
-			!reflect.DeepEqual(shouldReloaderContainer, reloaderContainer) {
-			deploy.Spec.Template.Spec.Containers = []corev1.Container{shouldExporterContainer, shouldReloaderContainer}
+		if !reflect.DeepEqual(expcExporterC, exporterC) ||
+			!reflect.DeepEqual(expcReloaderC, reloaderC) {
+			deploy.Spec.Template.Spec.Containers = []corev1.Container{expcExporterC, expcReloaderC}
 		}
 		deploy.SetOwnerReferences(nil)
 		return controllerutil.SetControllerReference(kee, deploy, r.Scheme)

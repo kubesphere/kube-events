@@ -11,29 +11,29 @@ import (
 )
 
 type RulerConfig struct {
-	RuleSelector labels.Selector `json:"ruleSelector,omitempty"`
+	RuleSelector          labels.Selector `json:"ruleSelector,omitempty"`
 	RuleNamespaceSelector labels.Selector `json:"ruleNamespaceSelector,omitempty"`
-	Sinks *RulerSinks `json:"sinks,omitempty"`
+	Sinks                 *RulerSinks     `json:"sinks,omitempty"`
 }
 
 type RulerSinks struct {
 	Alertmanager *RulerAlertmanagerSink `json:"alertmanager,omitempty"`
-	Webhooks []*RulerWebhookSink `json:"webhooks,omitempty"`
-	Stdout *RulerStdoutSink `json:"stdout,omitempty"`
+	Webhooks     []*RulerWebhookSink    `json:"webhooks,omitempty"`
+	Stdout       *RulerStdoutSink       `json:"stdout,omitempty"`
 }
 
 type RulerAlertmanagerSink struct {
 	Namespace string `json:"namespace"`
-	Name string `json:"name"`
-	Port *int `json:"port"`
+	Name      string `json:"name"`
+	Port      *int   `json:"port"`
 	// TargetPort is the port to access on the backend instances targeted by the service.
 	// If this is not specified, the value of the 'port' field is used.
 	TargetPort *int `json:"targetPort,omitempty"`
 }
 
 type RulerWebhookSink struct {
-	Type RulerSinkType `json:"type"`
-	Url string `json:"namespace"`
+	Type    RulerSinkType     `json:"type"`
+	Url     string            `json:"namespace"`
 	Service *ServiceReference `json:"service"`
 }
 
@@ -42,6 +42,7 @@ type RulerStdoutSink struct {
 }
 
 type RulerSinkType string
+
 const (
 	// RulerSinkTypeNotification represents event notifications sink.
 	RulerSinkTypeNotification = "notification"
