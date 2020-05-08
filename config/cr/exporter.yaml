@@ -1,0 +1,15 @@
+apiVersion: logging.kubesphere.io/v1alpha1
+kind: KubeEventsExporter
+metadata:
+  name: exporter
+  namespace: system
+spec:
+  image: exporter
+  sinks:
+    stdout: {}
+    webhooks:
+    - service:
+        namespace: system
+        name: ruler
+        port: 8443
+        path: /events

@@ -119,9 +119,8 @@ func (s *K8sEventSource) sinkEvents(ctx context.Context) {
 			if len(evtSinkers) == 0 {
 				return
 			}
-			events := &types.Events{KubeEvents: evts}
 			for _, sinker := range evtSinkers {
-				if e := sinker.Sink(ctx, events); e != nil {
+				if e := sinker.Sink(ctx, evts); e != nil {
 					klog.Error("Error sinking events: ", e)
 					postFunc = s.workqueue.AddRateLimited
 					return

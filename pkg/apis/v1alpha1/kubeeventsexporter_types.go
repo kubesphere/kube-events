@@ -23,7 +23,8 @@ import (
 
 // KubeEventsExporterSpec defines the desired state of KubeEventsExporter
 type KubeEventsExporterSpec struct {
-	Image string `json:"image,omitempty"`
+	Image           string            `json:"image,omitempty"`
+	ImagePullPolicy corev1.PullPolicy `json:"imagePullPolicy,omitempty"`
 	// Resources defines resources requests and limits for single Pod.
 	Resources corev1.ResourceRequirements `json:"resources,omitempty"`
 	// Sinks defines details of events sinks
@@ -58,8 +59,10 @@ type KubeEventsExporterList struct {
 
 // ExporterSinks defines a set of sinks for Events Exporter
 type ExporterSinks struct {
+	// Webhooks is a list of ExporterWebhookSink
 	Webhooks []*ExporterWebhookSink `json:"webhooks,omitempty"`
-	Stdout   *ExporterStdoutSink    `json:"stdout,omitempty"`
+	// Stdout represents whether to write events to stdout
+	Stdout *ExporterStdoutSink `json:"stdout,omitempty"`
 }
 
 // ExporterStdoutSink defines parameters for stdout sink of Events Exporter.

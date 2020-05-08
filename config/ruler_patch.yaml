@@ -1,0 +1,11 @@
+apiVersion: logging.kubesphere.io/v1alpha1
+kind: KubeEventsRuler
+metadata:
+  name: ruler
+  namespace: system
+spec:
+  image: ruler
+  sinks:
+    alertmanager:
+      namespace: kubesphere-monitoring-system
+      name: alertmanager-main

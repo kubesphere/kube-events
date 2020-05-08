@@ -1,0 +1,29 @@
+resources:
+- deploy.yaml
+- admission.yaml
+
+vars:
+- name: ADMISSION_SERVICE_NAMESPACE
+  objref:
+    kind: Service
+    name: admission
+    apiVersion: v1
+  fieldref:
+    fieldpath: metadata.namespace
+- name: ADMISSION_SERVICE_NAME
+  objref:
+    kind: Service
+    name: admission
+    apiVersion: v1
+  fieldref:
+    fieldpath: metadata.name
+- name: OPERATOR_NAME
+  objref:
+    kind: Deployment
+    name: operator
+    apiVersion: apps/v1
+  fieldref:
+    fieldpath: metadata.name
+
+configurations:
+- kustomizeconfig.yaml

@@ -101,12 +101,12 @@ func (r *KubeEventsRulerReconciler) Reconcile(req ctrl.Request) (ctrl.Result, er
 	} else {
 		if hasFinalizer(&ker.ObjectMeta, finalizerNameEventsRuler) {
 			crb := &rbacv1.ClusterRoleBinding{}
-			crb.Name = fmt.Sprintf("%s-%s-crb", ker.Namespace, ker.Name)
+			crb.Name = fmt.Sprintf("%s-%s", ker.Namespace, ker.Name)
 			if e = r.Delete(ctx, crb); e != nil && !apierrs.IsNotFound(e) {
 				return ctrl.Result{}, e
 			}
 			cr := &rbacv1.ClusterRole{}
-			cr.Name = fmt.Sprintf("%s-%s-cr", ker.Namespace, ker.Name)
+			cr.Name = fmt.Sprintf("%s-%s", ker.Namespace, ker.Name)
 			if e = r.Delete(ctx, cr); e != nil && !apierrs.IsNotFound(e) {
 				return ctrl.Result{}, e
 			}
@@ -120,34 +120,34 @@ func (r *KubeEventsRulerReconciler) Reconcile(req ctrl.Request) (ctrl.Result, er
 
 	sa := &corev1.ServiceAccount{}
 	sa.Namespace = ker.Namespace
-	sa.Name = fmt.Sprintf("%s-sa", ker.Name)
+	sa.Name = ker.Name
 	if _, e = controllerutil.CreateOrUpdate(ctx, r.Client, sa, r.serviceAccountMutate(sa, ker)); e != nil {
 		return ctrl.Result{}, e
 	}
 	cr := &rbacv1.ClusterRole{}
-	cr.Name = fmt.Sprintf("%s-%s-cr", ker.Namespace, ker.Name)
+	cr.Name = fmt.Sprintf("%s-%s", ker.Namespace, ker.Name)
 	if _, e = controllerutil.CreateOrUpdate(ctx, r.Client, cr, r.clusterRoleMutate(cr, ker)); e != nil {
 		return ctrl.Result{}, e
 	}
 	crb := &rbacv1.ClusterRoleBinding{}
-	crb.Name = fmt.Sprintf("%s-%s-crb", ker.Namespace, ker.Name)
+	crb.Name = fmt.Sprintf("%s-%s", ker.Namespace, ker.Name)
 	if _, e = controllerutil.CreateOrUpdate(ctx, r.Client, crb, r.clusterRoleBindingMutate(crb, cr, sa, ker)); e != nil {
 		return ctrl.Result{}, e
 	}
 	cm := &corev1.ConfigMap{}
 	cm.Namespace = ker.Namespace
-	cm.Name = fmt.Sprintf("%s-cm", ker.Name)
+	cm.Name = ker.Name
 	if _, e = controllerutil.CreateOrUpdate(ctx, r.Client, cm, r.configMutate(cm, ker)); e != nil {
 		return ctrl.Result{}, e
 	}
 	deploy := &appsv1.Deployment{}
-	deploy.Name = fmt.Sprintf("%s-deploy", ker.Name)
+	deploy.Name = ker.Name
 	deploy.Namespace = ker.Namespace
 	if _, e = controllerutil.CreateOrUpdate(ctx, r.Client, deploy, r.deployMutate(deploy, cm, sa, ker)); e != nil {
 		return ctrl.Result{}, e
 	}
 	svc := &corev1.Service{}
-	svc.Name = fmt.Sprintf("%s-svc", ker.Name)
+	svc.Name = ker.Name
 	svc.Namespace = ker.Namespace
 	if _, e = controllerutil.CreateOrUpdate(ctx, r.Client, svc, r.serviceMutate(svc, deploy, ker)); e != nil {
 		return ctrl.Result{}, e
@@ -388,12 +388,13 @@ func (r *KubeEventsRulerReconciler) deployMutate(deploy *appsv1.Deployment,
 			reloaderRes.Limits[corev1.ResourceMemory] = resource.MustParse(r.Conf.ConfigReloaderMemory)
 		}
 		expcRulerC := corev1.Container{
-			Name: "ruler",
+			Name: "events-ruler",
 			Args: []string{
 				fmt.Sprintf("--config.file=%s", path.Join(configDirEventsRuler, configFileNameEventsRuler)),
 			},
-			Image:     ker.Spec.Image,
-			Resources: ker.Spec.Resources,
+			Image:           ker.Spec.Image,
+			ImagePullPolicy: ker.Spec.ImagePullPolicy,
+			Resources:       ker.Spec.Resources,
 			VolumeMounts: []corev1.VolumeMount{
 				{
 					Name:      expcConfV.Name,

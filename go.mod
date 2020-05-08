@@ -7,7 +7,7 @@ require (
 	github.com/go-logr/logr v0.1.0
 	github.com/go-openapi/spec v0.19.4 // indirect
 	github.com/julienschmidt/httprouter v1.2.0
-	github.com/kubesphere/alertmanager-kit v0.0.0-20200327054013-56856bfa2eef
+	github.com/kubesphere/alertmanager-kit v0.0.0-20200506095235-f3c3d19a4c25
 	github.com/onsi/ginkgo v1.11.0
 	github.com/onsi/gomega v1.8.1
 	github.com/panjf2000/ants/v2 v2.2.2

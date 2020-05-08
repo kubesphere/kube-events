@@ -98,12 +98,12 @@ func (r *KubeEventsExporterReconciler) Reconcile(req ctrl.Request) (ctrl.Result,
 	} else {
 		if hasFinalizer(&kee.ObjectMeta, finalizerNameEventsExporter) {
 			crb := &rbacv1.ClusterRoleBinding{}
-			crb.Name = fmt.Sprintf("%s-%s-crb", kee.Namespace, kee.Name)
+			crb.Name = fmt.Sprintf("%s-%s", kee.Namespace, kee.Name)
 			if e = r.Delete(ctx, crb); e != nil && !apierrs.IsNotFound(e) {
 				return ctrl.Result{}, e
 			}
 			cr := &rbacv1.ClusterRole{}
-			cr.Name = fmt.Sprintf("%s-%s-cr", kee.Namespace, kee.Name)
+			cr.Name = fmt.Sprintf("%s-%s", kee.Namespace, kee.Name)
 			if e = r.Delete(ctx, cr); e != nil && !apierrs.IsNotFound(e) {
 				return ctrl.Result{}, e
 			}
@@ -117,28 +117,28 @@ func (r *KubeEventsExporterReconciler) Reconcile(req ctrl.Request) (ctrl.Result,
 
 	sa := &corev1.ServiceAccount{}
 	sa.Namespace = kee.Namespace
-	sa.Name = fmt.Sprintf("%s-sa", kee.Name)
+	sa.Name = kee.Name
 	if _, e = controllerutil.CreateOrUpdate(ctx, r.Client, sa, r.serviceAccountMutate(sa, kee)); e != nil {
 		return ctrl.Result{}, e
 	}
 	cr := &rbacv1.ClusterRole{}
-	cr.Name = fmt.Sprintf("%s-%s-cr", kee.Namespace, kee.Name)
+	cr.Name = fmt.Sprintf("%s-%s", kee.Namespace, kee.Name)
 	if _, e = controllerutil.CreateOrUpdate(ctx, r.Client, cr, r.clusterRoleMutate(cr, kee)); e != nil {
 		return ctrl.Result{}, e
 	}
 	crb := &rbacv1.ClusterRoleBinding{}
-	crb.Name = fmt.Sprintf("%s-%s-crb", kee.Namespace, kee.Name)
+	crb.Name = fmt.Sprintf("%s-%s", kee.Namespace, kee.Name)
 	if _, e = controllerutil.CreateOrUpdate(ctx, r.Client, crb, r.clusterRoleBindingMutate(crb, cr, sa, kee)); e != nil {
 		return ctrl.Result{}, e
 	}
 	cm := &corev1.ConfigMap{}
 	cm.Namespace = kee.Namespace
-	cm.Name = fmt.Sprintf("%s-cm", kee.Name)
+	cm.Name = kee.Name
 	if _, e = controllerutil.CreateOrUpdate(ctx, r.Client, cm, r.configMutate(cm, kee)); e != nil {
 		return ctrl.Result{}, e
 	}
 	deploy := &appsv1.Deployment{}
-	deploy.Name = fmt.Sprintf("%s-deploy", kee.Name)
+	deploy.Name = kee.Name
 	deploy.Namespace = kee.Namespace
 	if _, e = controllerutil.CreateOrUpdate(ctx, r.Client, deploy, r.deployMutate(deploy, cm, sa, kee)); e != nil {
 		return ctrl.Result{}, e
@@ -358,12 +358,13 @@ func (r *KubeEventsExporterReconciler) deployMutate(deploy *appsv1.Deployment,
 			reloaderRes.Limits[corev1.ResourceMemory] = resource.MustParse(r.Conf.ConfigReloaderMemory)
 		}
 		expcExporterC := corev1.Container{
-			Name: "exporter",
+			Name: "events-exporter",
 			Args: []string{
 				fmt.Sprintf("--config.file=%s", path.Join(configDirEventsExporter, configFileNameEventsExporter)),
 			},
-			Image:     kee.Spec.Image,
-			Resources: kee.Spec.Resources,
+			Image:           kee.Spec.Image,
+			ImagePullPolicy: kee.Spec.ImagePullPolicy,
+			Resources:       kee.Spec.Resources,
 			VolumeMounts: []corev1.VolumeMount{
 				{
 					Name:      expcConfV.Name,

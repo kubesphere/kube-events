@@ -51,7 +51,7 @@ type KubeEventsRuleList struct {
 	Items           []KubeEventsRule `json:"items"`
 }
 
-// Rule describes a notification or alerting rule
+// Rule describes a notification or alert rule
 type Rule struct {
 	Name      string `json:"name,omitempty"`
 	Summary   string `json:"summary,omitempty"`
@@ -63,8 +63,11 @@ type Rule struct {
 	Priority  string   `json:"priority,omitempty"`
 	Source    string   `json:"source,omitempty"`
 	Tags      []string `json:"tags,omitempty"`
-	Enable    bool     `json:"enable,omitempty"`
-	Type      RuleType `json:"type,omitempty"`
+	// Enable is whether to enable the rule
+	Enable bool `json:"enable,omitempty"`
+	// Type represents that the rule is for notification or alert.
+	// Available values are `notification` and `alert`
+	Type RuleType `json:"type,omitempty"`
 }
 
 type RuleType string

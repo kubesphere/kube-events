@@ -1,12 +1,12 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: events-operator
+  name: operator
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: events-operator
+  name: operator
 subjects:
 - kind: ServiceAccount
-  name: events-operator
-  namespace: kubesphere-logging-system
+  name: operator
+  namespace: system

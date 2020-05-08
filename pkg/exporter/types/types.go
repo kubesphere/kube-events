@@ -11,5 +11,5 @@ type Events struct {
 }
 
 type Sinker interface {
-	Sink(ctx context.Context, events *Events) error
+	Sink(ctx context.Context, events []*v1.Event) error
 }

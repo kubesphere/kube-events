@@ -1,0 +1,11 @@
+varReference:
+- path: webhooks/clientConfig/service
+  kind: MutatingWebhookConfiguration
+- path: webhooks/clientConfig/service
+  kind: ValidatingWebhookConfiguration
+- path: spec/template/metadata/labels
+  kind: Deployment
+- path: spec/selector/matchLabels
+  kind: Deployment
+- path: spec/selector
+  kind: Service

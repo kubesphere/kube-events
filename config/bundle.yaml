@@ -1,0 +1,2006 @@
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.2.5
+  creationTimestamp: null
+  name: kubeeventsexporters.logging.kubesphere.io
+spec:
+  group: logging.kubesphere.io
+  names:
+    kind: KubeEventsExporter
+    listKind: KubeEventsExporterList
+    plural: kubeeventsexporters
+    singular: kubeeventsexporter
+  scope: Namespaced
+  validation:
+    openAPIV3Schema:
+      description: KubeEventsExporter is the Schema for the kubeeventsexporters API
+      properties:
+        apiVersion:
+          description: 'APIVersion defines the versioned schema of this representation
+            of an object. Servers should convert recognized schemas to the latest
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+          type: string
+        kind:
+          description: 'Kind is a string value representing the REST resource this
+            object represents. Servers may infer this from the endpoint the client
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+          type: string
+        metadata:
+          type: object
+        spec:
+          description: KubeEventsExporterSpec defines the desired state of KubeEventsExporter
+          properties:
+            image:
+              type: string
+            imagePullPolicy:
+              description: PullPolicy describes a policy for if/when to pull a container
+                image
+              type: string
+            resources:
+              description: Resources defines resources requests and limits for single
+                Pod.
+              properties:
+                limits:
+                  additionalProperties:
+                    anyOf:
+                    - type: integer
+                    - type: string
+                    pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                    x-kubernetes-int-or-string: true
+                  description: 'Limits describes the maximum amount of compute resources
+                    allowed. More info: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/'
+                  type: object
+                requests:
+                  additionalProperties:
+                    anyOf:
+                    - type: integer
+                    - type: string
+                    pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                    x-kubernetes-int-or-string: true
+                  description: 'Requests describes the minimum amount of compute resources
+                    required. If Requests is omitted for a container, it defaults
+                    to Limits if that is explicitly specified, otherwise to an implementation-defined
+                    value. More info: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/'
+                  type: object
+              type: object
+            sinks:
+              description: Sinks defines details of events sinks
+              properties:
+                stdout:
+                  description: ExporterStdoutSink defines parameters for stdout sink
+                    of Events Exporter.
+                  type: object
+                webhooks:
+                  items:
+                    description: ExporterWebhookSink defines parameters for webhook
+                      sink of Events Exporter.
+                    properties:
+                      service:
+                        properties:
+                          name:
+                            type: string
+                          namespace:
+                            type: string
+                          path:
+                            type: string
+                          port:
+                            type: integer
+                        type: object
+                      url:
+                        type: string
+                    type: object
+                  type: array
+              type: object
+          type: object
+        status:
+          description: KubeEventsExporterStatus defines the observed state of KubeEventsExporter
+          type: object
+      type: object
+  version: v1alpha1
+  versions:
+  - name: v1alpha1
+    served: true
+    storage: true
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.2.5
+  creationTimestamp: null
+  name: kubeeventsrulers.logging.kubesphere.io
+spec:
+  group: logging.kubesphere.io
+  names:
+    kind: KubeEventsRuler
+    listKind: KubeEventsRulerList
+    plural: kubeeventsrulers
+    singular: kubeeventsruler
+  scope: Namespaced
+  validation:
+    openAPIV3Schema:
+      description: KubeEventsRuler is the Schema for the kubeeventsrulers API
+      properties:
+        apiVersion:
+          description: 'APIVersion defines the versioned schema of this representation
+            of an object. Servers should convert recognized schemas to the latest
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+          type: string
+        kind:
+          description: 'Kind is a string value representing the REST resource this
+            object represents. Servers may infer this from the endpoint the client
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+          type: string
+        metadata:
+          type: object
+        spec:
+          description: KubeEventsRulerSpec defines the desired state of KubeEventsRuler
+          properties:
+            image:
+              type: string
+            imagePullPolicy:
+              description: PullPolicy describes a policy for if/when to pull a container
+                image
+              type: string
+            replicas:
+              format: int32
+              type: integer
+            resources:
+              description: Resources defines resources requests and limits for single
+                Pod.
+              properties:
+                limits:
+                  additionalProperties:
+                    anyOf:
+                    - type: integer
+                    - type: string
+                    pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                    x-kubernetes-int-or-string: true
+                  description: 'Limits describes the maximum amount of compute resources
+                    allowed. More info: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/'
+                  type: object
+                requests:
+                  additionalProperties:
+                    anyOf:
+                    - type: integer
+                    - type: string
+                    pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                    x-kubernetes-int-or-string: true
+                  description: 'Requests describes the minimum amount of compute resources
+                    required. If Requests is omitted for a container, it defaults
+                    to Limits if that is explicitly specified, otherwise to an implementation-defined
+                    value. More info: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/'
+                  type: object
+              type: object
+            ruleNamespaceSelector:
+              description: Namespaces to be selected for KubeEventsRules discovery.
+                If unspecified, only the same namespace as the KubeEventsRuler object
+                is in is used.
+              properties:
+                matchExpressions:
+                  description: matchExpressions is a list of label selector requirements.
+                    The requirements are ANDed.
+                  items:
+                    description: A label selector requirement is a selector that contains
+                      values, a key, and an operator that relates the key and values.
+                    properties:
+                      key:
+                        description: key is the label key that the selector applies
+                          to.
+                        type: string
+                      operator:
+                        description: operator represents a key's relationship to a
+                          set of values. Valid operators are In, NotIn, Exists and
+                          DoesNotExist.
+                        type: string
+                      values:
+                        description: values is an array of string values. If the operator
+                          is In or NotIn, the values array must be non-empty. If the
+                          operator is Exists or DoesNotExist, the values array must
+                          be empty. This array is replaced during a strategic merge
+                          patch.
+                        items:
+                          type: string
+                        type: array
+                    required:
+                    - key
+                    - operator
+                    type: object
+                  type: array
+                matchLabels:
+                  additionalProperties:
+                    type: string
+                  description: matchLabels is a map of {key,value} pairs. A single
+                    {key,value} in the matchLabels map is equivalent to an element
+                    of matchExpressions, whose key field is "key", the operator is
+                    "In", and the values array contains only "value". The requirements
+                    are ANDed.
+                  type: object
+              type: object
+            ruleSelector:
+              description: A selector to select which KubeEventsRules to use for notifications
+                or alerting.
+              properties:
+                matchExpressions:
+                  description: matchExpressions is a list of label selector requirements.
+                    The requirements are ANDed.
+                  items:
+                    description: A label selector requirement is a selector that contains
+                      values, a key, and an operator that relates the key and values.
+                    properties:
+                      key:
+                        description: key is the label key that the selector applies
+                          to.
+                        type: string
+                      operator:
+                        description: operator represents a key's relationship to a
+                          set of values. Valid operators are In, NotIn, Exists and
+                          DoesNotExist.
+                        type: string
+                      values:
+                        description: values is an array of string values. If the operator
+                          is In or NotIn, the values array must be non-empty. If the
+                          operator is Exists or DoesNotExist, the values array must
+                          be empty. This array is replaced during a strategic merge
+                          patch.
+                        items:
+                          type: string
+                        type: array
+                    required:
+                    - key
+                    - operator
+                    type: object
+                  type: array
+                matchLabels:
+                  additionalProperties:
+                    type: string
+                  description: matchLabels is a map of {key,value} pairs. A single
+                    {key,value} in the matchLabels map is equivalent to an element
+                    of matchExpressions, whose key field is "key", the operator is
+                    "In", and the values array contains only "value". The requirements
+                    are ANDed.
+                  type: object
+              type: object
+            sinks:
+              description: Sinks defines sinks detail of this ruler
+              properties:
+                alertmanager:
+                  properties:
+                    name:
+                      type: string
+                    namespace:
+                      type: string
+                    port:
+                      type: integer
+                    targetPort:
+                      description: TargetPort is the port to access on the backend
+                        instances targeted by the service. If this is not specified,
+                        the value of the 'port' field is used.
+                      type: integer
+                  type: object
+                stdout:
+                  properties:
+                    type:
+                      type: string
+                  type: object
+                webhooks:
+                  items:
+                    properties:
+                      namespace:
+                        type: string
+                      service:
+                        properties:
+                          name:
+                            type: string
+                          namespace:
+                            type: string
+                          path:
+                            type: string
+                          port:
+                            type: integer
+                        type: object
+                      type:
+                        type: string
+                    type: object
+                  type: array
+              type: object
+          type: object
+        status:
+          description: KubeEventsRulerStatus defines the observed state of KubeEventsRuler
+          type: object
+      type: object
+  version: v1alpha1
+  versions:
+  - name: v1alpha1
+    served: true
+    storage: true
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.2.5
+  creationTimestamp: null
+  name: kubeeventsrules.logging.kubesphere.io
+spec:
+  group: logging.kubesphere.io
+  names:
+    kind: KubeEventsRule
+    listKind: KubeEventsRuleList
+    plural: kubeeventsrules
+    singular: kubeeventsrule
+  scope: Namespaced
+  validation:
+    openAPIV3Schema:
+      description: KubeEventsRule is the Schema for the kubeeventsrules API
+      properties:
+        apiVersion:
+          description: 'APIVersion defines the versioned schema of this representation
+            of an object. Servers should convert recognized schemas to the latest
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+          type: string
+        kind:
+          description: 'Kind is a string value representing the REST resource this
+            object represents. Servers may infer this from the endpoint the client
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+          type: string
+        metadata:
+          type: object
+        spec:
+          description: KubeEventsRuleSpec defines the desired state of KubeEventsRule
+          properties:
+            rules:
+              items:
+                description: Rule describes a notification or alerting rule
+                properties:
+                  condition:
+                    description: 'Condition is a string similar with the where part
+                      of sql. The usage is as follows: event.type="Warning" and event.involvedObject.kind="Pod"
+                      and event.reason="FailedMount"'
+                    type: string
+                  enable:
+                    type: boolean
+                  message:
+                    type: string
+                  name:
+                    type: string
+                  priority:
+                    type: string
+                  source:
+                    type: string
+                  summary:
+                    type: string
+                  summaryCn:
+                    type: string
+                  tags:
+                    items:
+                      type: string
+                    type: array
+                  type:
+                    type: string
+                type: object
+              type: array
+          type: object
+        status:
+          description: KubeEventsRuleStatus defines the observed state of KubeEventsRule
+          type: object
+      type: object
+  version: v1alpha1
+  versions:
+  - name: v1alpha1
+    served: true
+    storage: true
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []
+---
+apiVersion: admissionregistration.k8s.io/v1beta1
+kind: MutatingWebhookConfiguration
+metadata:
+  name: kube-events-admission-mutate
+webhooks:
+- clientConfig:
+    caBundle: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURaRENDQWt5Z0F3SUJBZ0lKQUpxYlYrTnBjeW5OTUEwR0NTcUdTSWIzRFFFQkN3VUFNRWN4Q3pBSkJnTlYKQkFZVEFrTk9NUXN3Q1FZRFZRUUlEQUpJUWpFTE1Ba0dBMVVFQ2d3Q1VVTXhIakFjQmdOVkJBTU1GV3QxWW1VdApaWFpsYm5SekxXRmtiV2x6YzJsdmJqQWVGdzB5TURBME1qUXdPRE16TUROYUZ3MDBOekE1TVRBd09ETXpNRE5hCk1FY3hDekFKQmdOVkJBWVRBa05PTVFzd0NRWURWUVFJREFKSVFqRUxNQWtHQTFVRUNnd0NVVU14SGpBY0JnTlYKQkFNTUZXdDFZbVV0WlhabGJuUnpMV0ZrYldsemMybHZiakNDQVNJd0RRWUpLb1pJaHZjTkFRRUJCUUFEZ2dFUApBRENDQVFvQ2dnRUJBT29pRXp5ZUtxRnhwQ1czWEVQaHpud2pJS0I0ekRQd01qaDdjR3pyMUo2VFY5bitYSVpVCkpxcm1lSWZkelloejBhQVpMM2tVenZERVZ0TWVUNExiUG14V0V1VUkvRHdjcExGUjBZQzVkWnRHeFpEQk9IakUKa1NndXA2enJPUTFEa1FtamZ5cTVialpFSzJnd1YxZk5FZTc0SXlyUmsreWlHTzJmT0lETWJ0cndnZy9nckVIWAo5cnFqUk1BQVhoQkdCUjFpUzhhellUM2RkaHNvajdwQlM2WnFONjRIR2JTYXg1QVViQy9vbS9IaEZvVDlPSWNnClQvdXVYVVZqTFlHVVowRzEyZi9SM3BuL09waGUrTDNjbWdibUp1VXEwQit6RTByQTNTYmNzbWxMQ1JoS2htVlYKZ29WK0wraU1Xdzh3bHdNd0poRnVVY1BtRjhEaEkvL1RiRnNDQXdFQUFhTlRNRkV3SFFZRFZSME9CQllFRkxJNwo3K1JxNHRJOVQyeCsxektmTFZ4RmJPQUNNQjhHQTFVZEl3UVlNQmFBRkxJNzcrUnE0dEk5VDJ4KzF6S2ZMVnhGCmJPQUNNQThHQTFVZEV3RUIvd1FGTUFNQkFmOHdEUVlKS29aSWh2Y05BUUVMQlFBRGdnRUJBTGJEUFhaOUpOTFAKSGVOdDJCc3VSMWFGMGpYTWRMUC9GWHFqN01IWnV0c3B2RWFXNDh1bU14a1Y2c0sxOHB5Z2QvVWZ6S3NTOEFidApOQ0Q2K3p4clZ6bTVmalF6c2JUWEtXcDdseHNnZ0VuQXFWTlo0Qm1yNHpJYVRySE95R1dVNHRmL2czT2F1YjJxCnprd05yRGFEWi8yWDZIT1pONHFKSitXMEZqakxkNmJ3M3B6bGgyZlFTNFBIdlZFVTZ5UHlBV2dLb2FpZ0hnTmMKd2h5ZEJZenFSeWFVZWJsSzZOVEFKczJaMkd2ZVZjUS92V1paYzJQU2lhMVQ5bjNBelBVQWtBVTQ3UzVmaEJGVAptMjhkeHIxQVIzbVdMYjVqZDNkQkJiS2FMWDBoeENJeU5ndzVhdHpLTjR6QXlTOTBVanppWm42S1h6ekxLZ0dqCm02MWM2VVQyT1NVPQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
+    service:
+      name: kube-events-admission
+      namespace: kubesphere-logging-system
+      path: /mutate-logging-kubesphere-io-v1alpha1-kubeeventsrule
+  failurePolicy: Fail
+  name: mkubeeventsrule.kb.io
+  rules:
+  - apiGroups:
+    - logging.kubesphere.io
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - kubeeventsrules
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kube-events-operator
+  namespace: kubesphere-logging-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  creationTimestamp: null
+  name: kube-events-operator
+rules:
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - deployments/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - apps
+  resources:
+  - services/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - namespaces
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - serviceaccounts
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - services
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - logging.kubesphere.io
+  resources:
+  - kubeeventsexporters
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - logging.kubesphere.io
+  resources:
+  - kubeeventsexporters/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - logging.kubesphere.io
+  resources:
+  - kubeeventsrulers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - logging.kubesphere.io
+  resources:
+  - kubeeventsrulers/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - logging.kubesphere.io
+  resources:
+  - kubeeventsrules
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - logging.kubesphere.io
+  resources:
+  - kubeeventsrules/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - clusterrolebindings
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - clusterroles
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kube-events-operator
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: kube-events-operator
+subjects:
+- kind: ServiceAccount
+  name: kube-events-operator
+  namespace: kubesphere-logging-system
+---
+apiVersion: v1
+data:
+  tls.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURLRENDQWhBQ0NRQ1c5QWIzYjFKRGdUQU5CZ2txaGtpRzl3MEJBUXNGQURCSE1Rc3dDUVlEVlFRR0V3SkQKVGpFTE1Ba0dBMVVFQ0F3Q1NFSXhDekFKQmdOVkJBb01BbEZETVI0d0hBWURWUVFEREJWcmRXSmxMV1YyWlc1MApjeTFoWkcxcGMzTnBiMjR3SGhjTk1qQXdOREkwTURnek16QXpXaGNOTkRjd09URXdNRGd6TXpBeldqQmxNUXN3CkNRWURWUVFHRXdKRFRqRUxNQWtHQTFVRUNBd0NTRUl4Q3pBSkJnTlZCQW9NQWxGRE1Ud3dPZ1lEVlFRRERETnIKZFdKbExXVjJaVzUwY3kxaFpHMXBjM05wYjI0dWEzVmlaWE53YUdWeVpTMXNiMmRuYVc1bkxYTjVjM1JsYlM1egpkbU13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLQW9JQkFRQzBhQVVxWHFwK2RtcDNVR0svCndITWM0dG8wZTFkMzVqYTV5R0dlMG5PRm1XcG1QaVVxZklDR1VaYXlQdUJranhCbk4vSkdRSVpyazFGRk83eWwKNHZZSVpINVdXdTFZNG41MytTRjBIeXRlWGZzRUo4amNFc0RWWURYbHR4ZjIxbWYydmhRUU9TdW4wODRCSVlzbwpkbGFhazBiTUFiQ3o1VnVKRWsxRlNLa0tKYWtWazlwTVV2VlI5MGl0RW0zZjZjbVhLRWZqV0xmV21tWTYvcTNsCkxIcVBSSTRZR1NselFQdXFtQmEzTmlNY1prenh4U2QvZWZFQzVIZkJ0cFkyT0ZpNkRRVVBNY255bUtVSytFYkYKNmplNnBRdmR3MzFJOE1yUVNpNnllMGhrWWNYUEZCclVDVlZFUDREWXdGQ1B6VFJUQmc5SFRqUzV6RlpTOTQvLwp2Rk45QWdNQkFBRXdEUVlKS29aSWh2Y05BUUVMQlFBRGdnRUJBT2VsUzMyYWc5Zm9aVFpFUGJnM0JBWFJ0OGEzCnMzakk0enZibGR3alFmbzJjYXR2enA2ZE5Jdy8xUDdpR0Y3dVhGdjVMc2RId21VczhPUExsU1VGSVlJTnEzUysKOTZod29yV2V3dW1YS1ZkcDFtT2R4aWpmYjZFeU90alVibThDbGR4WHA2T1dsdjByWkZFbGxpRTBLcEVPSWRDbwpoMUtHS1BqME96MC9SNlBxajIvSnByRnpxQlF0NHQveWJoeVRDenVMdUEyN1Zld1FlR1JyNU5MZzJ4YzhwRVp4CnFmM2pUVFpCTm5FeitjdkdqenowdlJQSmI2UGRFY2FEZzNOeHN3QWdyblhqQndSSzcwNHBhU3g4bXJhdVZLVm8KNkpVN2JiTGprSWJVUlp1SlhCai9xTDJWTmFMZzgxZ28vcVlGNzArTVluSUluT0NaNmpURXdtY1dMdEE9Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
+  tls.key: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFb3dJQkFBS0NBUUVBdEdnRktsNnFmblpxZDFCaXY4QnpIT0xhTkh0WGQrWTJ1Y2hobnRKemhabHFaajRsCktueUFobEdXc2o3Z1pJOFFaemZ5UmtDR2E1TlJSVHU4cGVMMkNHUitWbHJ0V09KK2Qva2hkQjhyWGwzN0JDZkkKM0JMQTFXQTE1YmNYOXRabjlyNFVFRGtycDlQT0FTR0xLSFpXbXBOR3pBR3dzK1ZiaVJKTlJVaXBDaVdwRlpQYQpURkwxVWZkSXJSSnQzK25KbHloSDQxaTMxcHBtT3Y2dDVTeDZqMFNPR0JrcGMwRDdxcGdXdHpZakhHWk04Y1VuCmYzbnhBdVIzd2JhV05qaFl1ZzBGRHpISjhwaWxDdmhHeGVvM3VxVUwzY045U1BESzBFb3VzbnRJWkdIRnp4UWEKMUFsVlJEK0EyTUJRajgwMFV3WVBSMDQwdWN4V1V2ZVAvN3hUZlFJREFRQUJBb0lCQUdydmliaE91dU1SVUJSLwpXcmxzMnc4UlRPUjFCQ2ozRmhOVHVzSEkzMThlekJuazFtVHp2YjlnbDJINnNVb0tIMS8vb3FXUDA5M3FTZTh1CjlLaWordENJdVBaNUdWMXBqQ3VUU2dncC9hd0hLeWFRYXBoQXFYc1JkNEU5NFgrWUliSDVnNjBHSm1GcHhCK1oKZ1lJdmV6QlBBbFVrMzFnVEtRbjhCajkrVFd6TVhSSUJwalBobCtDYURjcmExekEwL0s5RG56Sld6M0IrTHNaagpmZWFxWUtMUjdyenlCSEY3YkpvbjdKMHk2MmF1UEJCVWtMSCtpT0ZQSnZtbXhkS0orbEdiNVJHYjN3cDJLNWU5ClI1SWRHcDFGeDI0ZFgwMXQ0NVJjbzRHUndkMFFLeFk4MSt3M3ZFYW93c0lRVlVnWStnRUJTZWR3TzhVTVcrWmQKYVIzTXFrRUNnWUVBMzExR2FmeVlIandzOFcvZ3hyQ3ViQ292dWt0WGNOSXYrejM5NFVGdXppMUt1QmQ3T0NrRworc3c3MTVTRHlnYitDRStyQ3h5Q294Znc5TjR4SHp2Qk01T0NmSVZOc0tjWFJVY05qMlRDL05YZDFUUHZhamZkCmQvNDg4T3lHR2w2RVhiY2pMRkNLSStXdlBQMG5tdFJpVmN0clZTTzEyS2ZHNlFMQTlrbXF3bTBDZ1lFQXpzUHgKTkU1d2h0N3pBVHBBSzZLOVRuQStmVUE5YXpiQWxHOXkrWnZDTmp5WURPNDB6QmZMWmFOc1F3REdUOFNmbVZ0RwpqYW9MTlBUQUVYYTNYRndIOE1oc0I5T3ZpOVV3R3p5b3EzU25za202SkJtbDZMcEFaaFRRS08ySkIzZGRDK1c1CjVDNGlBRVBZL1RPU1kwbjJqSjNlcy80TzBBN3ZyalRaaUs1dXExRUNnWUJ3MFo0VlBuNWZGeW5rTVF3cGoyZ3EKUGd5cFhoQ21iYVBLbFA4ODNWM29TYndweThKekZWWHZLMlUyZUU4d3BlTjlzeS9EaHZ6OC84UzNDZHRwMlRhMgpwRlVPTEE2WG9XNEJrZWZwZTQxNVExU3VzWExHQmIyWk5CTDM1WisraGVyNW90empMekwyK3JaT2FkZXRQb1VFCnJLQmorb3VKQ1FWUkFCRVMxUmFvNlFLQmdDTklIaTJOd1BmU3JXYWxPUFA1TmhKZlp0cGFqdUJ2bkZiMzJZZXMKUTJ5YjFGcElmMnZnRjQ0RlgrRGpEZlBvbWs5QjJ2MHJhZlFrVzIzZmN4Um9nOVpiYk11OUhIUmc4VytFWDBlNgpoUzhRRTVvN1lpc2ZOUVAyUXpyb3BYeEhxdkh2eGxPZ1o1N2g5UEhuemUveFhBZk1uSWJjTUV6aWI1V3JZUDlJCnZJdXhBb0dCQUk5aUZERys2MTVJWWhyTFhlVEh6YjV3UkVlcjZVRzlydlFtMmN1NmlGTkF6OUhJbUJBeG8vNTMKS25sRmQvcmhDcUxUTTJDZlhHSzcvSnozV1hFaVA1Ni9mc1pPd2tiNklkQTF0aGUrRVVjU28wWjFaWnpPNmE0dApGemJLSzUvKzRWNDRTTUdLWGVKSlZDRk9RUlFTOGd0ZjIrbW9KUStNNVJha0YraUVkU0haCi0tLS0tRU5EIFJTQSBQUklWQVRFIEtFWS0tLS0tCg==
+kind: Secret
+metadata:
+  name: kube-events-admission
+  namespace: kubesphere-logging-system
+type: Opaque
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kube-events-admission
+  namespace: kubesphere-logging-system
+spec:
+  ports:
+  - port: 443
+    targetPort: 9443
+  selector:
+    app: kube-events-operator
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kube-events-operator
+  namespace: kubesphere-logging-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kube-events-operator
+  template:
+    metadata:
+      labels:
+        app: kube-events-operator
+    spec:
+      containers:
+      - image: kubespheredev/kube-events-operator:v0.1.0
+        name: events-operator
+        ports:
+        - containerPort: 9443
+          name: webhook-server
+          protocol: TCP
+        resources:
+          requests:
+            cpu: 100m
+            memory: 20Mi
+        volumeMounts:
+        - mountPath: /tmp/k8s-webhook-server/serving-certs
+          name: cert
+          readOnly: true
+      serviceAccountName: kube-events-operator
+      volumes:
+      - name: cert
+        secret:
+          secretName: kube-events-admission
+---
+apiVersion: logging.kubesphere.io/v1alpha1
+kind: KubeEventsExporter
+metadata:
+  name: kube-events-exporter
+  namespace: kubesphere-logging-system
+spec:
+  image: kubespheredev/kube-events-exporter:v0.1.0
+  sinks:
+    stdout: {}
+    webhooks:
+    - service:
+        name: kube-events-ruler
+        namespace: kubesphere-logging-system
+        path: /events
+        port: 8443
+---
+apiVersion: logging.kubesphere.io/v1alpha1
+kind: KubeEventsRule
+metadata:
+  labels:
+    kubesphere.io/rule-scope: cluster
+  name: kube-events-cluster-rules-default
+  namespace: kubesphere-logging-system
+spec:
+  rules:
+  - condition: |
+      event.type="Normal" and event.involvedObject.kind="Pod" and event.reason="Created" and not event.involvedObject.fieldPath=""
+    enable: true
+    message: |
+      %event.message
+    name: ContainerCreated
+    priority: normal
+    source: k8s_event
+    summary: Container was created
+    summaryCn: 容器已创建
+    tags:
+    - k8s_event_notification
+    type: notification
+  - condition: |
+      event.type="Normal" and event.involvedObject.kind="Pod" and event.reason="Started" and not event.involvedObject.fieldPath=""
+    enable: true
+    message: |
+      %event.message
+    name: ContainerStarted
+    priority: normal
+    source: k8s_event
+    summary: Container was started
+    summaryCn: 容器已启动
+    tags:
+    - k8s_event_notification
+    type: notification
+  - condition: |
+      event.type="Warning" and event.involvedObject.kind="Pod" and event.reason="Failed" and not event.involvedObject.fieldPath=""
+    enable: true
+    message: |
+      %event.message
+    name: ContainerFailed
+    priority: warning
+    source: k8s_event
+    summary: Container failed
+    summaryCn: 容器失败
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Normal" and event.involvedObject.kind="Pod" and event.reason="Killing" and not event.involvedObject.fieldPath=""
+    enable: true
+    message: |
+      %event.message
+    name: ContainerKilling
+    priority: normal
+    source: k8s_event
+    summary: Container killing
+    summaryCn: 容器终止中
+    tags:
+    - k8s_event_notification
+    type: notification
+  - condition: |
+      event.type="Warning" and event.involvedObject.kind="Pod" and event.reason="Preempting"
+    message: |
+      %event.message
+    name: ContainerPreempting
+    priority: warning
+    source: k8s_event
+    summary: Container is preemting
+    summaryCn: 容器抢占中
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Warning" and event.involvedObject.kind="Pod" and reason="BackOff" and not event.involvedObject.fieldPath="" and event.count>3
+    enable: true
+    message: |
+      %event.message
+    name: ContainerBackoff
+    priority: warning
+    source: k8s_event
+    summary: Container back-off
+    summaryCn: 容器回退
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Warning" and event.involvedObject.kind="Pod" and event.reason="Unhealthy" and event.count>3
+    enable: true
+    message: |
+      %event.message
+    name: ContainerUnhealthy
+    priority: warning
+    source: k8s_event
+    summary: Container is unhealthy
+    summaryCn: 容器状态不良
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Warning" and event.involvedObject.kind="Pod" and event.reason="ProbeWarning" and event.count>3
+    enable: true
+    message: |
+      %event.message
+    name: ContainerProbeWarning
+    priority: warning
+    source: k8s_event
+    summary: Warning to perform a probe to the container
+    summaryCn: 容器探测警告
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Warning" and event.involvedObject.kind="Pod" and event.reason="ExceededGracePeriod"
+    enable: true
+    message: |
+      %event.message
+    name: PodKillingExceededGracePeriod
+    priority: warning
+    source: k8s_event
+    summary: Pod killing exceeded specified grace period
+    summaryCn: pod终止超时
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Warning" and event.reason="FailedKillPod"
+    enable: true
+    message: |
+      %event.message
+    name: PodKillFailed
+    priority: warning
+    source: k8s_event
+    summary: Failed to kill pod
+    summaryCn: pod终止失败
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Warning" and event.reason="FailedCreatePodContainer"
+    enable: true
+    message: |
+      %event.message
+    name: PodContainerCreateFailed
+    priority: warning
+    source: k8s_event
+    summary: Failed to create pod container
+    summaryCn: pod容器创建失败
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Warning" and event.involvedObject.kind="Pod" and event.reason="Failed" and event.involvedObject.fieldPath=""
+    enable: true
+    message: |
+      %event.message
+    name: PodFailed
+    priority: warning
+    source: k8s_event
+    summary: Pod failed
+    summaryCn: pod失败
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Warning" and event.involvedObject.kind="Pod" and event.reason="NetworkNotReady"
+    enable: true
+    message: |
+      %event.message
+    name: PodNetworkNotReady
+    priority: warning
+    source: k8s_event
+    summary: Pod network is not ready
+    summaryCn: Pod网络异常
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Normal" and event.involvedObject.kind="Pod" and event.reason="Pulling"
+    enable: true
+    message: |
+      %event.message
+    name: ImagePulling
+    priority: normal
+    source: k8s_event
+    summary: Image pulling
+    summaryCn: 镜像拉取中
+    tags:
+    - k8s_event_notification
+    type: notification
+  - condition: |
+      event.type="Normal" and event.involvedObject.kind="Pod" and event.reason="Pulled"
+    enable: true
+    message: |
+      %event.message
+    name: ImagePulled
+    priority: normal
+    source: k8s_event
+    summary: Image was pulled
+    summaryCn: 镜像已拉取
+    tags:
+    - k8s_event_notification
+    type: notification
+  - condition: |
+      event.type="Warning" and event.involvedObject.kind="Pod" and event.reason="ErrImageNeverPull"
+    enable: true
+    message: |
+      %event.message
+    name: ImagePullPolicyError
+    priority: warning
+    source: k8s_event
+    summary: Wrong image pull policy
+    summaryCn: 镜像拉取策略错误
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Warning" and event.involvedObject.kind="Pod" and event.reason="InspectFailed"
+    enable: true
+    message: |
+      %event.message
+    name: ImageInspectFailed
+    priority: warning
+    source: k8s_event
+    summary: Failed to inspect image
+    summaryCn: 镜像检查失败
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Normal" and event.involvedObject.kind="Node" and event.reason="NodeReady"
+    enable: true
+    message: |
+      %event.message
+    name: NodeReady
+    priority: normal
+    source: k8s_event
+    summary: Node is ready
+    summaryCn: 节点就绪
+    tags:
+    - k8s_event_notification
+    type: notification
+  - condition: |
+      event.type="Normal" and event.involvedObject.kind="Node" and event.reason="NodeNotReady"
+    enable: true
+    message: |
+      %event.message
+    name: NodeNotReady
+    priority: normal
+    source: k8s_event
+    summary: Node is not ready
+    summaryCn: 节点未就绪
+    tags:
+    - k8s_event_notification
+    type: notification
+  - condition: |
+      event.type="Normal" and event.involvedObject.kind="Node" and event.reason="NodeSchedulable"
+    enable: true
+    message: |
+      %event.message
+    name: NodeSchedulable
+    priority: normal
+    source: k8s_event
+    summary: Node is schedulable
+    summaryCn: 节点可调度
+    tags:
+    - k8s_event_notification
+    type: notification
+  - condition: |
+      event.type="Normal" and event.involvedObject.kind="Node" and event.reason="NodeNotSchedulable"
+    enable: true
+    message: |
+      %event.message
+    name: NodeNotSchedulable
+    priority: normal
+    source: k8s_event
+    summary: Node is not schedulable
+    summaryCn: 节点不可调度
+    tags:
+    - k8s_event_notification
+    type: notification
+  - condition: |
+      event.type="Normal" and event.involvedObject.kind="Node" and event.reason="Starting"
+    enable: true
+    message: |
+      %event.message
+    name: KubeletStarting
+    priority: normal
+    source: k8s_event
+    summary: Kubelet is starting
+    summaryCn: kubelet启动中
+    tags:
+    - k8s_event_notification
+    type: notification
+  - condition: |
+      event.type="Warning" and event.involvedObject.kind="Node" and event.reason="KubeletSetupFailed"
+    enable: true
+    message: |
+      %event.message
+    name: KubeletSetupFailed
+    priority: warning
+    source: k8s_event
+    summary: Failed to setup kubelet
+    summaryCn: kubelet安装失败
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Warning" and event.reason="FailedAttachVolume"
+    enable: true
+    message: |
+      %event.message
+    name: VolumeAttachFailed
+    priority: warning
+    source: k8s_event
+    summary: Failed to attach volume
+    summaryCn: 存储卷装载失败
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Warning" and event.reason="FailedMount"
+    enable: true
+    message: |
+      %event.message
+    name: VolumeMountFailed
+    priority: warning
+    source: k8s_event
+    summary: Failed to mount volume
+    summaryCn: 存储卷挂载失败
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Warning" and event.reason="VolumeResizeFailed"
+    enable: true
+    message: |
+      %event.message
+    name: VolumeResizeFailed
+    priority: warning
+    source: k8s_event
+    summary: Failed to expand/reduce volume
+    summaryCn: 存储卷扩缩容失败
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Normal" and event.reason="VolumeResizeSuccessful"
+    enable: true
+    message: |
+      %event.message
+    name: VolumeResizeSuccess
+    priority: normal
+    source: k8s_event
+    summary: Successfully expanded/reduced volume
+    summaryCn: 存储卷扩缩容成功
+    tags:
+    - k8s_event_notification
+    type: notification
+  - condition: |
+      event.type="Warning" and event.reason="FileSystemResizeFailed"
+    enable: true
+    message: |
+      %event.message
+    name: FileSystemResizeFailed
+    priority: warning
+    source: k8s_event
+    summary: Failed to expand/reduce file system
+    summaryCn: 文件系统扩缩容失败
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Normal" and event.reason="FileSystemResizeSuccessful"
+    enable: true
+    message: |
+      %event.message
+    name: FileSystemResized
+    priority: normal
+    source: k8s_event
+    summary: Successfully expanded/reduced file system
+    summaryCn: 文件系统扩缩容成功
+    tags:
+    - k8s_event_notification
+    type: notification
+  - condition: |
+      event.type="Warning" and event.reason="FailedMapVolume"
+    enable: true
+    message: |
+      %event.message
+    name: VolumeMapFailed
+    priority: warning
+    source: k8s_event
+    summary: Failed to map volume
+    summaryCn: 存储卷映射失败
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Warning" and event.reason="AlreadyMountedVolume"
+    enable: true
+    message: |
+      %event.message
+    name: VolumeAlreadyMounted
+    priority: warning
+    source: k8s_event
+    summary: Volume is already mounted
+    summaryCn: 存储卷已被挂载
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Normal" and event.reason="SuccessfulAttachVolume"
+    enable: true
+    message: |
+      %event.message
+    name: VolumeAttached
+    priority: warning
+    source: k8s_event
+    summary: Volume is successfully attached
+    summaryCn: 存储卷装载成功
+    tags:
+    - k8s_event_notification
+    type: notification
+  - condition: |
+      event.type="Normal" and event.reason="SuccessfulMountVolume"
+    enable: true
+    message: |
+      %event.message
+    name: VolumeMounted
+    priority: normal
+    source: k8s_event
+    summary: Volume is successfully mounted
+    summaryCn: 存储卷挂载成功
+    tags:
+    - k8s_event_notification
+    type: notification
+  - condition: |
+      event.type="Warning" and event.involvedObject.kind="Node" and event.reason="Rebooted"
+    enable: true
+    message: |
+      %event.message
+    name: NodeRebooted
+    priority: warning
+    source: k8s_event
+    summary: Node Rebooted
+    summaryCn: 节点重启
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Warning" and event.reason="ContainerGCFailed"
+    enable: true
+    message: |
+      %event.message
+    name: ContainerGCFailed
+    priority: warning
+    source: k8s_event
+    summary: Container GC failed
+    summaryCn: 容器GC失败
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Warning" and event.reason="ImageGCFailed"
+    enable: true
+    message: |
+      %event.message
+    name: ImageGCFailed
+    priority: warning
+    source: k8s_event
+    summary: Image GC failed
+    summaryCn: 镜像GC失败
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Warning" and event.reason="FailedNodeAllocatableEnforcement"
+    enable: true
+    message: |
+      %event.message
+    name: NodeAllocatableEnforcementFailed
+    priority: warning
+    source: k8s_event
+    summary: Node allocatable enforcement failed
+    summaryCn: 节点可分配资源更新失败
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Normal" and event.involvedObject.kind="Node" and event.reason="NodeAllocatableEnforced"
+    enable: true
+    message: |
+      %event.message
+    name: NodeAllocatableEnforcedSuccess
+    priority: normal
+    source: k8s_event
+    summary: Node allocatable enforcement succeed
+    summaryCn: 节点可分配资源更新成功
+    tags:
+    - k8s_event_notification
+    type: notification
+  - condition: |
+      event.type="Normal" and event.reason="SandboxChanged"
+    enable: true
+    message: |
+      %event.message
+    name: SandboxChanged
+    priority: normal
+    source: k8s_event
+    summary: sandbox changed
+    summaryCn: Sandbox变化
+    tags:
+    - k8s_event_notification
+    type: notification
+  - condition: |
+      event.type="Warning" and event.reason="FailedCreatePodSandBox"
+    enable: true
+    message: |
+      %event.message
+    name: SandboxCreateFailed
+    priority: warning
+    source: k8s_event
+    summary: Failed to create sandbox
+    summaryCn: Sandbox创建失败
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Warning" and event.reason="FailedPodSandBoxStatus"
+    enable: true
+    message: |
+      %event.message
+    name: SandboxStatusFailed
+    priority: warning
+    source: k8s_event
+    summary: Failed to get sandbox status
+    summaryCn: 获取Sandbox状态错误
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Warning" and event.reason="InvalidDiskCapacity"
+    enable: true
+    message: |
+      %event.message
+    name: DiskCapacityInvalid
+    priority: warning
+    source: k8s_event
+    summary: Invalid disk capacity
+    summaryCn: 磁盘容量配置不合法
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      type="Warning" and reason="FreeDiskSpaceFailed"
+    enable: true
+    message: |
+      %event.message
+    name: DiskSpaceFreeFailed
+    priority: warning
+    source: k8s_event
+    summary: Failed to free disk space
+    summaryCn: 磁盘空间释放失败
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Warning" and event.involvedObject.kind="Pod" and event.reason="FailedSync"
+    enable: true
+    message: |
+      %event.message
+    name: PodStatusSyncFailed
+    priority: warning
+    source: k8s_event
+    summary: Failed To Sync Pod Status
+    summaryCn: Pod状态同步失败
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Warning" and event.involvedObject.kind="Pod" and event.reason="FailedValidation"
+    enable: true
+    message: |
+      %event.message
+    name: ConfigurationValidationFailed
+    priority: warning
+    source: k8s_event
+    summary: Configuration Validation Failed
+    summaryCn: 配置验证失败
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Warning" and event.reason="FailedPostStartHook"
+    enable: true
+    message: |
+      %event.message
+    name: LifecycleHookPostStartFailed
+    priority: warning
+    source: k8s_event
+    summary: Failed to postStart LifecycleHook
+    summaryCn: 容器启动后的生命周期钩子运行失败
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Warning" and event.reason="FailedPreStopHook"
+    enable: true
+    message: |
+      %event.message
+    name: LifecycleHookPreStopFailed
+    priority: warning
+    source: k8s_event
+    summary: Failed to preStop LifecycleHook
+    summaryCn: 容器停止前的生命周期钩子运行失败
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Warning" and event.involvedObject.kind="HorizontalPodAutoscaler" and event.reason in ("SelectorRequired","InvalidSelector")
+    enable: true
+    message: |
+      %event.message
+    name: HPASelectorError
+    priority: warning
+    source: k8s_event
+    summary: HPA selector error
+    summaryCn: HPA选择器错误
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Warning" and event.involvedObject.kind="HorizontalPodAutoscaler" and event.reason in ("FailedGetObjectMetric","InvalidMetricSourceType")
+    enable: true
+    message: |
+      %event.message
+    name: HPAMetricError
+    priority: warning
+    source: k8s_event
+    summary: HPA metric error
+    summaryCn: HPA对象指标错误
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Warning" and event.involvedObject.kind="HorizontalPodAutoscaler" and event.reason="FailedConvertHPA"
+    enable: true
+    message: |
+      %event.message
+    name: HPAConvertFailed
+    priority: warning
+    source: k8s_event
+    summary: Failed to convert HPA
+    summaryCn: HPA转换失败
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Warning" and event.involvedObject.kind="HorizontalPodAutoscaler" and event.reason="FailedGetScale"
+    enable: true
+    message: |
+      %event.message
+    name: HPAGetScaleFailed
+    priority: warning
+    source: k8s_event
+    summary: Failed to get HPA scale
+    summaryCn: HPA规模获取失败
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Warning" and event.involvedObject.kind="HorizontalPodAutoscaler" and event.reason="FailedComputeMetricsReplicas"
+    enable: true
+    message: |
+      %event.message
+    name: HPAComputeReplicasFailed
+    priority: warning
+    source: k8s_event
+    summary: Failed to compute HPA replicas
+    summaryCn: HPA副本计算失败
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Warning" and event.involvedObject.kind="HorizontalPodAutoscaler" and event.reason="FailedRescale"
+    enable: true
+    message: |
+      %event.message
+    name: HPARescaleFailed
+    priority: warning
+    source: k8s_event
+    summary: Failed to rescale HPA size
+    summaryCn: HPA规模调整失败
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Normal" and event.involvedObject.kind="HorizontalPodAutoscaler" and event.reason="SuccessfulRescale"
+    enable: true
+    message: |
+      %event.message
+    name: HPARescaleSuccess
+    priority: normal
+    source: k8s_event
+    summary: Successfully rescale HPA size
+    summaryCn: HPA规模调整成功
+    tags:
+    - k8s_event_notification
+    type: notification
+  - condition: |
+      event.type="Warning" and event.involvedObject.kind="Node" and event.reason="SystemOOM"
+    enable: true
+    message: |
+      %event.message
+    name: NodeSystemOOM
+    priority: warning
+    source: k8s_event
+    summary: Node system OOM encountered
+    summaryCn: 节点内存溢出
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Warning" and event.reason="FailedBinding"
+    enable: true
+    message: |
+      %event.message
+    name: VolumeBindingFailed
+    priority: warning
+    source: k8s_event
+    summary: Volume binding failed
+    summaryCn: 存储卷绑定失败
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Warning" and event.reason="VolumeMismatch"
+    enable: true
+    message: |
+      %event.message
+    name: VolumeMismatch
+    priority: warning
+    source: k8s_event
+    summary: Volume Mismatch
+    summaryCn: 存储卷不匹配
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Warning" and event.reason="VolumeFailedRecycle"
+    enable: true
+    message: |
+      %event.message
+    name: VolumeRecycleFailed
+    priority: warning
+    source: k8s_event
+    summary: Failed to recycle volume
+    summaryCn: 存储卷回收失败
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Normal" and event.reason="VolumeRecycled"
+    enable: true
+    message: |
+      %event.message
+    name: VolumeRecycled
+    priority: normal
+    source: k8s_event
+    summary: Volume was recycled
+    summaryCn: 存储卷已回收
+    tags:
+    - k8s_event_notification
+    type: notification
+  - condition: |
+      event.type="Warning" and event.reason="RecyclerPod"
+    enable: true
+    message: |
+      %event.message
+    name: VolumeRecyclerPodError
+    priority: warning
+    source: k8s_event
+    summary: Volume Recycler pod error
+    summaryCn: 存储卷回收器错误
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Normal" and event.reason="VolumeDelete"
+    enable: true
+    message: |
+      %event.message
+    name: VolumeDeleted
+    priority: normal
+    source: k8s_event
+    summary: Volume was deleted
+    summaryCn: 存储卷已删除
+    tags:
+    - k8s_event_notification
+    type: notification
+  - condition: |
+      event.type="Warning" and event.reason="VolumeFailedDelete"
+    enable: true
+    message: |
+      %event.message
+    name: VolumeDeleteFailed
+    priority: warning
+    source: k8s_event
+    summary: Failed to delete volume
+    summaryCn: 存储卷删除失败
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Warning" and event.reason="ProvisioningFailed"
+    enable: true
+    message: |
+      %event.message
+    name: VolumeProvisionFailed
+    priority: warning
+    source: k8s_event
+    summary: Failed to provision volume
+    summaryCn: 存储申请失败
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Normal" and event.reason="ProvisioningSucceeded"
+    enable: true
+    message: |
+      %event.message
+    name: VolumeProvisioned
+    priority: normal
+    source: k8s_event
+    summary: Volume was provisioned
+    summaryCn: 存储申请成功
+    tags:
+    - k8s_event_notification
+    type: notification
+  - condition: |
+      event.type="Warning" and event.reason="ProvisioningCleanupFailed"
+    enable: true
+    message: |
+      %event.message
+    name: VolumeProvisionCleanupFailed
+    priority: warning
+    source: k8s_event
+    summary: Failed to provision volume
+    summaryCn: 清理存储失败
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Warning" and event.reason="ExternalExpanding"
+    enable: true
+    message: |
+      %event.message
+    name: VolumeExternalExpandingError
+    priority: warning
+    source: k8s_event
+    summary: Error for volume external expanding
+    summaryCn: 存储外部扩展错误
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Warning" and event.involvedObject.kind="Pod" and event.reason="FailedScheduling"
+    enable: true
+    message: |
+      %event.message
+    name: PodScheduleFailed
+    priority: warning
+    source: k8s_event
+    summary: Failed to schedule pod
+    summaryCn: pod调度失败
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Normal" and event.involvedObject.kind="Pod" and event.reason="Preempted"
+    enable: true
+    message: |
+      %event.message
+    name: PodSchedulePreempted
+    priority: normal
+    source: k8s_event
+    summary: Pod scheduling was preempted
+    summaryCn: pod调度抢占
+    tags:
+    - k8s_event_notification
+    type: notification
+  - condition: |
+      event.type="Normal" and event.involvedObject.kind="Pod" and event.reason="Scheduled"
+    enable: true
+    message: |
+      %event.message
+    name: PodScheduled
+    priority: normal
+    source: k8s_event
+    summary: Pod was scheduled
+    summaryCn: pod调度成功
+    tags:
+    - k8s_event_notification
+    type: notification
+  - condition: |
+      event.type="Warning" and event.involvedObject.kind in ("Pod","ReplicaSet","DaemonSet","StatefulSet","Job") and event.reason="FailedCreate"
+    enable: true
+    message: |
+      %event.message
+    name: PodCreateFailed
+    priority: warning
+    source: k8s_event
+    summary: Failed to create pod
+    summaryCn: pod创建失败
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Normal" and event.involvedObject.kind in ("Pod","ReplicaSet","DaemonSet","StatefulSet","Job") and event.reason="SuccessfulCreate"
+    enable: true
+    message: |
+      %event.message
+    name: PodCreated
+    priority: normal
+    source: k8s_event
+    summary: Pod was created
+    summaryCn: pod已创建
+    tags:
+    - k8s_event_notification
+    type: notification
+  - condition: |
+      event.type="Warning" and event.involvedObject.kind in ("Pod","ReplicaSet","DaemonSet","StatefulSet","Job") and event.reason="FailedDelete"
+    enable: true
+    message: |
+      %event.message
+    name: PodDeleteFailed
+    priority: warning
+    source: k8s_event
+    summary: Failed to delete pod
+    summaryCn: pod删除失败
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Normal" and event.involvedObject.kind in ("Pod","ReplicaSet","DaemonSet","StatefulSet","Job") and event.reason="SuccessfulDelete"
+    enable: true
+    message: |
+      %event.message
+    name: PodDeleted
+    priority: normal
+    source: k8s_event
+    summary: Pod was deleted
+    summaryCn: pod已删除
+    tags:
+    - k8s_event_notification
+    type: notification
+  - condition: |
+      event.type="Warning" and event.reason="ReplicaSetCreateError"
+    enable: true
+    message: |
+      %event.message
+    name: ReplicaSetCreateError
+    priority: warning
+    source: k8s_event
+    summary: Error to create replica set for deployment
+    summaryCn: 副本集创建错误
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Warning" and event.reason in("DeploymentRollbackRevisionNotFound","DeploymentRollbackTemplateUnchanged")
+    enable: true
+    message: |
+      %event.message
+    name: DeploymentRollbackFailed
+    priority: warning
+    source: k8s_event
+    summary: Failed to rollback deployment
+    summaryCn: 部署回滚失败
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Warning" and event.involvedObject.kind="Deployment" and event.reason="SelectingAll"
+    enable: true
+    message: |
+      %event.message
+    name: DeploySelectorAll
+    priority: warning
+    source: k8s_event
+    summary: The deploy is selecting all pods
+    summaryCn: deploy选择了所有pod
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Warning" and event.involvedObject.kind="DaemonSet" and event.reason="SelectingAll"
+    enable: true
+    message: |
+      %event.message
+    name: DaemonSelectorAll
+    priority: warning
+    source: k8s_event
+    summary: The daemon set is selecting all pods
+    summaryCn: daemonset选择了所有pod
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Warning" and event.involvedObject.kind="DaemonSet" and event.reason in ("FailedDaemonPod","FailedPlacement")
+    enable: true
+    message: |
+      %event.message
+    name: DaemonPodFailed
+    priority: warning
+    source: k8s_event
+    summary: Failed daemon pod
+    summaryCn: daemonset的pod失败
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Warning" and event.reason="SyncLoadBalancerFailed"
+    enable: true
+    message: |
+      %event.message
+    name: LoadBalancerSyncFailed
+    priority: warning
+    source: k8s_event
+    summary: Error syncing load balancer
+    summaryCn: 负载据衡器不可用
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Normal" and event.reason="DeletingLoadBalancer"
+    enable: true
+    message: |
+      %event.message
+    name: LoadBalancerDeleting
+    priority: normal
+    source: k8s_event
+    summary: Deleting load balancer
+    summaryCn: 负载均衡器删除中
+    tags:
+    - k8s_event_notification
+    type: notification
+  - condition: |
+      event.type="Normal" and event.reason="EnsuringLoadBalancer"
+    enable: true
+    message: |
+      %event.message
+    name: LoadBalancerEnsuring
+    priority: normal
+    source: k8s_event
+    summary: Ensuring load balancer
+    summaryCn: 负载均衡器确认中
+    tags:
+    - k8s_event_notification
+    type: notification
+  - condition: |
+      event.type="Normal" and event.reason="EnsuredLoadBalancer"
+    enable: true
+    message: |
+      %event.message
+    name: LoadBalancerEnsured
+    priority: warning
+    source: k8s_event
+    summary: Load balancer was ensured
+    summaryCn: 负载据衡器已确认
+    tags:
+    - k8s_event_notification
+    type: notification
+  - condition: |
+      event.type="Warning" and event.reason="UnAvailableLoadBalancer"
+    enable: true
+    message: |
+      %event.message
+    name: LoadBalancerUnAvailable
+    priority: warning
+    source: k8s_event
+    summary: Load balancer is not available
+    summaryCn: 负载据衡器不可用
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Normal" and event.reason="UpdatedLoadBalancer"
+    enable: true
+    message: |
+      %event.message
+    name: LoadBalancerUpdated
+    priority: warning
+    source: k8s_event
+    summary: Load balancer was updated
+    summaryCn: 负载据衡器已更新
+    tags:
+    - k8s_event_notification
+    type: notification
+  - condition: |
+      event.type="Warning" and event.reason="UpdateLoadBalancerFailed"
+    enable: true
+    message: |
+      %event.message
+    name: LoadBalancerUpdateFailed
+    priority: warning
+    source: k8s_event
+    summary: Failed to update load balancer
+    summaryCn: 更新负载据衡器失败
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Normal" and event.reason="DeletingLoadBalancer"
+    enable: true
+    message: |
+      %event.message
+    name: LoadBalancerDeleting
+    priority: warning
+    source: k8s_event
+    summary: Deleting load balancer
+    summaryCn: 负载据衡器删除中
+    tags:
+    - k8s_event_notification
+    type: notification
+  - condition: |
+      event.type="Normal" and event.reason="DeletedLoadBalancer"
+    enable: true
+    message: |
+      %event.message
+    name: LoadBalancerDeleted
+    priority: normal
+    source: k8s_event
+    summary: Load balancer was deleted
+    summaryCn: 负载据衡器已删除
+    tags:
+    - k8s_event_notification
+    type: notification
+  - condition: |
+      event.type="Warning" and event.reason="DeleteLoadBalancerFailed"
+    enable: true
+    message: |
+      %event.message
+    name: LoadBalancerDeleteFailed
+    priority: warning
+    source: k8s_event
+    summary: Failed to delete load balancer
+    summaryCn: 负载据衡器删除失败
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Warning" and event.involvedObject.kind="CronJob" and event.reason="FailedGet"
+    enable: true
+    message: |
+      %event.message
+    name: JobGetFailed
+    priority: warning
+    source: k8s_event
+    summary: Failed to get job
+    summaryCn: 任务获取失败
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Normal" and event.involvedObject.kind="CronJob" and event.reason="SuccessfulCreate"
+    enable: true
+    message: |
+      %event.message
+    name: JobCreated
+    priority: normal
+    source: k8s_event
+    summary: Job was created
+    summaryCn: 任务已创建
+    tags:
+    - k8s_event_notification
+    type: notification
+  - condition: |
+      event.type="Warning" and event.involvedObject.kind="CronJob" and event.reason="FailedCreate"
+    enable: true
+    message: |
+      %event.message
+    name: JobCreateFailed
+    priority: warning
+    source: k8s_event
+    summary: Failed to create job
+    summaryCn: 任务创建失败
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Normal" and event.involvedObject.kind="CronJob" and event.reason="SuccessfulDelete"
+    enable: true
+    message: |
+      %event.message
+    name: JobDeleted
+    priority: normal
+    source: k8s_event
+    summary: Job was deleted
+    summaryCn: 任务已删除
+    tags:
+    - k8s_event_notification
+    type: notification
+  - condition: |
+      event.type="Warning" and event.involvedObject.kind="CronJob" and event.reason="FailedDelete"
+    enable: true
+    message: |
+      %event.message
+    name: JobDeleteFailed
+    priority: warning
+    source: k8s_event
+    summary: Failed to delete job
+    summaryCn: 任务删除失败
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Normal" and event.involvedObject.kind="CronJob" and event.reason="SawCompletedJob"
+    enable: true
+    message: |
+      %event.message
+    name: JobCompleted
+    priority: normal
+    source: k8s_event
+    summary: CronJob saw completed job
+    summaryCn: 任务已完成
+    tags:
+    - k8s_event_notification
+    type: notification
+  - condition: |
+      event.type="Warning" and event.involvedObject.kind="CronJob" and event.reason="UnexpectedJob"
+    enable: true
+    message: |
+      %event.message
+    name: JobUnexpected
+    priority: warning
+    source: k8s_event
+    summary: CronJob saw unexpected job
+    summaryCn: 任务非预期
+    tags:
+    - k8s_event_alert
+    type: alert
+  - condition: |
+      event.type="Normal" and event.involvedObject.kind="CronJob" and event.reason="MissingJob"
+    enable: true
+    message: |
+      %event.message
+    name: JobMissing
+    priority: normal
+    source: k8s_event
+    summary: Job missing
+    summaryCn: 任务丢失
+    tags:
+    - k8s_event_notification
+    type: notification
+  - condition: |
+      event.type="Warning" and event.involvedObject.kind="CronJob" and event.reason in ("MissSchedule","FailedNeedsStart")
+    enable: true
+    message: |
+      %event.message
+    name: JobScheduleFailed
+    priority: warning
+    source: k8s_event
+    summary: CronJob failed to schedule job
+    summaryCn: 任务调度失败
+    tags:
+    - k8s_event_alert
+    type: alert
+---
+apiVersion: logging.kubesphere.io/v1alpha1
+kind: KubeEventsRuler
+metadata:
+  name: kube-events-ruler
+  namespace: kubesphere-logging-system
+spec:
+  image: kubespheredev/kube-events-ruler:v0.1.0
+  sinks:
+    alertmanager:
+      name: alertmanager-main
+      namespace: kubesphere-monitoring-system
+---
+apiVersion: admissionregistration.k8s.io/v1beta1
+kind: ValidatingWebhookConfiguration
+metadata:
+  name: kube-events-admission-validate
+webhooks:
+- clientConfig:
+    caBundle: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURaRENDQWt5Z0F3SUJBZ0lKQUpxYlYrTnBjeW5OTUEwR0NTcUdTSWIzRFFFQkN3VUFNRWN4Q3pBSkJnTlYKQkFZVEFrTk9NUXN3Q1FZRFZRUUlEQUpJUWpFTE1Ba0dBMVVFQ2d3Q1VVTXhIakFjQmdOVkJBTU1GV3QxWW1VdApaWFpsYm5SekxXRmtiV2x6YzJsdmJqQWVGdzB5TURBME1qUXdPRE16TUROYUZ3MDBOekE1TVRBd09ETXpNRE5hCk1FY3hDekFKQmdOVkJBWVRBa05PTVFzd0NRWURWUVFJREFKSVFqRUxNQWtHQTFVRUNnd0NVVU14SGpBY0JnTlYKQkFNTUZXdDFZbVV0WlhabGJuUnpMV0ZrYldsemMybHZiakNDQVNJd0RRWUpLb1pJaHZjTkFRRUJCUUFEZ2dFUApBRENDQVFvQ2dnRUJBT29pRXp5ZUtxRnhwQ1czWEVQaHpud2pJS0I0ekRQd01qaDdjR3pyMUo2VFY5bitYSVpVCkpxcm1lSWZkelloejBhQVpMM2tVenZERVZ0TWVUNExiUG14V0V1VUkvRHdjcExGUjBZQzVkWnRHeFpEQk9IakUKa1NndXA2enJPUTFEa1FtamZ5cTVialpFSzJnd1YxZk5FZTc0SXlyUmsreWlHTzJmT0lETWJ0cndnZy9nckVIWAo5cnFqUk1BQVhoQkdCUjFpUzhhellUM2RkaHNvajdwQlM2WnFONjRIR2JTYXg1QVViQy9vbS9IaEZvVDlPSWNnClQvdXVYVVZqTFlHVVowRzEyZi9SM3BuL09waGUrTDNjbWdibUp1VXEwQit6RTByQTNTYmNzbWxMQ1JoS2htVlYKZ29WK0wraU1Xdzh3bHdNd0poRnVVY1BtRjhEaEkvL1RiRnNDQXdFQUFhTlRNRkV3SFFZRFZSME9CQllFRkxJNwo3K1JxNHRJOVQyeCsxektmTFZ4RmJPQUNNQjhHQTFVZEl3UVlNQmFBRkxJNzcrUnE0dEk5VDJ4KzF6S2ZMVnhGCmJPQUNNQThHQTFVZEV3RUIvd1FGTUFNQkFmOHdEUVlKS29aSWh2Y05BUUVMQlFBRGdnRUJBTGJEUFhaOUpOTFAKSGVOdDJCc3VSMWFGMGpYTWRMUC9GWHFqN01IWnV0c3B2RWFXNDh1bU14a1Y2c0sxOHB5Z2QvVWZ6S3NTOEFidApOQ0Q2K3p4clZ6bTVmalF6c2JUWEtXcDdseHNnZ0VuQXFWTlo0Qm1yNHpJYVRySE95R1dVNHRmL2czT2F1YjJxCnprd05yRGFEWi8yWDZIT1pONHFKSitXMEZqakxkNmJ3M3B6bGgyZlFTNFBIdlZFVTZ5UHlBV2dLb2FpZ0hnTmMKd2h5ZEJZenFSeWFVZWJsSzZOVEFKczJaMkd2ZVZjUS92V1paYzJQU2lhMVQ5bjNBelBVQWtBVTQ3UzVmaEJGVAptMjhkeHIxQVIzbVdMYjVqZDNkQkJiS2FMWDBoeENJeU5ndzVhdHpLTjR6QXlTOTBVanppWm42S1h6ekxLZ0dqCm02MWM2VVQyT1NVPQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
+    service:
+      name: kube-events-admission
+      namespace: kubesphere-logging-system
+      path: /validate-logging-kubesphere-io-v1alpha1-kubeeventsrule
+  failurePolicy: Fail
+  name: vkubeeventsrule.kb.io
+  rules:
+  - apiGroups:
+    - logging.kubesphere.io
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - kubeeventsrules

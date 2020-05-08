@@ -36,6 +36,10 @@ spec:
           properties:
             image:
               type: string
+            imagePullPolicy:
+              description: PullPolicy describes a policy for if/when to pull a container
+                image
+              type: string
             resources:
               description: Resources defines resources requests and limits for single
                 Pod.

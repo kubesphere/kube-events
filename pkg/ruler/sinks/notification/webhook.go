@@ -16,8 +16,14 @@ type WebhookSinker struct {
 
 func (s *WebhookSinker) SinkNotifications(ctx context.Context, evtNotifications []*types.EventNotification) error {
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(evtNotifications); err != nil {
-		return err
+	for _, notification := range evtNotifications {
+		if bs, err := json.Marshal(notification.Event); err != nil {
+			return err
+		} else if _, err := buf.Write(bs); err != nil {
+			return err
+		} else if err := buf.WriteByte('\n'); err != nil {
+			return err
+		}
 	}
 	req, err := http.NewRequest("POST", s.Url, &buf)
 	if err != nil {

@@ -1,17 +1,18 @@
 package main
 
 import (
+	"bufio"
 	"context"
 	"encoding/json"
 	"flag"
 	"fmt"
+	v1 "k8s.io/api/core/v1"
 	"net/http"
 	"runtime"
 	"time"
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/kubesphere/kube-events/pkg/config"
-	exportertypes "github.com/kubesphere/kube-events/pkg/exporter/types"
 	"github.com/kubesphere/kube-events/pkg/ruler"
 	rulertypes "github.com/kubesphere/kube-events/pkg/ruler/types"
 	"github.com/kubesphere/kube-events/pkg/util"
@@ -117,19 +118,19 @@ func receiveEvents(r *http.Request) ([]*rulertypes.Event, error) {
 
 	defer r.Body.Close()
 
-	exEvts := exportertypes.Events{}
-
-	err := json.NewDecoder(r.Body).Decode(&exEvts)
-	if err != nil {
-		err = fmt.Errorf("decoding request failed: %v", err)
-		klog.Error(err)
-		return nil, err
-	}
-
 	var ruEvts []*rulertypes.Event
 
-	for _, exe := range exEvts.KubeEvents {
-		ruEvts = append(ruEvts, &rulertypes.Event{Event: exe})
+	s := bufio.NewScanner(r.Body)
+	var err error
+	for s.Scan() {
+		evt := &v1.Event{}
+		if err = json.Unmarshal(s.Bytes(), evt); err != nil {
+			break
+		}
+		ruEvts = append(ruEvts, &rulertypes.Event{Event: evt})
+	}
+	if err != nil {
+		return nil, err
 	}
 
 	return ruEvts, nil

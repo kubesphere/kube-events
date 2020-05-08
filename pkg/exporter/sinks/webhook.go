@@ -7,18 +7,24 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/kubesphere/kube-events/pkg/exporter/types"
 	"github.com/kubesphere/kube-events/pkg/util"
+	v1 "k8s.io/api/core/v1"
 )
 
 type WebhookSinker struct {
 	Url string
 }
 
-func (s *WebhookSinker) Sink(ctx context.Context, evts *types.Events) error {
+func (s *WebhookSinker) Sink(ctx context.Context, evts []*v1.Event) error {
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(evts); err != nil {
-		return err
+	for _, evt := range evts {
+		if bs, err := json.Marshal(evt); err != nil {
+			return err
+		} else if _, err := buf.Write(bs); err != nil {
+			return err
+		} else if err := buf.WriteByte('\n'); err != nil {
+			return err
+		}
 	}
 
 	req, err := http.NewRequest("POST", s.Url, &buf)

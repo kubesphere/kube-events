@@ -2,7 +2,7 @@ apiVersion: logging.kubesphere.io/v1alpha1
 kind: KubeEventsRule
 metadata:
   name: cluster-rules-default
-  namespace: kubesphere-logging-system
+  namespace: system
   labels:
     kubesphere.io/rule-scope: cluster
 spec:

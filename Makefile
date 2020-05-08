@@ -4,7 +4,9 @@ REGISTRY?=kubespheredev
 REPO_OPERATOR?=$(REGISTRY)/kube-events-operator
 REPO_EXPORTER?=$(REGISTRY)/kube-events-exporter
 REPO_RULER?=$(REGISTRY)/kube-events-ruler
-TAG?=v0.1
+TAG?=v0.1.0
+
+GO_PKG?=github.com/kubesphere/kube-events
 
 # Produce CRDs that work back to Kubernetes 1.11 (no version conversion)
 CRD_OPTIONS ?= "crd:trivialVersions=true"
@@ -16,22 +18,24 @@ else
 GOBIN=$(shell go env GOBIN)
 endif
 
+CONTROLLER_GEN := $(GOBIN)/controller-gen
+KE_DOCGEN_BINARY:=$(GOBIN)/ke-docgen
 
-deploy: yaml
-	kubectl apply -f deploy/operator.yaml
-	kubectl apply -f deploy/crs-rules-default.yaml
-	kubectl apply -f deploy/crs.yaml
+TYPES_V1ALPHA1_TARGET := pkg/apis/v1alpha1/kubeeventsexporter_types.go pkg/apis/v1alpha1/kubeeventsruler_types.go pkg/apis/v1alpha1/kubeeventsrule_types.go
 
-yaml: manifests ca-secret update-cert
-	cd config/manager && $(GOBIN)/kustomize edit set image operator=$(REPO_OPERATOR):$(TAG)
-	$(GOBIN)/kustomize build config/default > deploy/operator.yaml
+deploy:
+	kubectl apply -f config/bundle.yaml
 
-test: generate fmt vet manifests
-	go test ./... -coverprofile cover.out
+generate: $(DEEPCOPY_TARGET) manifests ca-secret update-cert
+	cd config && $(GOBIN)/kustomize edit set image operator=$(REPO_OPERATOR):$(TAG) exporter=$(REPO_EXPORTER):$(TAG) ruler=$(REPO_RULER):$(TAG)
+	$(GOBIN)/kustomize build config > config/bundle.yaml
 
 # Generate manifests e.g. CRD, RBAC etc.
-manifests: controller-gen
-	$(CONTROLLER_GEN) $(CRD_OPTIONS) rbac:roleName=events-operator webhook paths="./pkg/..." output:crd:artifacts:config=config/crd/bases
+manifests: $(CONTROLLER_GEN) $(TYPES_V1ALPHA1_TARGET)
+	$(CONTROLLER_GEN) $(CRD_OPTIONS) rbac:roleName=operator paths="./pkg/..." output:crd:artifacts:config=config/crd/bases
+
+doc/api.md: $(KE_DOCGEN_BINARY) $(TYPES_V1ALPHA1_TARGET)
+	$(KE_DOCGEN_BINARY) $(TYPES_V1ALPHA1_TARGET) > doc/api.md
 
 fmt:
 	go fmt ./...
@@ -39,23 +43,21 @@ fmt:
 vet:
 	go vet ./...
 
-generate: controller-gen
+DEEPCOPY_TARGET := pkg/apis/v1alpha1/zz_generated.deepcopy.go
+# Generate deepcopy etc.
+$(DEEPCOPY_TARGET): $(CONTROLLER_GEN) $(TYPES_V1ALPHA1_TARGET)
 	$(CONTROLLER_GEN) object:headerFile="hack/boilerplate.go.txt" paths="./pkg/..."
 
-controller-gen:
-ifeq (, $(shell which controller-gen))
-	@{ \
+$(CONTROLLER_GEN):
 	set -e ;\
 	CONTROLLER_GEN_TMP_DIR=$$(mktemp -d) ;\
 	cd $$CONTROLLER_GEN_TMP_DIR ;\
 	go mod init tmp ;\
 	go get sigs.k8s.io/controller-tools/cmd/controller-gen@v0.2.5 ;\
 	rm -rf $$CONTROLLER_GEN_TMP_DIR ;\
-	}
-CONTROLLER_GEN=$(GOBIN)/controller-gen
-else
-CONTROLLER_GEN=$(shell which controller-gen)
-endif
+
+$(KE_DOCGEN_BINARY): cmd/docgen/ke-docgen.go
+	go install cmd/docgen/ke-docgen.go
 
 image-push: image
 	docker push $(REPO_OPERATOR):$(TAG)
@@ -76,7 +78,7 @@ ruler-image: cmd/ruler/Dockerfile
 
 
 ca-secret:
-	./hack/certs.sh --service events-webhook-service --namespace $(NAMESPACE)
+	./hack/certs.sh --service kube-events-admission --namespace $(NAMESPACE)
 
 update-cert: ca-secret
 	./hack/update-cert.sh
