@@ -36,32 +36,34 @@ spec:
           properties:
             rules:
               items:
-                description: Rule describes a notification or alerting rule
+                description: Rule describes a notification or alert rule
                 properties:
+                  annotations:
+                    additionalProperties:
+                      type: string
+                    description: 'Values of Annotations can use format string with
+                      the fields of the event. For example: `{"message": "%event.message"}`'
+                    type: object
                   condition:
                     description: 'Condition is a string similar with the where part
-                      of sql. The usage is as follows: event.type="Warning" and event.involvedObject.kind="Pod"
-                      and event.reason="FailedMount"'
+                      of sql (please use double quotation to mark a string). For example:
+                      `event.type="Warning" and event.involvedObject.kind="Pod" and
+                      event.reason="FailedMount"`'
                     type: string
                   enable:
+                    description: Enable is whether to enable the rule
                     type: boolean
-                  message:
-                    type: string
-                  name:
-                    type: string
-                  priority:
-                    type: string
-                  source:
-                    type: string
-                  summary:
-                    type: string
-                  summaryCn:
-                    type: string
-                  tags:
-                    items:
+                  labels:
+                    additionalProperties:
                       type: string
-                    type: array
+                    description: Labels
+                    type: object
+                  name:
+                    description: Name is simple name of rule
+                    type: string
                   type:
+                    description: Type represents that the rule is for notification
+                      or alert. Available values are `notification` and `alert`
                     type: string
                 type: object
               type: array
@@ -69,6 +71,8 @@ spec:
         status:
           description: KubeEventsRuleStatus defines the observed state of KubeEventsRule
           type: object
+      required:
+      - spec
       type: object
   version: v1alpha1
   versions:

@@ -8,1184 +8,864 @@ metadata:
 spec:
   rules:
     - name: ContainerCreated
-      summary: Container was created
-      summaryCn: 容器已创建
-      condition: >
+      condition: |
         event.type="Normal" and event.involvedObject.kind="Pod" and event.reason="Created" and not event.involvedObject.fieldPath=""
-      message: >
-        %event.message
-      priority: normal
-      source: k8s_event
-      tags: [k8s_event_notification]
       enable: true
       type: notification
     - name: ContainerStarted
-      summary: Container was started
-      summaryCn: 容器已启动
-      condition: >
+      condition: |
         event.type="Normal" and event.involvedObject.kind="Pod" and event.reason="Started" and not event.involvedObject.fieldPath=""
-      message: >
-        %event.message
-      priority: normal
-      source: k8s_event
-      tags: [k8s_event_notification]
       enable: true
       type: notification
     - name: ContainerFailed
-      summary: Container failed
-      summaryCn: 容器失败
-      condition: >
+      condition: |
         event.type="Warning" and event.involvedObject.kind="Pod" and event.reason="Failed" and not event.involvedObject.fieldPath=""
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Container failed
+        summaryCn: 容器失败
       enable: true
       type: alert
     - name: ContainerKilling
-      summary: Container killing
-      summaryCn: 容器终止中
-      condition: >
+      condition: |
         event.type="Normal" and event.involvedObject.kind="Pod" and event.reason="Killing" and not event.involvedObject.fieldPath=""
-      message: >
-        %event.message
-      priority: normal
-      source: k8s_event
-      tags: [k8s_event_notification]
       enable: true
       type: notification
     - name: ContainerPreempting
-      summary: Container is preemting
-      summaryCn: 容器抢占中
-      condition: >
+      condition: |
         event.type="Warning" and event.involvedObject.kind="Pod" and event.reason="Preempting"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Container is preemting
+        summaryCn: 容器抢占中
       type: alert
     - name: ContainerBackoff
-      summary: Container back-off
-      summaryCn: 容器回退
-      condition: >
+      condition: |
         event.type="Warning" and event.involvedObject.kind="Pod" and reason="BackOff" and not event.involvedObject.fieldPath="" and event.count>3
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Container back-off
+        summaryCn: 容器回退
       enable: true
       type: alert
-
     - name: ContainerUnhealthy
-      summary: Container is unhealthy
-      summaryCn: 容器状态不良
-      condition: >
+      condition: |
         event.type="Warning" and event.involvedObject.kind="Pod" and event.reason="Unhealthy" and event.count>3
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Container is unhealthy
+        summaryCn: 容器状态不良
       enable: true
       type: alert
     - name: ContainerProbeWarning
-      summary: Warning to perform a probe to the container
-      summaryCn: 容器探测警告
-      condition: >
+      condition: |
         event.type="Warning" and event.involvedObject.kind="Pod" and event.reason="ProbeWarning" and event.count>3
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Warning to perform a probe to the container
+        summaryCn: 容器探测警告
       enable: true
       type: alert
-
     - name: PodKillingExceededGracePeriod
-      summary: Pod killing exceeded specified grace period
-      summaryCn: pod终止超时
-      condition: >
+      condition: |
         event.type="Warning" and event.involvedObject.kind="Pod" and event.reason="ExceededGracePeriod"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Pod killing exceeded specified grace period
+        summaryCn: pod终止超时
       enable: true
       type: alert
-
     - name: PodKillFailed
-      summary: Failed to kill pod
-      summaryCn: pod终止失败
-      condition: >
+      condition: |
         event.type="Warning" and event.reason="FailedKillPod"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Failed to kill pod
+        summaryCn: pod终止失败
       enable: true
       type: alert
     - name: PodContainerCreateFailed
-      summary: Failed to create pod container
-      summaryCn: pod容器创建失败
-      condition: >
+      condition: |
         event.type="Warning" and event.reason="FailedCreatePodContainer"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Failed to create pod container
+        summaryCn: pod容器创建失败
       enable: true
       type: alert
     - name: PodFailed
-      summary: Pod failed
-      summaryCn: pod失败
-      condition: >
+      condition: |
         event.type="Warning" and event.involvedObject.kind="Pod" and event.reason="Failed" and event.involvedObject.fieldPath=""
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Pod failed
+        summaryCn: pod失败
       enable: true
       type: alert
     - name: PodNetworkNotReady
-      summary: Pod network is not ready
-      summaryCn: Pod网络异常
-      condition: >
+      condition: |
         event.type="Warning" and event.involvedObject.kind="Pod" and event.reason="NetworkNotReady"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Pod network is not ready
+        summaryCn: Pod网络异常
       enable: true
       type: alert
-
     - name: ImagePulling
-      summary: Image pulling
-      summaryCn: 镜像拉取中
-      condition: >
+      condition: |
         event.type="Normal" and event.involvedObject.kind="Pod" and event.reason="Pulling"
-      message: >
-        %event.message
-      priority: normal
-      source: k8s_event
-      tags: [k8s_event_notification]
       enable: true
       type: notification
     - name: ImagePulled
-      summary: Image was pulled
-      summaryCn: 镜像已拉取
-      condition: >
+      condition: |
         event.type="Normal" and event.involvedObject.kind="Pod" and event.reason="Pulled"
-      message: >
-        %event.message
-      priority: normal
-      source: k8s_event
-      tags: [k8s_event_notification]
       enable: true
       type: notification
     - name: ImagePullPolicyError
-      summary: Wrong image pull policy
-      summaryCn: 镜像拉取策略错误
-      condition: >
+      condition: |
         event.type="Warning" and event.involvedObject.kind="Pod" and event.reason="ErrImageNeverPull"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Wrong image pull policy
+        summaryCn: 镜像拉取策略错误
       enable: true
       type: alert
     - name: ImageInspectFailed
-      summary: Failed to inspect image
-      summaryCn: 镜像检查失败
-      condition: >
+      condition: |
         event.type="Warning" and event.involvedObject.kind="Pod" and event.reason="InspectFailed"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Failed to inspect image
+        summaryCn: 镜像检查失败
       enable: true
       type: alert
-
     - name: NodeReady
-      summary: Node is ready
-      summaryCn: 节点就绪
-      condition: >
+      condition: |
         event.type="Normal" and event.involvedObject.kind="Node" and event.reason="NodeReady"
-      message: >
-        %event.message
-      priority: normal
-      source: k8s_event
-      tags: [k8s_event_notification]
       enable: true
       type: notification
     - name: NodeNotReady
-      summary: Node is not ready
-      summaryCn: 节点未就绪
-      condition: >
+      condition: |
         event.type="Normal" and event.involvedObject.kind="Node" and event.reason="NodeNotReady"
-      message: >
-        %event.message
-      priority: normal
-      source: k8s_event
-      tags: [k8s_event_notification]
       enable: true
       type: notification
     - name: NodeSchedulable
-      summary: Node is schedulable
-      summaryCn: 节点可调度
-      condition: >
+      condition: |
         event.type="Normal" and event.involvedObject.kind="Node" and event.reason="NodeSchedulable"
-      message: >
-        %event.message
-      priority: normal
-      source: k8s_event
-      tags: [k8s_event_notification]
       enable: true
       type: notification
     - name: NodeNotSchedulable
-      summary: Node is not schedulable
-      summaryCn: 节点不可调度
-      condition: >
+      condition: |
         event.type="Normal" and event.involvedObject.kind="Node" and event.reason="NodeNotSchedulable"
-      message: >
-        %event.message
-      priority: normal
-      source: k8s_event
-      tags: [k8s_event_notification]
       enable: true
       type: notification
     - name: KubeletStarting
-      summary: Kubelet is starting
-      summaryCn: kubelet启动中
-      condition: >
+      condition: |
         event.type="Normal" and event.involvedObject.kind="Node" and event.reason="Starting"
-      message: >
-        %event.message
-      priority: normal
-      source: k8s_event
-      tags: [k8s_event_notification]
       enable: true
       type: notification
     - name: KubeletSetupFailed
-      summary: Failed to setup kubelet
-      summaryCn: kubelet安装失败
-      condition: >
+      condition: |
         event.type="Warning" and event.involvedObject.kind="Node" and event.reason="KubeletSetupFailed"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Failed to setup kubelet
+        summaryCn: kubelet安装失败
       enable: true
       type: alert
     - name: VolumeAttachFailed
-      summary: Failed to attach volume
-      summaryCn: 存储卷装载失败
-      condition: >
+      condition: |
         event.type="Warning" and event.reason="FailedAttachVolume"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Failed to attach volume
+        summaryCn: 存储卷装载失败
       enable: true
       type: alert
     - name: VolumeMountFailed
-      summary: Failed to mount volume
-      summaryCn: 存储卷挂载失败
-      condition: >
+      condition: |
         event.type="Warning" and event.reason="FailedMount"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Failed to mount volume
+        summaryCn: 存储卷挂载失败
       enable: true
       type: alert
     - name: VolumeResizeFailed
-      summary: Failed to expand/reduce volume
-      summaryCn: 存储卷扩缩容失败
-      condition: >
+      condition: |
         event.type="Warning" and event.reason="VolumeResizeFailed"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Failed to expand/reduce volume
+        summaryCn: 存储卷扩缩容失败
       enable: true
       type: alert
     - name: VolumeResizeSuccess
-      summary: Successfully expanded/reduced volume
-      summaryCn: 存储卷扩缩容成功
-      condition: >
+      condition: |
         event.type="Normal" and event.reason="VolumeResizeSuccessful"
-      message: >
-        %event.message
-      priority: normal
-      source: k8s_event
-      tags: [k8s_event_notification]
       enable: true
       type: notification
     - name: FileSystemResizeFailed
-      summary: Failed to expand/reduce file system
-      summaryCn: 文件系统扩缩容失败
-      condition: >
+      condition: |
         event.type="Warning" and event.reason="FileSystemResizeFailed"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Failed to expand/reduce file system
+        summaryCn: 文件系统扩缩容失败
       enable: true
       type: alert
     - name: FileSystemResized
-      summary: Successfully expanded/reduced file system
-      summaryCn: 文件系统扩缩容成功
-      condition: >
+      condition: |
         event.type="Normal" and event.reason="FileSystemResizeSuccessful"
-      message: >
-        %event.message
-      priority: normal
-      source: k8s_event
-      tags: [k8s_event_notification]
       enable: true
       type: notification
     - name: VolumeMapFailed
-      summary: Failed to map volume
-      summaryCn: 存储卷映射失败
-      condition: >
+      condition: |
         event.type="Warning" and event.reason="FailedMapVolume"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Failed to map volume
+        summaryCn: 存储卷映射失败
       enable: true
       type: alert
     - name: VolumeAlreadyMounted
-      summary: Volume is already mounted
-      summaryCn: 存储卷已被挂载
-      condition: >
+      condition: |
         event.type="Warning" and event.reason="AlreadyMountedVolume"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Volume is already mounted
+        summaryCn: 存储卷已被挂载
       enable: true
       type: alert
     - name: VolumeAttached
-      summary: Volume is successfully attached
-      summaryCn: 存储卷装载成功
-      condition: >
+      condition: |
         event.type="Normal" and event.reason="SuccessfulAttachVolume"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_notification]
       enable: true
       type: notification
     - name: VolumeMounted
-      summary: Volume is successfully mounted
-      summaryCn: 存储卷挂载成功
-      condition: >
+      condition: |
         event.type="Normal" and event.reason="SuccessfulMountVolume"
-      message: >
-        %event.message
-      priority: normal
-      source: k8s_event
-      tags: [k8s_event_notification]
       enable: true
       type: notification
     - name: NodeRebooted
-      summary: Node Rebooted
-      summaryCn: 节点重启
-      condition: >
+      condition: |
         event.type="Warning" and event.involvedObject.kind="Node" and event.reason="Rebooted"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Node Rebooted
+        summaryCn: 节点重启
       enable: true
       type: alert
     - name: ContainerGCFailed
-      summary: Container GC failed
-      summaryCn: 容器GC失败
-      condition: >
+      condition: |
         event.type="Warning" and event.reason="ContainerGCFailed"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Container GC failed
+        summaryCn: 容器GC失败
       enable: true
       type: alert
     - name: ImageGCFailed
-      summary: Image GC failed
-      summaryCn: 镜像GC失败
-      condition: >
+      condition: |
         event.type="Warning" and event.reason="ImageGCFailed"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Image GC failed
+        summaryCn: 镜像GC失败
       enable: true
       type: alert
     - name: NodeAllocatableEnforcementFailed
-      summary: Node allocatable enforcement failed
-      summaryCn: 节点可分配资源更新失败
-      condition: >
+      condition: |
         event.type="Warning" and event.reason="FailedNodeAllocatableEnforcement"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Node allocatable enforcement failed
+        summaryCn: 节点可分配资源更新失败
       enable: true
       type: alert
     - name: NodeAllocatableEnforcedSuccess
-      summary: Node allocatable enforcement succeed
-      summaryCn: 节点可分配资源更新成功
-      condition: >
+      condition: |
         event.type="Normal" and event.involvedObject.kind="Node" and event.reason="NodeAllocatableEnforced"
-      message: >
-        %event.message
-      priority: normal
-      source: k8s_event
-      tags: [k8s_event_notification]
       enable: true
       type: notification
     - name: SandboxChanged
-      summary: sandbox changed
-      summaryCn: Sandbox变化
-      condition: >
+      condition: |
         event.type="Normal" and event.reason="SandboxChanged"
-      message: >
-        %event.message
-      priority: normal
-      source: k8s_event
-      tags: [k8s_event_notification]
       enable: true
       type: notification
     - name: SandboxCreateFailed
-      summary: Failed to create sandbox
-      summaryCn: Sandbox创建失败
-      condition: >
+      condition: |
         event.type="Warning" and event.reason="FailedCreatePodSandBox"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Failed to create sandbox
+        summaryCn: Sandbox创建失败
       enable: true
       type: alert
     - name: SandboxStatusFailed
-      summary: Failed to get sandbox status
-      summaryCn: 获取Sandbox状态错误
-      condition: >
+      condition: |
         event.type="Warning" and event.reason="FailedPodSandBoxStatus"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Failed to get sandbox status
+        summaryCn: 获取Sandbox状态错误
       enable: true
       type: alert
-
     - name: DiskCapacityInvalid
-      summary: Invalid disk capacity
-      summaryCn: 磁盘容量配置不合法
-      condition: >
+      condition: |
         event.type="Warning" and event.reason="InvalidDiskCapacity"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Invalid disk capacity
+        summaryCn: 磁盘容量配置不合法
       enable: true
       type: alert
     - name: DiskSpaceFreeFailed
-      summary: Failed to free disk space
-      summaryCn: 磁盘空间释放失败
-      condition: >
+      condition: |
         type="Warning" and reason="FreeDiskSpaceFailed"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Failed to free disk space
+        summaryCn: 磁盘空间释放失败
       enable: true
       type: alert
-
     - name: PodStatusSyncFailed
-      summary: Failed To Sync Pod Status
-      summaryCn: Pod状态同步失败
-      condition: >
+      condition: |
         event.type="Warning" and event.involvedObject.kind="Pod" and event.reason="FailedSync"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Failed To Sync Pod Status
+        summaryCn: Pod状态同步失败
       enable: true
       type: alert
-
     - name: ConfigurationValidationFailed
-      summary: Configuration Validation Failed
-      summaryCn: 配置验证失败
-      condition: >
+      condition: |
         event.type="Warning" and event.involvedObject.kind="Pod" and event.reason="FailedValidation"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Configuration Validation Failed
+        summaryCn: 配置验证失败
       enable: true
       type: alert
-
     - name: LifecycleHookPostStartFailed
-      summary: Failed to postStart LifecycleHook
-      summaryCn: 容器启动后的生命周期钩子运行失败
-      condition: >
+      condition: |
         event.type="Warning" and event.reason="FailedPostStartHook"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Failed to postStart LifecycleHook
+        summaryCn: 容器启动后的生命周期钩子运行失败
       enable: true
       type: alert
     - name: LifecycleHookPreStopFailed
-      summary: Failed to preStop LifecycleHook
-      summaryCn: 容器停止前的生命周期钩子运行失败
-      condition: >
+      condition: |
         event.type="Warning" and event.reason="FailedPreStopHook"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Failed to preStop LifecycleHook
+        summaryCn: 容器停止前的生命周期钩子运行失败
       enable: true
       type: alert
-
-
-
     - name: HPASelectorError
-      summary: HPA selector error
-      summaryCn: HPA选择器错误
-      condition: >
+      condition: |
         event.type="Warning" and event.involvedObject.kind="HorizontalPodAutoscaler" and event.reason in ("SelectorRequired","InvalidSelector")
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: HPA selector error
+        summaryCn: HPA选择器错误
       enable: true
       type: alert
     - name: HPAMetricError
-      summary: HPA metric error
-      summaryCn: HPA对象指标错误
-      condition: >
+      condition: |
         event.type="Warning" and event.involvedObject.kind="HorizontalPodAutoscaler" and event.reason in ("FailedGetObjectMetric","InvalidMetricSourceType")
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: HPA metric error
+        summaryCn: HPA对象指标错误
       enable: true
       type: alert
     - name: HPAConvertFailed
-      summary: Failed to convert HPA
-      summaryCn: HPA转换失败
-      condition: >
+      condition: |
         event.type="Warning" and event.involvedObject.kind="HorizontalPodAutoscaler" and event.reason="FailedConvertHPA"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Failed to convert HPA
+        summaryCn: HPA转换失败
       enable: true
       type: alert
     - name: HPAGetScaleFailed
-      summary: Failed to get HPA scale
-      summaryCn: HPA规模获取失败
-      condition: >
+      condition: |
         event.type="Warning" and event.involvedObject.kind="HorizontalPodAutoscaler" and event.reason="FailedGetScale"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Failed to get HPA scale
+        summaryCn: HPA规模获取失败
       enable: true
       type: alert
     - name: HPAComputeReplicasFailed
-      summary: Failed to compute HPA replicas
-      summaryCn: HPA副本计算失败
-      condition: >
+      condition: |
         event.type="Warning" and event.involvedObject.kind="HorizontalPodAutoscaler" and event.reason="FailedComputeMetricsReplicas"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Failed to compute HPA replicas
+        summaryCn: HPA副本计算失败
       enable: true
       type: alert
     - name: HPARescaleFailed
-      summary: Failed to rescale HPA size
-      summaryCn: HPA规模调整失败
-      condition: >
+      condition: |
         event.type="Warning" and event.involvedObject.kind="HorizontalPodAutoscaler" and event.reason="FailedRescale"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Failed to rescale HPA size
+        summaryCn: HPA规模调整失败
       enable: true
       type: alert
     - name: HPARescaleSuccess
-      summary: Successfully rescale HPA size
-      summaryCn: HPA规模调整成功
-      condition: >
+      condition: |
         event.type="Normal" and event.involvedObject.kind="HorizontalPodAutoscaler" and event.reason="SuccessfulRescale"
-      message: >
-        %event.message
-      priority: normal
-      source: k8s_event
-      tags: [k8s_event_notification]
       enable: true
       type: notification
-
     - name: NodeSystemOOM
-      summary: Node system OOM encountered
-      summaryCn: 节点内存溢出
-      condition: >
+      condition: |
         event.type="Warning" and event.involvedObject.kind="Node" and event.reason="SystemOOM"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Node system OOM encountered
+        summaryCn: 节点内存溢出
       enable: true
       type: alert
-
     - name: VolumeBindingFailed
-      summary: Volume binding failed
-      summaryCn: 存储卷绑定失败
-      condition: >
+      condition: |
         event.type="Warning" and event.reason="FailedBinding"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Volume binding failed
+        summaryCn: 存储卷绑定失败
       enable: true
       type: alert
     - name: VolumeMismatch
-      summary: Volume Mismatch
-      summaryCn: 存储卷不匹配
-      condition: >
+      condition: |
         event.type="Warning" and event.reason="VolumeMismatch"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Volume Mismatch
+        summaryCn: 存储卷不匹配
       enable: true
       type: alert
     - name: VolumeRecycleFailed
-      summary: Failed to recycle volume
-      summaryCn: 存储卷回收失败
-      condition: >
+      condition: |
         event.type="Warning" and event.reason="VolumeFailedRecycle"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Failed to recycle volume
+        summaryCn: 存储卷回收失败
       enable: true
       type: alert
     - name: VolumeRecycled
-      summary: Volume was recycled
-      summaryCn: 存储卷已回收
-      condition: >
+      condition: |
         event.type="Normal" and event.reason="VolumeRecycled"
-      message: >
-        %event.message
-      priority: normal
-      source: k8s_event
-      tags: [k8s_event_notification]
       enable: true
       type: notification
     - name: VolumeRecyclerPodError
-      summary: Volume Recycler pod error
-      summaryCn: 存储卷回收器错误
-      condition: >
+      condition: |
         event.type="Warning" and event.reason="RecyclerPod"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Volume Recycler pod error
+        summaryCn: 存储卷回收器错误
       enable: true
       type: alert
     - name: VolumeDeleted
-      summary: Volume was deleted
-      summaryCn: 存储卷已删除
-      condition: >
+      condition: |
         event.type="Normal" and event.reason="VolumeDelete"
-      message: >
-        %event.message
-      priority: normal
-      source: k8s_event
-      tags: [k8s_event_notification]
       enable: true
       type: notification
     - name: VolumeDeleteFailed
-      summary: Failed to delete volume
-      summaryCn: 存储卷删除失败
-      condition: >
+      condition: |
         event.type="Warning" and event.reason="VolumeFailedDelete"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Failed to delete volume
+        summaryCn: 存储卷删除失败
       enable: true
       type: alert
     - name: VolumeProvisionFailed
-      summary: Failed to provision volume
-      summaryCn: 存储申请失败
-      condition: >
+      condition: |
         event.type="Warning" and event.reason="ProvisioningFailed"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Failed to provision volume
+        summaryCn: 存储申请失败
       enable: true
       type: alert
     - name: VolumeProvisioned
-      summary: Volume was provisioned
-      summaryCn: 存储申请成功
-      condition: >
+      condition: |
         event.type="Normal" and event.reason="ProvisioningSucceeded"
-      message: >
-        %event.message
-      priority: normal
-      source: k8s_event
-      tags: [k8s_event_notification]
       enable: true
       type: notification
     - name: VolumeProvisionCleanupFailed
-      summary: Failed to provision volume
-      summaryCn: 清理存储失败
-      condition: >
+      condition: |
         event.type="Warning" and event.reason="ProvisioningCleanupFailed"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Failed to provision volume
+        summaryCn: 清理存储失败
       enable: true
       type: alert
     - name: VolumeExternalExpandingError
-      summary: Error for volume external expanding
-      summaryCn: 存储外部扩展错误
-      condition: >
+      condition: |
         event.type="Warning" and event.reason="ExternalExpanding"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Error for volume external expanding
+        summaryCn: 存储外部扩展错误
       enable: true
       type: alert
-
     - name: PodScheduleFailed
-      summary: Failed to schedule pod
-      summaryCn: pod调度失败
-      condition: >
+      condition: |
         event.type="Warning" and event.involvedObject.kind="Pod" and event.reason="FailedScheduling"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Failed to schedule pod
+        summaryCn: pod调度失败
       enable: true
       type: alert
     - name: PodSchedulePreempted
-      summary: Pod scheduling was preempted
-      summaryCn: pod调度抢占
-      condition: >
+      condition: |
         event.type="Normal" and event.involvedObject.kind="Pod" and event.reason="Preempted"
-      message: >
-        %event.message
-      priority: normal
-      source: k8s_event
-      tags: [k8s_event_notification]
       enable: true
       type: notification
     - name: PodScheduled
-      summary: Pod was scheduled
-      summaryCn: pod调度成功
-      condition: >
+      condition: |
         event.type="Normal" and event.involvedObject.kind="Pod" and event.reason="Scheduled"
-      message: >
-        %event.message
-      priority: normal
-      source: k8s_event
-      tags: [k8s_event_notification]
       enable: true
       type: notification
-
     - name: PodCreateFailed
-      summary: Failed to create pod
-      summaryCn: pod创建失败
-      condition: >
+      condition: |
         event.type="Warning" and event.involvedObject.kind in ("Pod","ReplicaSet","DaemonSet","StatefulSet","Job") and event.reason="FailedCreate"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Failed to create pod
+        summaryCn: pod创建失败
       enable: true
       type: alert
     - name: PodCreated
-      summary: Pod was created
-      summaryCn: pod已创建
-      condition: >
+      condition: |
         event.type="Normal" and event.involvedObject.kind in ("Pod","ReplicaSet","DaemonSet","StatefulSet","Job") and event.reason="SuccessfulCreate"
-      message: >
-        %event.message
-      priority: normal
-      source: k8s_event
-      tags: [k8s_event_notification]
       enable: true
       type: notification
     - name: PodDeleteFailed
-      summary: Failed to delete pod
-      summaryCn: pod删除失败
-      condition: >
+      condition: |
         event.type="Warning" and event.involvedObject.kind in ("Pod","ReplicaSet","DaemonSet","StatefulSet","Job") and event.reason="FailedDelete"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Failed to delete pod
+        summaryCn: pod删除失败
       enable: true
       type: alert
     - name: PodDeleted
-      summary: Pod was deleted
-      summaryCn: pod已删除
-      condition: >
+      condition: |
         event.type="Normal" and event.involvedObject.kind in ("Pod","ReplicaSet","DaemonSet","StatefulSet","Job") and event.reason="SuccessfulDelete"
-      message: >
-        %event.message
-      priority: normal
-      source: k8s_event
-      tags: [k8s_event_notification]
       enable: true
       type: notification
-
     - name: ReplicaSetCreateError
-      summary: Error to create replica set for deployment
-      summaryCn: 副本集创建错误
-      condition: >
+      condition: |
         event.type="Warning" and event.reason="ReplicaSetCreateError"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Error to create replica set for deployment
+        summaryCn: 副本集创建错误
       enable: true
       type: alert
     - name: DeploymentRollbackFailed
-      summary: Failed to rollback deployment
-      summaryCn: 部署回滚失败
-      condition: >
+      condition: |
         event.type="Warning" and event.reason in("DeploymentRollbackRevisionNotFound","DeploymentRollbackTemplateUnchanged")
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Failed to rollback deployment
+        summaryCn: 部署回滚失败
       enable: true
       type: alert
     - name: DeploySelectorAll
-      summary: The deploy is selecting all pods
-      summaryCn: deploy选择了所有pod
-      condition: >
+      condition: |
         event.type="Warning" and event.involvedObject.kind="Deployment" and event.reason="SelectingAll"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: The deploy is selecting all pods
+        summaryCn: deploy选择了所有pod
       enable: true
       type: alert
     - name: DaemonSelectorAll
-      summary: The daemon set is selecting all pods
-      summaryCn: daemonset选择了所有pod
-      condition: >
+      condition: |
         event.type="Warning" and event.involvedObject.kind="DaemonSet" and event.reason="SelectingAll"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: The daemon set is selecting all pods
+        summaryCn: daemonset选择了所有pod
       enable: true
       type: alert
     - name: DaemonPodFailed
-      summary: Failed daemon pod
-      summaryCn: daemonset的pod失败
-      condition: >
+      condition: |
         event.type="Warning" and event.involvedObject.kind="DaemonSet" and event.reason in ("FailedDaemonPod","FailedPlacement")
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Failed daemon pod
+        summaryCn: daemonset的pod失败
       enable: true
       type: alert
     - name: LoadBalancerSyncFailed
-      summary: Error syncing load balancer
-      summaryCn: 负载据衡器不可用
-      condition: >
+      condition: |
         event.type="Warning" and event.reason="SyncLoadBalancerFailed"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Error syncing load balancer
+        summaryCn: 负载据衡器不可用
       enable: true
       type: alert
     - name: LoadBalancerDeleting
-      summary: Deleting load balancer
-      summaryCn: 负载均衡器删除中
-      condition: >
+      condition: |
         event.type="Normal" and event.reason="DeletingLoadBalancer"
-      message: >
-        %event.message
-      priority: normal
-      source: k8s_event
-      tags: [k8s_event_notification]
       enable: true
       type: notification
     - name: LoadBalancerEnsuring
-      summary: Ensuring load balancer
-      summaryCn: 负载均衡器确认中
-      condition: >
+      condition: |
         event.type="Normal" and event.reason="EnsuringLoadBalancer"
-      message: >
-        %event.message
-      priority: normal
-      source: k8s_event
-      tags: [k8s_event_notification]
       enable: true
       type: notification
     - name: LoadBalancerEnsured
-      summary: Load balancer was ensured
-      summaryCn: 负载据衡器已确认
-      condition: >
+      condition: |
         event.type="Normal" and event.reason="EnsuredLoadBalancer"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_notification]
       enable: true
       type: notification
     - name: LoadBalancerUnAvailable
-      summary: Load balancer is not available
-      summaryCn: 负载据衡器不可用
-      condition: >
+      condition: |
         event.type="Warning" and event.reason="UnAvailableLoadBalancer"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Load balancer is not available
+        summaryCn: 负载据衡器不可用
       enable: true
       type: alert
     - name: LoadBalancerUpdated
-      summary: Load balancer was updated
-      summaryCn: 负载据衡器已更新
-      condition: >
+      condition: |
         event.type="Normal" and event.reason="UpdatedLoadBalancer"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_notification]
       enable: true
       type: notification
     - name: LoadBalancerUpdateFailed
-      summary: Failed to update load balancer
-      summaryCn: 更新负载据衡器失败
-      condition: >
+      condition: |
         event.type="Warning" and event.reason="UpdateLoadBalancerFailed"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Failed to update load balancer
+        summaryCn: 更新负载据衡器失败
       enable: true
       type: alert
     - name: LoadBalancerDeleting
-      summary: Deleting load balancer
-      summaryCn: 负载据衡器删除中
-      condition: >
+      condition: |
         event.type="Normal" and event.reason="DeletingLoadBalancer"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_notification]
       enable: true
       type: notification
     - name: LoadBalancerDeleted
-      summary: Load balancer was deleted
-      summaryCn: 负载据衡器已删除
-      condition: >
+      condition: |
         event.type="Normal" and event.reason="DeletedLoadBalancer"
-      message: >
-        %event.message
-      priority: normal
-      source: k8s_event
-      tags: [k8s_event_notification]
       enable: true
       type: notification
     - name: LoadBalancerDeleteFailed
-      summary: Failed to delete load balancer
-      summaryCn: 负载据衡器删除失败
-      condition: >
+      condition: |
         event.type="Warning" and event.reason="DeleteLoadBalancerFailed"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Failed to delete load balancer
+        summaryCn: 负载据衡器删除失败
       enable: true
       type: alert
-
-
     - name: JobGetFailed
-      summary: Failed to get job
-      summaryCn: 任务获取失败
-      condition: >
+      condition: |
         event.type="Warning" and event.involvedObject.kind="CronJob" and event.reason="FailedGet"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Failed to get job
+        summaryCn: 任务获取失败
       enable: true
       type: alert
     - name: JobCreated
-      summary: Job was created
-      summaryCn: 任务已创建
-      condition: >
+      condition: |
         event.type="Normal" and event.involvedObject.kind="CronJob" and event.reason="SuccessfulCreate"
-      message: >
-        %event.message
-      priority: normal
-      source: k8s_event
-      tags: [k8s_event_notification]
       enable: true
       type: notification
     - name: JobCreateFailed
-      summary: Failed to create job
-      summaryCn: 任务创建失败
-      condition: >
+      condition: |
         event.type="Warning" and event.involvedObject.kind="CronJob" and event.reason="FailedCreate"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Failed to create job
+        summaryCn: 任务创建失败
       enable: true
       type: alert
     - name: JobDeleted
-      summary: Job was deleted
-      summaryCn: 任务已删除
-      condition: >
+      condition: |
         event.type="Normal" and event.involvedObject.kind="CronJob" and event.reason="SuccessfulDelete"
-      message: >
-        %event.message
-      priority: normal
-      source: k8s_event
-      tags: [k8s_event_notification]
       enable: true
       type: notification
     - name: JobDeleteFailed
-      summary: Failed to delete job
-      summaryCn: 任务删除失败
-      condition: >
+      condition: |
         event.type="Warning" and event.involvedObject.kind="CronJob" and event.reason="FailedDelete"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: Failed to delete job
+        summaryCn: 任务删除失败
       enable: true
       type: alert
     - name: JobCompleted
-      summary: CronJob saw completed job
-      summaryCn: 任务已完成
-      condition: >
+      condition: |
         event.type="Normal" and event.involvedObject.kind="CronJob" and event.reason="SawCompletedJob"
-      message: >
-        %event.message
-      priority: normal
-      source: k8s_event
-      tags: [k8s_event_notification]
       enable: true
       type: notification
     - name: JobUnexpected
-      summary: CronJob saw unexpected job
-      summaryCn: 任务非预期
-      condition: >
+      condition: |
         event.type="Warning" and event.involvedObject.kind="CronJob" and event.reason="UnexpectedJob"
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: CronJob saw unexpected job
+        summaryCn: 任务非预期
       enable: true
       type: alert
     - name: JobMissing
-      summary: Job missing
-      summaryCn: 任务丢失
-      condition: >
+      condition: |
         event.type="Normal" and event.involvedObject.kind="CronJob" and event.reason="MissingJob"
-      message: >
-        %event.message
-      priority: normal
-      source: k8s_event
-      tags: [k8s_event_notification]
       enable: true
       type: notification
     - name: JobScheduleFailed
-      summary: CronJob failed to schedule job
-      summaryCn: 任务调度失败
-      condition: >
+      condition: |
         event.type="Warning" and event.involvedObject.kind="CronJob" and event.reason in ("MissSchedule","FailedNeedsStart")
-      message: >
-        %event.message
-      priority: warning
-      source: k8s_event
-      tags: [k8s_event_alert]
+      labels:
+        severity: warning
+      annotations:
+        message: '%event.message'
+        summary: CronJob failed to schedule job
+        summaryCn: 任务调度失败
       enable: true
       type: alert

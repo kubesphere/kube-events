@@ -23,8 +23,11 @@ import (
 
 // KubeEventsRulerSpec defines the desired state of KubeEventsRuler
 type KubeEventsRulerSpec struct {
-	Replicas        *int32            `json:"replicas,omitempty"`
-	Image           string            `json:"image,omitempty"`
+	// Number of desired pods. Defaults to 1.
+	Replicas *int32 `json:"replicas,omitempty"`
+	// Docker image of kube-events-exporter
+	Image string `json:"image"`
+	// Image pull policy. One of Always, Never, IfNotPresent.
 	ImagePullPolicy corev1.PullPolicy `json:"imagePullPolicy,omitempty"`
 	// Resources defines resources requests and limits for single Pod.
 	Resources corev1.ResourceRequirements `json:"resources,omitempty"`
@@ -50,7 +53,9 @@ type KubeEventsRuler struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   KubeEventsRulerSpec   `json:"spec,omitempty"`
+	// Spec defines the specification of the desired behavior of the KubeEventsRuler.
+	Spec KubeEventsRulerSpec `json:"spec"`
+
 	Status KubeEventsRulerStatus `json:"status,omitempty"`
 }
 
@@ -60,23 +65,31 @@ type KubeEventsRuler struct {
 type KubeEventsRulerList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []KubeEventsRuler `json:"items"`
+
+	// List of KubeEventsRulers
+	Items []KubeEventsRuler `json:"items"`
 }
 
+// RulerSinks defines a set of sinks for Events Ruler
 type RulerSinks struct {
-	// Alertmanager is for sinking alerts
+	// Alertmanager is an alertmanager sink to which only alerts can sink.
 	Alertmanager *RulerAlertmanagerSink `json:"alertmanager,omitempty"`
 	// Webhooks is a list of RulerWebhookSink to which notifications or alerts can sink
 	Webhooks []*RulerWebhookSink `json:"webhooks,omitempty"`
-	Stdout   *RulerStdoutSink    `json:"stdout,omitempty"`
+	// Stdout can config write notifications or alerts to stdout; do nothing when no configuration
+	Stdout *RulerStdoutSink `json:"stdout,omitempty"`
 }
 
 // RulerAlertmanagerSink is a sink to alertmanager service on k8s
 type RulerAlertmanagerSink struct {
-	Namespace string `json:"namespace,omitempty"`
-	Name      string `json:"name,omitempty"`
-	Port      *int   `json:"port,omitempty"`
-	// TargetPort is the port to access on the backend instances targeted by the service.
+	// `namespace` is the namespace of the alertmanager service.
+	Namespace string `json:"namespace"`
+	// `name` is the name of the alertmanager service.
+	Name string `json:"name"`
+	// `port` is the port on the alertmanager service. Default to 9093.
+	// `port` should be a valid port number (1-65535, inclusive).
+	Port *int `json:"port,omitempty"`
+	// TargetPort is the port to access on the backend instances targeted by the alertmanager service.
 	// If this is not specified, the value of the 'port' field is used.
 	TargetPort *int `json:"targetPort,omitempty"`
 }
@@ -85,22 +98,33 @@ type RulerAlertmanagerSink struct {
 type RulerWebhookSink struct {
 	// Type represents that the sink is for notification or alert.
 	// Available values are `notification` and `alert`
-	Type    RulerSinkType     `json:"type,omitempty"`
-	Url     string            `json:"namespace,omitempty"`
+	Type RulerSinkType `json:"type"`
+	// `url` gives the location of the webhook, in standard URL form (`scheme://host:port/path`).
+	// Exactly one of `url` or `service` must be specified.
+	Url string `json:"url,omitempty"`
+	// `service` is a reference to the service for this webhook. Either
+	// `service` or `url` must be specified.
+	// If the webhook is running within the cluster, then you should use `service`.
 	Service *ServiceReference `json:"service,omitempty"`
 }
 
 // RulerStdoutSink defines parameters for stdout sink of Events Ruler.
 type RulerStdoutSink struct {
-	Type RulerSinkType `json:"type,omitempty"`
+	// Type represents that the sink is for notification or alert.
+	// Available values are `notification` and `alert`
+	Type RulerSinkType `json:"type"`
 }
 
 // ServiceReference holds a reference to k8s Service
 type ServiceReference struct {
-	Namespace string `json:"namespace,omitempty"`
-	Name      string `json:"name,omitempty"`
-	Port      *int   `json:"port,omitempty"`
-	Path      string `json:"path,omitempty"`
+	// `namespace` is the namespace of the service.
+	Namespace string `json:"namespace"`
+	// `name` is the name of the service.
+	Name string `json:"name"`
+	// `port` is the port on the service and should be a valid port number (1-65535, inclusive).
+	Port *int `json:"port,omitempty"`
+	// `path` is an optional URL path which will be sent in any request to this service.
+	Path string `json:"path,omitempty"`
 }
 
 type RulerSinkType string

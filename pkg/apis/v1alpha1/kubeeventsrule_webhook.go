@@ -143,7 +143,6 @@ func (r *KubeEventsRule) validateRuleScope() *field.Error {
 
 	switch rs {
 	case _ruleScopeConfig.ScopeLabelValueCluster:
-		fmt.Println(r.Namespace)
 		if r.Namespace != _ruleScopeConfig.NamespaceScopeCluster {
 			return field.Invalid(labelsFieldPath, rs, fmt.Sprintf(
 				"cluster rule is only supported in namespace %s", _ruleScopeConfig.NamespaceScopeCluster))

@@ -24,10 +24,10 @@ type ExporterSinkWebhook struct {
 }
 
 type ServiceReference struct {
-	Namespace string `json:"namespace"`
-	Name      string `json:"name"`
-	Port      *int   `json:"port"`
-	Path      string `json:"path"`
+	Namespace string `json:"namespace,omitempty"`
+	Name      string `json:"name,omitempty"`
+	Port      *int   `json:"port,omitempty"`
+	Path      string `json:"path,omitempty"`
 }
 
 func NewExporterConfig(filename string) (*ExporterConfig, error) {

@@ -5,6 +5,13 @@ metadata:
   namespace: system
 spec:
   image: ruler
+  resources:
+    limits:
+      cpu: 500m
+      memory: 500Mi
+    requests:
+      cpu: 50m
+      memory: 50Mi
   sinks:
     alertmanager:
       namespace: kubesphere-monitoring-system

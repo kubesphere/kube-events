@@ -31,7 +31,7 @@ ExporterSinks defines a set of sinks for Events Exporter
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | webhooks | Webhooks is a list of ExporterWebhookSink | []*[ExporterWebhookSink](#exporterwebhooksink) | false |
-| stdout | Stdout represents whether to write events to stdout | *[ExporterStdoutSink](#exporterstdoutsink) | false |
+| stdout | Stdout represents whether to write events to stdout. Output when configure an empty struct `{}`, but do nothing when no configuration | *[ExporterStdoutSink](#exporterstdoutsink) | false |
 
 [Back to TOC](#table-of-contents)
 
@@ -41,8 +41,8 @@ ExporterWebhookSink defines parameters for webhook sink of Events Exporter.
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
-| url |  | string | false |
-| service |  | *[ServiceReference](#servicereference) | false |
+| url | `url` gives the location of the webhook, in standard URL form (`scheme://host:port/path`). Exactly one of `url` or `service` must be specified. | string | false |
+| service | `service` is a reference to the service for this webhook. Either `service` or `url` must be specified. If the webhook is running within the cluster, then you should use `service`. | *[ServiceReference](#servicereference) | false |
 
 [Back to TOC](#table-of-contents)
 
@@ -53,7 +53,7 @@ KubeEventsExporter is the Schema for the kubeeventsexporters API
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | metadata |  | [metav1.ObjectMeta](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#objectmeta-v1-meta) | false |
-| spec |  | [KubeEventsExporterSpec](#kubeeventsexporterspec) | false |
+| spec | Spec defines the specification of the desired behavior of the KubeEventsExporter. | [KubeEventsExporterSpec](#kubeeventsexporterspec) | true |
 | status |  | [KubeEventsExporterStatus](#kubeeventsexporterstatus) | false |
 
 [Back to TOC](#table-of-contents)
@@ -65,7 +65,7 @@ KubeEventsExporterList contains a list of KubeEventsExporter
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | metadata |  | [metav1.ListMeta](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#listmeta-v1-meta) | false |
-| items |  | [][KubeEventsExporter](#kubeeventsexporter) | true |
+| items | List of KubeEventsExporters | [][KubeEventsExporter](#kubeeventsexporter) | true |
 
 [Back to TOC](#table-of-contents)
 
@@ -75,9 +75,9 @@ KubeEventsExporterSpec defines the desired state of KubeEventsExporter
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
-| image |  | string | false |
-| imagePullPolicy |  | corev1.PullPolicy | false |
-| resources | Resources defines resources requests and limits for single Pod. | corev1.ResourceRequirements | false |
+| image | Docker image of kube-events-exporter | string | true |
+| imagePullPolicy | Image pull policy. One of Always, Never, IfNotPresent. | [corev1.PullPolicy](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#container-v1-core) | false |
+| resources | Resources defines resources requests and limits for single Pod. | [corev1.ResourceRequirements](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#resourcerequirements-v1-core) | false |
 | sinks | Sinks defines details of events sinks | *[ExporterSinks](#exportersinks) | false |
 
 [Back to TOC](#table-of-contents)
@@ -89,7 +89,7 @@ KubeEventsRuler is the Schema for the kubeeventsrulers API
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | metadata |  | [metav1.ObjectMeta](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#objectmeta-v1-meta) | false |
-| spec |  | [KubeEventsRulerSpec](#kubeeventsrulerspec) | false |
+| spec | Spec defines the specification of the desired behavior of the KubeEventsRuler. | [KubeEventsRulerSpec](#kubeeventsrulerspec) | true |
 | status |  | [KubeEventsRulerStatus](#kubeeventsrulerstatus) | false |
 
 [Back to TOC](#table-of-contents)
@@ -101,7 +101,7 @@ KubeEventsRulerList contains a list of KubeEventsRuler
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | metadata |  | [metav1.ListMeta](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#listmeta-v1-meta) | false |
-| items |  | [][KubeEventsRuler](#kubeeventsruler) | true |
+| items | List of KubeEventsRulers | [][KubeEventsRuler](#kubeeventsruler) | true |
 
 [Back to TOC](#table-of-contents)
 
@@ -111,10 +111,10 @@ KubeEventsRulerSpec defines the desired state of KubeEventsRuler
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
-| replicas |  | *int32 | false |
-| image |  | string | false |
-| imagePullPolicy |  | corev1.PullPolicy | false |
-| resources | Resources defines resources requests and limits for single Pod. | corev1.ResourceRequirements | false |
+| replicas | Number of desired pods. Defaults to 1. | *int32 | false |
+| image | Docker image of kube-events-exporter | string | true |
+| imagePullPolicy | Image pull policy. One of Always, Never, IfNotPresent. | [corev1.PullPolicy](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#container-v1-core) | false |
+| resources | Resources defines resources requests and limits for single Pod. | [corev1.ResourceRequirements](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#resourcerequirements-v1-core) | false |
 | ruleNamespaceSelector | Namespaces to be selected for KubeEventsRules discovery. If unspecified, discover KubeEventsRule instances from all namespaces. | *[metav1.LabelSelector](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#labelselector-v1-meta) | false |
 | ruleSelector | A selector to select KubeEventsRules instances. | *[metav1.LabelSelector](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#labelselector-v1-meta) | false |
 | sinks | Sinks defines sinks detail of this ruler | *[RulerSinks](#rulersinks) | false |
@@ -127,22 +127,22 @@ RulerAlertmanagerSink is a sink to alertmanager service on k8s
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
-| namespace |  | string | false |
-| name |  | string | false |
-| port |  | *int | false |
-| targetPort | TargetPort is the port to access on the backend instances targeted by the service. If this is not specified, the value of the 'port' field is used. | *int | false |
+| namespace | `namespace` is the namespace of the alertmanager service. | string | true |
+| name | `name` is the name of the alertmanager service. | string | true |
+| port | `port` is the port on the alertmanager service. Default to 9093. `port` should be a valid port number (1-65535, inclusive). | *int | false |
+| targetPort | TargetPort is the port to access on the backend instances targeted by the alertmanager service. If this is not specified, the value of the 'port' field is used. | *int | false |
 
 [Back to TOC](#table-of-contents)
 
 ## RulerSinks
 
-
+RulerSinks defines a set of sinks for Events Ruler
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
-| alertmanager | Alertmanager is for sinking alerts | *[RulerAlertmanagerSink](#ruleralertmanagersink) | false |
+| alertmanager | Alertmanager is an alertmanager sink to which only alerts can sink. | *[RulerAlertmanagerSink](#ruleralertmanagersink) | false |
 | webhooks | Webhooks is a list of RulerWebhookSink to which notifications or alerts can sink | []*[RulerWebhookSink](#rulerwebhooksink) | false |
-| stdout |  | *[RulerStdoutSink](#rulerstdoutsink) | false |
+| stdout | Stdout can config write notifications or alerts to stdout; do nothing when no configuration | *[RulerStdoutSink](#rulerstdoutsink) | false |
 
 [Back to TOC](#table-of-contents)
 
@@ -152,7 +152,7 @@ RulerStdoutSink defines parameters for stdout sink of Events Ruler.
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
-| type |  | RulerSinkType | false |
+| type | Type represents that the sink is for notification or alert. Available values are `notification` and `alert` | RulerSinkType | true |
 
 [Back to TOC](#table-of-contents)
 
@@ -162,9 +162,9 @@ RulerWebhookSink defines parameters for webhook sink of Events Ruler.
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
-| type | Type represents that the sink is for notification or alert. Available values are `notification` and `alert` | RulerSinkType | false |
-| namespace |  | string | false |
-| service |  | *[ServiceReference](#servicereference) | false |
+| type | Type represents that the sink is for notification or alert. Available values are `notification` and `alert` | RulerSinkType | true |
+| url | `url` gives the location of the webhook, in standard URL form (`scheme://host:port/path`). Exactly one of `url` or `service` must be specified. | string | false |
+| service | `service` is a reference to the service for this webhook. Either `service` or `url` must be specified. If the webhook is running within the cluster, then you should use `service`. | *[ServiceReference](#servicereference) | false |
 
 [Back to TOC](#table-of-contents)
 
@@ -174,10 +174,10 @@ ServiceReference holds a reference to k8s Service
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
-| namespace |  | string | false |
-| name |  | string | false |
-| port |  | *int | false |
-| path |  | string | false |
+| namespace | `namespace` is the namespace of the service. | string | true |
+| name | `name` is the name of the service. | string | true |
+| port | `port` is the port on the service and should be a valid port number (1-65535, inclusive). | *int | false |
+| path | `path` is an optional URL path which will be sent in any request to this service. | string | false |
 
 [Back to TOC](#table-of-contents)
 
@@ -188,7 +188,7 @@ KubeEventsRule is the Schema for the kubeeventsrules API
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | metadata |  | [metav1.ObjectMeta](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#objectmeta-v1-meta) | false |
-| spec |  | [KubeEventsRuleSpec](#kubeeventsrulespec) | false |
+| spec |  | [KubeEventsRuleSpec](#kubeeventsrulespec) | true |
 | status |  | [KubeEventsRuleStatus](#kubeeventsrulestatus) | false |
 
 [Back to TOC](#table-of-contents)
@@ -220,14 +220,10 @@ Rule describes a notification or alert rule
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
-| name |  | string | false |
-| summary |  | string | false |
-| summaryCn |  | string | false |
-| condition | Condition is a string similar with the where part of sql. The usage is as follows: event.type=\"Warning\" and event.involvedObject.kind=\"Pod\" and event.reason=\"FailedMount\" | string | false |
-| message |  | string | false |
-| priority |  | string | false |
-| source |  | string | false |
-| tags |  | []string | false |
+| name | Name is simple name of rule | string | false |
+| condition | Condition is a string similar with the where part of sql (please use double quotation to mark a string). For example: `event.type="Warning" and event.involvedObject.kind="Pod" and event.reason="FailedMount"` | string | false |
+| labels | Labels | map[string]string | false |
+| annotations | Values of Annotations can use format string with the fields of the event. For example: `{"message": "%event.message"}` | map[string]string | false |
 | enable | Enable is whether to enable the rule | bool | false |
 | type | Type represents that the rule is for notification or alert. Available values are `notification` and `alert` | RuleType | false |
 

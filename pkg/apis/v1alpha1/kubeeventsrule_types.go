@@ -38,7 +38,7 @@ type KubeEventsRule struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   KubeEventsRuleSpec   `json:"spec,omitempty"`
+	Spec   KubeEventsRuleSpec   `json:"spec"`
 	Status KubeEventsRuleStatus `json:"status,omitempty"`
 }
 
@@ -53,16 +53,16 @@ type KubeEventsRuleList struct {
 
 // Rule describes a notification or alert rule
 type Rule struct {
-	Name      string `json:"name,omitempty"`
-	Summary   string `json:"summary,omitempty"`
-	SummaryCn string `json:"summaryCn,omitempty"`
-	// Condition is a string similar with the where part of sql.
-	// The usage is as follows: event.type="Warning" and event.involvedObject.kind="Pod" and event.reason="FailedMount"
-	Condition string   `json:"condition,omitempty"`
-	Message   string   `json:"message,omitempty"`
-	Priority  string   `json:"priority,omitempty"`
-	Source    string   `json:"source,omitempty"`
-	Tags      []string `json:"tags,omitempty"`
+	// Name is simple name of rule
+	Name string `json:"name,omitempty"`
+	// Condition is a string similar with the where part of sql (please use double quotation to mark a string).
+	// For example: `event.type="Warning" and event.involvedObject.kind="Pod" and event.reason="FailedMount"`
+	Condition string `json:"condition,omitempty"`
+	// Labels
+	Labels map[string]string `json:"labels,omitempty"`
+	// Values of Annotations can use format string with the fields of the event.
+	// For example: `{"message": "%event.message"}`
+	Annotations map[string]string `json:"annotations,omitempty"`
 	// Enable is whether to enable the rule
 	Enable bool `json:"enable,omitempty"`
 	// Type represents that the rule is for notification or alert.

@@ -52,10 +52,18 @@ func main() {
 	flag.BoolVar(&enableLeaderElection, "enable-leader-election", false,
 		"Enable leader election for controller manager. "+
 			"Enabling this will ensure there is only one active controller manager.")
-	flag.StringVar(&cfg.ConfigReloaderImage, "config-reloader-image", "jimmidyson/configmap-reload", "Reload Image")
+	flag.StringVar(&cfg.ConfigReloaderImage, "config-reloader-image", "jimmidyson/configmap-reload:v0.3.0", "Reload Image")
 	flag.StringVar(&cfg.ConfigReloaderCPU, "config-reloader-cpu", "100m", "Config Reloader CPU. Value \"0\" disables it and causes no limit to be configured.")
 	flag.StringVar(&cfg.ConfigReloaderMemory, "config-reloader-memory", "25Mi", "Config Reloader Memory. Value \"0\" disables it and causes no limit to be configured.")
 	flag.Parse()
+
+	{
+		if ns, rsc := os.Getenv("POD_NAMESPACE"), loggingv1alpha1.DefaultRuleScopeConfig(); ns != "" && ns != rsc.NamespaceScopeCluster {
+			rsc.NamespaceScopeCluster = ns
+			rsc.NamespaceScopeWorkspace = ns
+			loggingv1alpha1.SetRuleScopeConfig(rsc)
+		}
+	}
 
 	ctrl.SetLogger(zap.New(zap.UseDevMode(true)))
 

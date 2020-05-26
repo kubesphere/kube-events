@@ -23,7 +23,9 @@ import (
 
 // KubeEventsExporterSpec defines the desired state of KubeEventsExporter
 type KubeEventsExporterSpec struct {
-	Image           string            `json:"image,omitempty"`
+	// Docker image of kube-events-exporter
+	Image string `json:"image"`
+	// Image pull policy. One of Always, Never, IfNotPresent.
 	ImagePullPolicy corev1.PullPolicy `json:"imagePullPolicy,omitempty"`
 	// Resources defines resources requests and limits for single Pod.
 	Resources corev1.ResourceRequirements `json:"resources,omitempty"`
@@ -44,7 +46,9 @@ type KubeEventsExporter struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   KubeEventsExporterSpec   `json:"spec,omitempty"`
+	// Spec defines the specification of the desired behavior of the KubeEventsExporter.
+	Spec KubeEventsExporterSpec `json:"spec"`
+
 	Status KubeEventsExporterStatus `json:"status,omitempty"`
 }
 
@@ -54,14 +58,16 @@ type KubeEventsExporter struct {
 type KubeEventsExporterList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []KubeEventsExporter `json:"items"`
+	// List of KubeEventsExporters
+	Items []KubeEventsExporter `json:"items"`
 }
 
 // ExporterSinks defines a set of sinks for Events Exporter
 type ExporterSinks struct {
 	// Webhooks is a list of ExporterWebhookSink
 	Webhooks []*ExporterWebhookSink `json:"webhooks,omitempty"`
-	// Stdout represents whether to write events to stdout
+	// Stdout represents whether to write events to stdout.
+	// Output when configure an empty struct `{}`, but do nothing when no configuration
 	Stdout *ExporterStdoutSink `json:"stdout,omitempty"`
 }
 
@@ -71,7 +77,12 @@ type ExporterStdoutSink struct {
 
 // ExporterWebhookSink defines parameters for webhook sink of Events Exporter.
 type ExporterWebhookSink struct {
-	Url     string            `json:"url,omitempty"`
+	// `url` gives the location of the webhook, in standard URL form (`scheme://host:port/path`).
+	// Exactly one of `url` or `service` must be specified.
+	Url string `json:"url,omitempty"`
+	// `service` is a reference to the service for this webhook. Either
+	// `service` or `url` must be specified.
+	// If the webhook is running within the cluster, then you should use `service`.
 	Service *ServiceReference `json:"service,omitempty"`
 }
 

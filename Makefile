@@ -8,7 +8,6 @@ TAG?=v0.1.0
 
 GO_PKG?=github.com/kubesphere/kube-events
 
-# Produce CRDs that work back to Kubernetes 1.11 (no version conversion)
 CRD_OPTIONS ?= "crd:trivialVersions=true"
 
 # Get the currently used golang install path (in GOPATH/bin, unless GOBIN is set)
@@ -19,14 +18,15 @@ GOBIN=$(shell go env GOBIN)
 endif
 
 CONTROLLER_GEN := $(GOBIN)/controller-gen
-KE_DOCGEN_BINARY:=$(GOBIN)/ke-docgen
+KE_DOCGEN_BINARY:=$(GOBIN)/kube-events-docgen
 
 TYPES_V1ALPHA1_TARGET := pkg/apis/v1alpha1/kubeeventsexporter_types.go pkg/apis/v1alpha1/kubeeventsruler_types.go pkg/apis/v1alpha1/kubeeventsrule_types.go
+DEEPCOPY_TARGET := pkg/apis/v1alpha1/zz_generated.deepcopy.go
 
 deploy:
 	kubectl apply -f config/bundle.yaml
 
-generate: $(DEEPCOPY_TARGET) manifests ca-secret update-cert
+generate: $(DEEPCOPY_TARGET) manifests
 	cd config && $(GOBIN)/kustomize edit set image operator=$(REPO_OPERATOR):$(TAG) exporter=$(REPO_EXPORTER):$(TAG) ruler=$(REPO_RULER):$(TAG)
 	$(GOBIN)/kustomize build config > config/bundle.yaml
 
@@ -43,7 +43,6 @@ fmt:
 vet:
 	go vet ./...
 
-DEEPCOPY_TARGET := pkg/apis/v1alpha1/zz_generated.deepcopy.go
 # Generate deepcopy etc.
 $(DEEPCOPY_TARGET): $(CONTROLLER_GEN) $(TYPES_V1ALPHA1_TARGET)
 	$(CONTROLLER_GEN) object:headerFile="hack/boilerplate.go.txt" paths="./pkg/..."
@@ -56,8 +55,8 @@ $(CONTROLLER_GEN):
 	go get sigs.k8s.io/controller-tools/cmd/controller-gen@v0.2.5 ;\
 	rm -rf $$CONTROLLER_GEN_TMP_DIR ;\
 
-$(KE_DOCGEN_BINARY): cmd/docgen/ke-docgen.go
-	go install cmd/docgen/ke-docgen.go
+$(KE_DOCGEN_BINARY): cmd/docgen/kube-events-docgen.go
+	go install cmd/docgen/kube-events-docgen.go
 
 image-push: image
 	docker push $(REPO_OPERATOR):$(TAG)

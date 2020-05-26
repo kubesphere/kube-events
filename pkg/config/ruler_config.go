@@ -23,22 +23,22 @@ type RulerSinks struct {
 }
 
 type RulerAlertmanagerSink struct {
-	Namespace string `json:"namespace"`
-	Name      string `json:"name"`
-	Port      *int   `json:"port"`
+	Namespace string `json:"namespace,omitempty"`
+	Name      string `json:"name,omitempty"`
+	Port      *int   `json:"port,omitempty"`
 	// TargetPort is the port to access on the backend instances targeted by the service.
 	// If this is not specified, the value of the 'port' field is used.
 	TargetPort *int `json:"targetPort,omitempty"`
 }
 
 type RulerWebhookSink struct {
-	Type    RulerSinkType     `json:"type"`
-	Url     string            `json:"namespace"`
-	Service *ServiceReference `json:"service"`
+	Type    RulerSinkType     `json:"type,omitempty"`
+	Url     string            `json:"namespace,omitempty"`
+	Service *ServiceReference `json:"service,omitempty"`
 }
 
 type RulerStdoutSink struct {
-	Type RulerSinkType `json:"type"`
+	Type RulerSinkType `json:"type,omitempty"`
 }
 
 type RulerSinkType string

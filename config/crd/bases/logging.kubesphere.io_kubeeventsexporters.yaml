@@ -32,13 +32,14 @@ spec:
         metadata:
           type: object
         spec:
-          description: KubeEventsExporterSpec defines the desired state of KubeEventsExporter
+          description: Spec defines the specification of the desired behavior of the
+            KubeEventsExporter.
           properties:
             image:
+              description: Docker image of kube-events-exporter
               type: string
             imagePullPolicy:
-              description: PullPolicy describes a policy for if/when to pull a container
-                image
+              description: Image pull policy. One of Always, Never, IfNotPresent.
               type: string
             resources:
               description: Resources defines resources requests and limits for single
@@ -71,34 +72,56 @@ spec:
               description: Sinks defines details of events sinks
               properties:
                 stdout:
-                  description: ExporterStdoutSink defines parameters for stdout sink
-                    of Events Exporter.
+                  description: Stdout represents whether to write events to stdout.
+                    Output when configure an empty struct `{}`, but do nothing when
+                    no configuration
                   type: object
                 webhooks:
+                  description: Webhooks is a list of ExporterWebhookSink
                   items:
                     description: ExporterWebhookSink defines parameters for webhook
                       sink of Events Exporter.
                     properties:
                       service:
+                        description: '`service` is a reference to the service for
+                          this webhook. Either `service` or `url` must be specified.
+                          If the webhook is running within the cluster, then you should
+                          use `service`.'
                         properties:
                           name:
+                            description: '`name` is the name of the service.'
                             type: string
                           namespace:
+                            description: '`namespace` is the namespace of the service.'
                             type: string
                           path:
+                            description: '`path` is an optional URL path which will
+                              be sent in any request to this service.'
                             type: string
                           port:
+                            description: '`port` is the port on the service and should
+                              be a valid port number (1-65535, inclusive).'
                             type: integer
+                        required:
+                        - name
+                        - namespace
                         type: object
                       url:
+                        description: '`url` gives the location of the webhook, in
+                          standard URL form (`scheme://host:port/path`). Exactly one
+                          of `url` or `service` must be specified.'
                         type: string
                     type: object
                   type: array
               type: object
+          required:
+          - image
           type: object
         status:
           description: KubeEventsExporterStatus defines the observed state of KubeEventsExporter
           type: object
+      required:
+      - spec
       type: object
   version: v1alpha1
   versions:

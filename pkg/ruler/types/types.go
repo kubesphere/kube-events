@@ -13,13 +13,6 @@ import (
 	corev1 "k8s.io/api/core/v1"
 )
 
-const (
-	flatEventKeyPrefix       = "event"
-	flatEventKeySeparator    = "."
-	alertTypeLabelName       = "alerttype"
-	alertTypeLabelValueEvent = "event"
-)
-
 type Event struct {
 	Event   *corev1.Event
 	once    sync.Once
@@ -28,7 +21,7 @@ type Event struct {
 
 func (evt *Event) Flat() map[string]interface{} {
 	evt.once.Do(func() {
-		evt.flatEvt = util.StructToFlatMap(evt.Event, flatEventKeyPrefix, flatEventKeySeparator)
+		evt.flatEvt = util.StructToFlatMap(evt.Event, "event", ".")
 	})
 	return evt.flatEvt
 }
@@ -40,6 +33,9 @@ func (evt *Event) EvalByRule(rule *loggingv1alpha1.Rule) (ok bool, err error) {
 				p, evt.Event.Namespace, evt.Event.Name, rule.Name, rule.Condition)
 		}
 	}()
+	if rule.Condition == "" {
+		return false, nil
+	}
 	return visitor.EventRuleEvaluate(evt.Flat(), rule.Condition), nil
 }
 
@@ -79,18 +75,15 @@ func (evt *Event) EvalToAlert(evtRules []*loggingv1alpha1.KubeEventsRule) (*Even
 
 func generateAlert(evt *Event, rule *loggingv1alpha1.Rule) *EventAlert {
 	alert := &amkit.RawAlert{
-		Annotations: map[string]string{
-			"message": util.FormatMap(rule.Message, evt.Flat()),
-		},
+		Annotations: map[string]string{},
 		Labels: map[string]string{
-			"alertname":        rule.Name,
-			alertTypeLabelName: alertTypeLabelValueEvent,
-			"namespace":        evt.Event.InvolvedObject.Namespace,
+			"alertname": rule.Name,
+			"alerttype": "event",
 			strings.ToLower(evt.Event.InvolvedObject.Kind): evt.Event.InvolvedObject.Name,
-			"severity":  rule.Priority,
-			"summary":   rule.Summary,
-			"summaryCn": rule.SummaryCn,
 		},
+	}
+	if ns := evt.Event.InvolvedObject.Namespace; ns != "" {
+		alert.Labels["namespace"] = ns
 	}
 	fp := evt.Event.InvolvedObject.FieldPath
 	if strings.HasPrefix(fp, "spec.containers") {
@@ -98,6 +91,14 @@ func generateAlert(evt *Event, rule *loggingv1alpha1.Rule) *EventAlert {
 	} else if strings.HasPrefix(fp, "spec.initContainers{") {
 		alert.Labels["container"] = strings.TrimSuffix(strings.TrimPrefix(fp, "spec.initContainers{"), "}")
 	}
+	for k, v := range rule.Labels {
+		alert.Labels[k] = v
+	}
+
+	for k, v := range rule.Annotations {
+		alert.Annotations[k] = util.FormatMap(v, evt.Flat())
+	}
+
 	return &EventAlert{
 		Alert: alert,
 	}
