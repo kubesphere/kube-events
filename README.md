@@ -18,7 +18,7 @@ Install quickly kube-events into your kubernetes cluster with the following comm
 kubectl apply -f config/bundle.yaml
 ```
 
-Or install it  by the [stable/kube-events]() helm chart.
+Or install it  by [helm chart](./helm/README.md).
 
 # Usage
 
