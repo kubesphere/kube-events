@@ -42,7 +42,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 
-	loggingv1alpha1 "github.com/kubesphere/kube-events/pkg/apis/v1alpha1"
+	eventsv1alpha1 "github.com/kubesphere/kube-events/pkg/apis/v1alpha1"
 	"github.com/kubesphere/kube-events/pkg/config"
 )
 
@@ -53,19 +53,19 @@ const (
 	labelKeyEventsExporter          = "events-exporter"
 	labelKeyEventsExporterNamespace = "events-exporter-ns"
 
-	finalizerNameEventsExporter = "kubeeventsexporters.finalizer.logging.kubesphere.io"
+	finalizerNameEventsExporter = "exporters.finalizer.events.kubesphere.io"
 )
 
-// KubeEventsExporterReconciler reconciles a KubeEventsExporter object
-type KubeEventsExporterReconciler struct {
+// ExporterReconciler reconciles a Exporter object
+type ExporterReconciler struct {
 	Conf *config.OperatorConfig
 	client.Client
 	Log    logr.Logger
 	Scheme *runtime.Scheme
 }
 
-// +kubebuilder:rbac:groups=logging.kubesphere.io,resources=kubeeventsexporters,verbs=get;list;watch;create;update;patch;delete
-// +kubebuilder:rbac:groups=logging.kubesphere.io,resources=kubeeventsexporters/status,verbs=get;update;patch
+// +kubebuilder:rbac:groups=events.kubesphere.io,resources=exporters,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=events.kubesphere.io,resources=exporters/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups=apps,resources=deployments,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=apps,resources=deployments/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups=core,resources=configmaps,verbs=get;list;watch;create;update;patch;delete
@@ -74,17 +74,17 @@ type KubeEventsExporterReconciler struct {
 // +kubebuilder:rbac:groups=rbac.authorization.k8s.io,resources=clusterrolebindings,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=core,resources=events,verbs=get;list;watch
 
-func (r *KubeEventsExporterReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
+func (r *ExporterReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	ctx := context.Background()
-	log := r.Log.WithValues("kubeeventsexporter", req.NamespacedName)
+	log := r.Log.WithValues("exporter", req.NamespacedName)
 
-	kee := &loggingv1alpha1.KubeEventsExporter{}
+	kee := &eventsv1alpha1.Exporter{}
 	e := r.Get(ctx, req.NamespacedName, kee)
 	if e != nil {
 		if apierrs.IsNotFound(e) {
 			return ctrl.Result{}, nil
 		}
-		log.Error(e, "unable to fetch KubeEventsExporter")
+		log.Error(e, "unable to fetch Exporter")
 		return ctrl.Result{}, e
 	}
 
@@ -147,13 +147,13 @@ func (r *KubeEventsExporterReconciler) Reconcile(req ctrl.Request) (ctrl.Result,
 	return ctrl.Result{}, nil
 }
 
-func (r *KubeEventsExporterReconciler) SetupWithManager(mgr ctrl.Manager) error {
+func (r *ExporterReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	meets := func(meta metav1.Object, obj runtime.Object) bool {
 		if meta == nil || obj == nil {
 			return false
 		}
 		switch obj.(type) {
-		case *loggingv1alpha1.KubeEventsExporter:
+		case *eventsv1alpha1.Exporter:
 			return true
 		case *appsv1.Deployment, *corev1.Service, *corev1.ConfigMap, *corev1.ServiceAccount:
 			if ls := meta.GetLabels(); ls != nil {
@@ -212,7 +212,7 @@ func (r *KubeEventsExporterReconciler) SetupWithManager(mgr ctrl.Manager) error 
 		},
 	}
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&loggingv1alpha1.KubeEventsExporter{}).
+		For(&eventsv1alpha1.Exporter{}).
 		Owns(&appsv1.Deployment{}).
 		Owns(&corev1.ConfigMap{}).
 		Owns(&corev1.ServiceAccount{}).
@@ -222,8 +222,8 @@ func (r *KubeEventsExporterReconciler) SetupWithManager(mgr ctrl.Manager) error 
 		Complete(r)
 }
 
-func (r *KubeEventsExporterReconciler) serviceAccountMutate(sa *corev1.ServiceAccount,
-	kee *loggingv1alpha1.KubeEventsExporter) controllerutil.MutateFn {
+func (r *ExporterReconciler) serviceAccountMutate(sa *corev1.ServiceAccount,
+	kee *eventsv1alpha1.Exporter) controllerutil.MutateFn {
 	return func() error {
 		sa.Labels = r.relativeResourcesShareLabels(kee)
 		sa.SetOwnerReferences(nil)
@@ -231,8 +231,8 @@ func (r *KubeEventsExporterReconciler) serviceAccountMutate(sa *corev1.ServiceAc
 	}
 }
 
-func (r *KubeEventsExporterReconciler) clusterRoleMutate(cr *rbacv1.ClusterRole,
-	kee *loggingv1alpha1.KubeEventsExporter) controllerutil.MutateFn {
+func (r *ExporterReconciler) clusterRoleMutate(cr *rbacv1.ClusterRole,
+	kee *eventsv1alpha1.Exporter) controllerutil.MutateFn {
 	return func() error {
 		cr.Labels = r.relativeResourcesShareLabels(kee)
 		cr.Labels[labelKeyEventsExporterNamespace] = kee.Namespace
@@ -245,9 +245,9 @@ func (r *KubeEventsExporterReconciler) clusterRoleMutate(cr *rbacv1.ClusterRole,
 	}
 }
 
-func (r *KubeEventsExporterReconciler) clusterRoleBindingMutate(crb *rbacv1.ClusterRoleBinding,
+func (r *ExporterReconciler) clusterRoleBindingMutate(crb *rbacv1.ClusterRoleBinding,
 	cr *rbacv1.ClusterRole, sa *corev1.ServiceAccount,
-	kee *loggingv1alpha1.KubeEventsExporter) controllerutil.MutateFn {
+	kee *eventsv1alpha1.Exporter) controllerutil.MutateFn {
 	return func() error {
 		crb.Labels = r.relativeResourcesShareLabels(kee)
 		crb.Labels[labelKeyEventsExporterNamespace] = kee.Namespace
@@ -265,8 +265,8 @@ func (r *KubeEventsExporterReconciler) clusterRoleBindingMutate(crb *rbacv1.Clus
 	}
 }
 
-func (r *KubeEventsExporterReconciler) configMutate(cm *corev1.ConfigMap,
-	kee *loggingv1alpha1.KubeEventsExporter) controllerutil.MutateFn {
+func (r *ExporterReconciler) configMutate(cm *corev1.ConfigMap,
+	kee *eventsv1alpha1.Exporter) controllerutil.MutateFn {
 	return func() error {
 		cm.Labels = r.relativeResourcesShareLabels(kee)
 
@@ -306,9 +306,9 @@ func (r *KubeEventsExporterReconciler) configMutate(cm *corev1.ConfigMap,
 	}
 }
 
-func (r *KubeEventsExporterReconciler) deployMutate(deploy *appsv1.Deployment,
+func (r *ExporterReconciler) deployMutate(deploy *appsv1.Deployment,
 	cm *corev1.ConfigMap, sa *corev1.ServiceAccount,
-	kee *loggingv1alpha1.KubeEventsExporter) controllerutil.MutateFn {
+	kee *eventsv1alpha1.Exporter) controllerutil.MutateFn {
 	return func() error {
 		deploy.Labels = r.relativeResourcesShareLabels(kee)
 
@@ -411,7 +411,7 @@ func (r *KubeEventsExporterReconciler) deployMutate(deploy *appsv1.Deployment,
 	}
 }
 
-func (r *KubeEventsExporterReconciler) relativeResourcesShareLabels(kee *loggingv1alpha1.KubeEventsExporter) map[string]string {
+func (r *ExporterReconciler) relativeResourcesShareLabels(kee *eventsv1alpha1.Exporter) map[string]string {
 	ls := make(map[string]string)
 	ls[labelKeyEventsExporter] = kee.Name
 	return ls

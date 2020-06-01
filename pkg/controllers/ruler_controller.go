@@ -43,7 +43,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/source"
 	"sigs.k8s.io/yaml"
 
-	loggingv1alpha1 "github.com/kubesphere/kube-events/pkg/apis/v1alpha1"
+	eventsv1alpha1 "github.com/kubesphere/kube-events/pkg/apis/v1alpha1"
 )
 
 const (
@@ -53,19 +53,19 @@ const (
 	labelKeyEventsRuler          = "events-ruler"
 	labelKeyEventsRulerNamespace = "events-ruler-ns"
 
-	finalizerNameEventsRuler = "kubeeventsrulers.finalizer.logging.kubesphere.io"
+	finalizerNameEventsRuler = "rulers.finalizer.events.kubesphere.io"
 )
 
-// KubeEventsRulerReconciler reconciles a KubeEventsRuler object
-type KubeEventsRulerReconciler struct {
+// RulerReconciler reconciles a Ruler object
+type RulerReconciler struct {
 	Conf *config.OperatorConfig
 	client.Client
 	Log    logr.Logger
 	Scheme *runtime.Scheme
 }
 
-// +kubebuilder:rbac:groups=logging.kubesphere.io,resources=kubeeventsrulers,verbs=get;list;watch;create;update;patch;delete
-// +kubebuilder:rbac:groups=logging.kubesphere.io,resources=kubeeventsrulers/status,verbs=get;update;patch
+// +kubebuilder:rbac:groups=events.kubesphere.io,resources=rulers,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=events.kubesphere.io,resources=rulers/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups=apps,resources=deployments,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=apps,resources=deployments/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups=core,resources=services,verbs=get;list;watch;create;update;patch;delete
@@ -76,18 +76,18 @@ type KubeEventsRulerReconciler struct {
 // +kubebuilder:rbac:groups=rbac.authorization.k8s.io,resources=clusterrolebindings,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=core,resources=namespaces,verbs=get;list;watch
 
-func (r *KubeEventsRulerReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
+func (r *RulerReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	ctx := context.Background()
-	log := r.Log.WithValues("kubeeventsruler", req.NamespacedName)
+	log := r.Log.WithValues("ruler", req.NamespacedName)
 
-	ker := &loggingv1alpha1.KubeEventsRuler{}
+	ker := &eventsv1alpha1.Ruler{}
 	e := r.Get(ctx, req.NamespacedName, ker)
 
 	if e != nil {
 		if apierrs.IsNotFound(e) {
 			return ctrl.Result{}, nil
 		}
-		log.Error(e, "unable to fetch KubeEventsRuler")
+		log.Error(e, "unable to fetch Ruler")
 		return ctrl.Result{}, e
 	}
 
@@ -156,13 +156,13 @@ func (r *KubeEventsRulerReconciler) Reconcile(req ctrl.Request) (ctrl.Result, er
 	return ctrl.Result{}, nil
 }
 
-func (r *KubeEventsRulerReconciler) SetupWithManager(mgr ctrl.Manager) error {
+func (r *RulerReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	meets := func(meta metav1.Object, obj runtime.Object) bool {
 		if meta == nil || obj == nil {
 			return false
 		}
 		switch obj.(type) {
-		case *loggingv1alpha1.KubeEventsRuler:
+		case *eventsv1alpha1.Ruler:
 			return true
 		case *appsv1.Deployment, *corev1.Service, *corev1.ConfigMap, *corev1.ServiceAccount:
 			if ls := meta.GetLabels(); ls != nil {
@@ -222,7 +222,7 @@ func (r *KubeEventsRulerReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	}
 
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&loggingv1alpha1.KubeEventsRuler{}).
+		For(&eventsv1alpha1.Ruler{}).
 		Owns(&appsv1.Deployment{}).
 		Owns(&corev1.Service{}).
 		Owns(&corev1.ConfigMap{}).
@@ -233,8 +233,8 @@ func (r *KubeEventsRulerReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		Complete(r)
 }
 
-func (r *KubeEventsRulerReconciler) serviceAccountMutate(sa *corev1.ServiceAccount,
-	ker *loggingv1alpha1.KubeEventsRuler) controllerutil.MutateFn {
+func (r *RulerReconciler) serviceAccountMutate(sa *corev1.ServiceAccount,
+	ker *eventsv1alpha1.Ruler) controllerutil.MutateFn {
 	return func() error {
 		sa.Labels = r.relativeResourcesShareLabels(ker)
 		sa.SetOwnerReferences(nil)
@@ -242,14 +242,14 @@ func (r *KubeEventsRulerReconciler) serviceAccountMutate(sa *corev1.ServiceAccou
 	}
 }
 
-func (r *KubeEventsRulerReconciler) clusterRoleMutate(cr *rbacv1.ClusterRole,
-	ker *loggingv1alpha1.KubeEventsRuler) controllerutil.MutateFn {
+func (r *RulerReconciler) clusterRoleMutate(cr *rbacv1.ClusterRole,
+	ker *eventsv1alpha1.Ruler) controllerutil.MutateFn {
 	return func() error {
 		cr.Labels = r.relativeResourcesShareLabels(ker)
 		cr.Labels[labelKeyEventsRulerNamespace] = ker.Namespace
 		cr.Rules = []rbacv1.PolicyRule{{
-			APIGroups: []string{"logging.kubesphere.io"},
-			Resources: []string{"kubeeventsrules"},
+			APIGroups: []string{"events.kubesphere.io"},
+			Resources: []string{"rules"},
 			Verbs:     []string{"get", "list", "watch"},
 		}, {
 			APIGroups: []string{""},
@@ -260,9 +260,9 @@ func (r *KubeEventsRulerReconciler) clusterRoleMutate(cr *rbacv1.ClusterRole,
 	}
 }
 
-func (r *KubeEventsRulerReconciler) clusterRoleBindingMutate(crb *rbacv1.ClusterRoleBinding,
+func (r *RulerReconciler) clusterRoleBindingMutate(crb *rbacv1.ClusterRoleBinding,
 	cr *rbacv1.ClusterRole, sa *corev1.ServiceAccount,
-	ker *loggingv1alpha1.KubeEventsRuler) controllerutil.MutateFn {
+	ker *eventsv1alpha1.Ruler) controllerutil.MutateFn {
 	return func() error {
 		crb.Labels = r.relativeResourcesShareLabels(ker)
 		crb.Labels[labelKeyEventsRulerNamespace] = ker.Namespace
@@ -280,8 +280,8 @@ func (r *KubeEventsRulerReconciler) clusterRoleBindingMutate(crb *rbacv1.Cluster
 	}
 }
 
-func (r *KubeEventsRulerReconciler) configMutate(cm *corev1.ConfigMap,
-	ker *loggingv1alpha1.KubeEventsRuler) controllerutil.MutateFn {
+func (r *RulerReconciler) configMutate(cm *corev1.ConfigMap,
+	ker *eventsv1alpha1.Ruler) controllerutil.MutateFn {
 	return func() error {
 		cm.Labels = r.relativeResourcesShareLabels(ker)
 
@@ -333,9 +333,9 @@ func (r *KubeEventsRulerReconciler) configMutate(cm *corev1.ConfigMap,
 	}
 }
 
-func (r *KubeEventsRulerReconciler) deployMutate(deploy *appsv1.Deployment,
+func (r *RulerReconciler) deployMutate(deploy *appsv1.Deployment,
 	cm *corev1.ConfigMap, sa *corev1.ServiceAccount,
-	ker *loggingv1alpha1.KubeEventsRuler) controllerutil.MutateFn {
+	ker *eventsv1alpha1.Ruler) controllerutil.MutateFn {
 	return func() error {
 		deploy.Labels = r.relativeResourcesShareLabels(ker)
 
@@ -441,8 +441,8 @@ func (r *KubeEventsRulerReconciler) deployMutate(deploy *appsv1.Deployment,
 	}
 }
 
-func (r *KubeEventsRulerReconciler) serviceMutate(svc *corev1.Service, deploy *appsv1.Deployment,
-	ker *loggingv1alpha1.KubeEventsRuler) controllerutil.MutateFn {
+func (r *RulerReconciler) serviceMutate(svc *corev1.Service, deploy *appsv1.Deployment,
+	ker *eventsv1alpha1.Ruler) controllerutil.MutateFn {
 	return func() error {
 		svc.Labels = r.relativeResourcesShareLabels(ker)
 
@@ -462,7 +462,7 @@ func (r *KubeEventsRulerReconciler) serviceMutate(svc *corev1.Service, deploy *a
 	}
 }
 
-func (r *KubeEventsRulerReconciler) relativeResourcesShareLabels(ker *loggingv1alpha1.KubeEventsRuler) map[string]string {
+func (r *RulerReconciler) relativeResourcesShareLabels(ker *eventsv1alpha1.Ruler) map[string]string {
 	ls := make(map[string]string)
 	ls[labelKeyEventsRuler] = ker.Name
 	return ls

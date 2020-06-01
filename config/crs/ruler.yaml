@@ -1,0 +1,19 @@
+apiVersion: events.kubesphere.io/v1alpha1
+kind: Ruler
+metadata:
+  name: ruler
+  namespace: system
+spec:
+  replicas: 2
+  image: ruler
+  resources: {}
+#    limits:
+#      cpu: 500m
+#      memory: 500Mi
+#    requests:
+#      cpu: 50m
+#      memory: 50Mi
+  sinks:
+    alertmanager:
+      namespace: kubesphere-monitoring-system
+      name: alertmanager-main

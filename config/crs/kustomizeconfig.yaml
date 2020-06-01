@@ -1,0 +1,5 @@
+images:
+- path: spec/image
+  kind: Exporter
+- path: spec/image
+  kind: Ruler

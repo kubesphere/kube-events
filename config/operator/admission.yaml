@@ -19,19 +19,19 @@ webhooks:
     service:
       name: $(ADMISSION_SERVICE_NAME)
       namespace: $(ADMISSION_SERVICE_NAMESPACE)
-      path: /mutate-logging-kubesphere-io-v1alpha1-kubeeventsrule
+      path: /mutate-events-kubesphere-io-v1alpha1-rule
   failurePolicy: Fail
-  name: mkubeeventsrule.kb.io
+  name: mrule.kb.io
   rules:
   - apiGroups:
-    - logging.kubesphere.io
+    - events.kubesphere.io
     apiVersions:
     - v1alpha1
     operations:
     - CREATE
     - UPDATE
     resources:
-    - kubeeventsrules
+    - rules
 
 ---
 apiVersion: admissionregistration.k8s.io/v1beta1
@@ -44,19 +44,19 @@ webhooks:
     service:
       name: $(ADMISSION_SERVICE_NAME)
       namespace: $(ADMISSION_SERVICE_NAMESPACE)
-      path: /validate-logging-kubesphere-io-v1alpha1-kubeeventsrule
+      path: /validate-events-kubesphere-io-v1alpha1-rule
   failurePolicy: Fail
-  name: vkubeeventsrule.kb.io
+  name: vrule.kb.io
   rules:
   - apiGroups:
-    - logging.kubesphere.io
+    - events.kubesphere.io
     apiVersions:
     - v1alpha1
     operations:
     - CREATE
     - UPDATE
     resources:
-    - kubeeventsrules
+    - rules
 ---
 apiVersion: v1
 kind: Service

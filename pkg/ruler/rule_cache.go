@@ -20,9 +20,9 @@ import (
 )
 
 type RuleCache struct {
-	clusterRules   sync.Map // {namespace/name: KubeEventsRule}
-	workspaceRules sync.Map // {workspace/namespace/name: KubeEventsRule}
-	namespaceRules sync.Map // {namespace: {namespace+name: KubeEventsRule}}
+	clusterRules   sync.Map // {namespace/name: Rule}
+	workspaceRules sync.Map // {workspace/namespace/name: Rule}
+	namespaceRules sync.Map // {namespace: {namespace+name: Rule}}
 	namespaces     sync.Map // {namespace: Namespace}
 
 	ruleSelector          labels.Selector
@@ -59,7 +59,7 @@ func (c *RuleCache) Run(ctx context.Context) error {
 		return fmt.Errorf("namespace cache failed")
 	}
 
-	ruleInf, e := c.resCache.GetInformer(&v1alpha1.KubeEventsRule{})
+	ruleInf, e := c.resCache.GetInformer(&v1alpha1.Rule{})
 	if e != nil {
 		return e
 	}
@@ -79,11 +79,11 @@ func (c *RuleCache) Run(ctx context.Context) error {
 	return ctx.Err()
 }
 
-func (c *RuleCache) GetRules(ctx context.Context, evt *types.Event) (rules []*v1alpha1.KubeEventsRule) {
+func (c *RuleCache) GetRules(ctx context.Context, evt *types.Event) (rules []*v1alpha1.Rule) {
 	createRangeFunc := func(f func(key interface{}) bool) func(key, value interface{}) bool {
 		return func(key, value interface{}) bool {
 			if f(key) {
-				rules = append(rules, value.(*v1alpha1.KubeEventsRule))
+				rules = append(rules, value.(*v1alpha1.Rule))
 			}
 			return true
 		}
@@ -120,7 +120,7 @@ func (c *RuleCache) GetRules(ctx context.Context, evt *types.Event) (rules []*v1
 
 func (c *RuleCache) ruleAdd(obj interface{}) {
 	rsc := v1alpha1.GetRuleScopeConfig()
-	if rule, ok := obj.(*v1alpha1.KubeEventsRule); ok && c.selectorMatchesRule(rule) {
+	if rule, ok := obj.(*v1alpha1.Rule); ok && c.selectorMatchesRule(rule) {
 		switch rule.Labels[rsc.ScopeLabelKey] {
 		case rsc.ScopeLabelValueCluster:
 			c.clusterRules.Store(c.ruleNameFromClusterRule(rule), rule)
@@ -136,7 +136,7 @@ func (c *RuleCache) ruleAdd(obj interface{}) {
 
 func (c *RuleCache) ruleDelete(obj interface{}) {
 	rsc := v1alpha1.GetRuleScopeConfig()
-	if rule, ok := obj.(*v1alpha1.KubeEventsRule); ok {
+	if rule, ok := obj.(*v1alpha1.Rule); ok {
 		switch rule.Labels[rsc.ScopeLabelKey] {
 		case rsc.ScopeLabelValueCluster:
 			c.clusterRules.Delete(c.ruleNameFromClusterRule(rule))
@@ -150,7 +150,7 @@ func (c *RuleCache) ruleDelete(obj interface{}) {
 	}
 }
 
-func (c *RuleCache) selectorMatchesRule(rule *v1alpha1.KubeEventsRule) bool {
+func (c *RuleCache) selectorMatchesRule(rule *v1alpha1.Rule) bool {
 	if !c.ruleSelector.Matches(labels.Set(rule.Labels)) {
 		return false
 	}
@@ -161,15 +161,15 @@ func (c *RuleCache) selectorMatchesRule(rule *v1alpha1.KubeEventsRule) bool {
 	return false
 }
 
-func (c *RuleCache) ruleNameFromClusterRule(rule *v1alpha1.KubeEventsRule) string {
+func (c *RuleCache) ruleNameFromClusterRule(rule *v1alpha1.Rule) string {
 	return rule.Namespace + "/" + rule.Name
 }
 
-func (c *RuleCache) ruleNameFromWorkspaceRule(rule *v1alpha1.KubeEventsRule) string {
+func (c *RuleCache) ruleNameFromWorkspaceRule(rule *v1alpha1.Rule) string {
 	return c.workspaceFromRule(rule) + "/" + rule.Namespace + "/" + rule.Name
 }
 
-func (c *RuleCache) ruleNameFromNamespaceRule(rule *v1alpha1.KubeEventsRule) string {
+func (c *RuleCache) ruleNameFromNamespaceRule(rule *v1alpha1.Rule) string {
 	return rule.Namespace + "/" + rule.Name
 }
 
@@ -177,7 +177,7 @@ func (c *RuleCache) workspaceFromNamespace(ns *corev1.Namespace) string {
 	return ns.Labels[v1alpha1.GetRuleScopeConfig().ScopeWorkspaceLabelKey]
 }
 
-func (c *RuleCache) workspaceFromRule(rule *v1alpha1.KubeEventsRule) string {
+func (c *RuleCache) workspaceFromRule(rule *v1alpha1.Rule) string {
 	return rule.Labels[v1alpha1.GetRuleScopeConfig().ScopeWorkspaceLabelKey]
 }
 

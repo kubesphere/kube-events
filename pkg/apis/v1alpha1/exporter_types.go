@@ -21,9 +21,9 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// KubeEventsExporterSpec defines the desired state of KubeEventsExporter
-type KubeEventsExporterSpec struct {
-	// Docker image of kube-events-exporter
+// ExporterSpec defines the desired state of Exporter
+type ExporterSpec struct {
+	// Docker image of events exporter
 	Image string `json:"image"`
 	// Image pull policy. One of Always, Never, IfNotPresent.
 	ImagePullPolicy corev1.PullPolicy `json:"imagePullPolicy,omitempty"`
@@ -33,33 +33,34 @@ type KubeEventsExporterSpec struct {
 	Sinks *ExporterSinks `json:"sinks,omitempty"`
 }
 
-// KubeEventsExporterStatus defines the observed state of KubeEventsExporter
-type KubeEventsExporterStatus struct {
+// ExporterStatus defines the observed state of Exporter
+type ExporterStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 }
 
 // +kubebuilder:object:root=true
+// +kubebuilder:resource:shortName=ex
 
-// KubeEventsExporter is the Schema for the kubeeventsexporters API
-type KubeEventsExporter struct {
+// Exporter is the Schema for the exporter API
+type Exporter struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	// Spec defines the specification of the desired behavior of the KubeEventsExporter.
-	Spec KubeEventsExporterSpec `json:"spec"`
+	// Spec defines the specification of the desired behavior of the Exporter.
+	Spec ExporterSpec `json:"spec"`
 
-	Status KubeEventsExporterStatus `json:"status,omitempty"`
+	Status ExporterStatus `json:"status,omitempty"`
 }
 
 // +kubebuilder:object:root=true
 
-// KubeEventsExporterList contains a list of KubeEventsExporter
-type KubeEventsExporterList struct {
+// ExporterList contains a list of Exporter
+type ExporterList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
-	// List of KubeEventsExporters
-	Items []KubeEventsExporter `json:"items"`
+	// List of Exporters
+	Items []Exporter `json:"items"`
 }
 
 // ExporterSinks defines a set of sinks for Events Exporter
@@ -87,5 +88,5 @@ type ExporterWebhookSink struct {
 }
 
 func init() {
-	SchemeBuilder.Register(&KubeEventsExporter{}, &KubeEventsExporterList{})
+	SchemeBuilder.Register(&Exporter{}, &ExporterList{})
 }

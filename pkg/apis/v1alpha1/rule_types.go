@@ -20,39 +20,40 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// KubeEventsRuleSpec defines the desired state of KubeEventsRule
-type KubeEventsRuleSpec struct {
-	Rules []Rule `json:"rules,omitempty"`
+// RuleSpec defines the desired state of Rule
+type RuleSpec struct {
+	Rules []EventRule `json:"rules,omitempty"`
 }
 
-// KubeEventsRuleStatus defines the observed state of KubeEventsRule
-type KubeEventsRuleStatus struct {
+// RuleStatus defines the observed state of Rule
+type RuleStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 }
 
 // +kubebuilder:object:root=true
+// +kubebuilder:resource:shortName=er
 
-// KubeEventsRule is the Schema for the kubeeventsrules API
-type KubeEventsRule struct {
+// Rule is the Schema for the Rule API
+type Rule struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   KubeEventsRuleSpec   `json:"spec"`
-	Status KubeEventsRuleStatus `json:"status,omitempty"`
+	Spec   RuleSpec   `json:"spec"`
+	Status RuleStatus `json:"status,omitempty"`
 }
 
 // +kubebuilder:object:root=true
 
-// KubeEventsRuleList contains a list of KubeEventsRule
-type KubeEventsRuleList struct {
+// RuleList contains a list of Rule
+type RuleList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []KubeEventsRule `json:"items"`
+	Items           []Rule `json:"items"`
 }
 
-// Rule describes a notification or alert rule
-type Rule struct {
+// EventRule describes a notification or alert rule
+type EventRule struct {
 	// Name is simple name of rule
 	Name string `json:"name,omitempty"`
 	// Condition is a string similar with the where part of sql (please use double quotation to mark a string).
@@ -82,5 +83,5 @@ const (
 )
 
 func init() {
-	SchemeBuilder.Register(&KubeEventsRule{}, &KubeEventsRuleList{})
+	SchemeBuilder.Register(&Rule{}, &RuleList{})
 }

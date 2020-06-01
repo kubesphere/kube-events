@@ -20,15 +20,17 @@ endif
 CONTROLLER_GEN := $(GOBIN)/controller-gen
 KE_DOCGEN_BINARY:=$(GOBIN)/kube-events-docgen
 
-TYPES_V1ALPHA1_TARGET := pkg/apis/v1alpha1/kubeeventsexporter_types.go pkg/apis/v1alpha1/kubeeventsruler_types.go pkg/apis/v1alpha1/kubeeventsrule_types.go
+TYPES_V1ALPHA1_TARGET := pkg/apis/v1alpha1/exporter_types.go pkg/apis/v1alpha1/ruler_types.go pkg/apis/v1alpha1/rule_types.go
 DEEPCOPY_TARGET := pkg/apis/v1alpha1/zz_generated.deepcopy.go
 
 deploy:
 	kubectl apply -f config/bundle.yaml
 
 generate: $(DEEPCOPY_TARGET) manifests
-	cd config && $(GOBIN)/kustomize edit set image operator=$(REPO_OPERATOR):$(TAG) exporter=$(REPO_EXPORTER):$(TAG) ruler=$(REPO_RULER):$(TAG)
+	cd config && $(GOBIN)/kustomize edit set image operator=$(REPO_OPERATOR):$(TAG)
 	$(GOBIN)/kustomize build config > config/bundle.yaml
+	cd config/crs && $(GOBIN)/kustomize edit set image operator=exporter=$(REPO_EXPORTER):$(TAG) ruler=$(REPO_RULER):$(TAG)
+	$(GOBIN)/kustomize build config/crs > config/crs/bundle.yaml
 
 # Generate manifests e.g. CRD, RBAC etc.
 manifests: $(CONTROLLER_GEN) $(TYPES_V1ALPHA1_TARGET)
