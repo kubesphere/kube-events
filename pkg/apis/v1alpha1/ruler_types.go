@@ -21,53 +21,54 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// KubeEventsRulerSpec defines the desired state of KubeEventsRuler
-type KubeEventsRulerSpec struct {
+// RulerSpec defines the desired state of Ruler
+type RulerSpec struct {
 	// Number of desired pods. Defaults to 1.
 	Replicas *int32 `json:"replicas,omitempty"`
-	// Docker image of kube-events-exporter
+	// Docker image of events ruler
 	Image string `json:"image"`
 	// Image pull policy. One of Always, Never, IfNotPresent.
 	ImagePullPolicy corev1.PullPolicy `json:"imagePullPolicy,omitempty"`
 	// Resources defines resources requests and limits for single Pod.
 	Resources corev1.ResourceRequirements `json:"resources,omitempty"`
-	// Namespaces to be selected for KubeEventsRules discovery.
-	// If unspecified, discover KubeEventsRule instances from all namespaces.
+	// Namespaces to be selected for Rules discovery.
+	// If unspecified, discover Rule instances from all namespaces.
 	RuleNamespaceSelector *metav1.LabelSelector `json:"ruleNamespaceSelector,omitempty"`
-	// A selector to select KubeEventsRules instances.
+	// A selector to select Rules instances.
 	RuleSelector *metav1.LabelSelector `json:"ruleSelector,omitempty"`
 	// Sinks defines sinks detail of this ruler
 	Sinks *RulerSinks `json:"sinks,omitempty"`
 }
 
-// KubeEventsRulerStatus defines the observed state of KubeEventsRuler
-type KubeEventsRulerStatus struct {
+// RulerStatus defines the observed state of Ruler
+type RulerStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 }
 
 // +kubebuilder:object:root=true
+// +kubebuilder:resource:shortName=erl
 
-// KubeEventsRuler is the Schema for the kubeeventsrulers API
-type KubeEventsRuler struct {
+// Ruler is the Schema for the ruler API
+type Ruler struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	// Spec defines the specification of the desired behavior of the KubeEventsRuler.
-	Spec KubeEventsRulerSpec `json:"spec"`
+	// Spec defines the specification of the desired behavior of the Ruler.
+	Spec RulerSpec `json:"spec"`
 
-	Status KubeEventsRulerStatus `json:"status,omitempty"`
+	Status RulerStatus `json:"status,omitempty"`
 }
 
 // +kubebuilder:object:root=true
 
-// KubeEventsRulerList contains a list of KubeEventsRuler
-type KubeEventsRulerList struct {
+// RulerList contains a list of Ruler
+type RulerList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
 
-	// List of KubeEventsRulers
-	Items []KubeEventsRuler `json:"items"`
+	// List of Rulers
+	Items []Ruler `json:"items"`
 }
 
 // RulerSinks defines a set of sinks for Events Ruler
@@ -137,5 +138,5 @@ const (
 )
 
 func init() {
-	SchemeBuilder.Register(&KubeEventsRuler{}, &KubeEventsRulerList{})
+	SchemeBuilder.Register(&Ruler{}, &RulerList{})
 }

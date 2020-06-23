@@ -63,9 +63,9 @@ func GetRuleScopeConfig() *ruleScopeConfig {
 }
 
 // log is for logging in this package.
-var kubeeventsrulelog = logf.Log.WithName("kubeeventsrule-resource")
+var rulelog = logf.Log.WithName("rule-resource")
 
-func (r *KubeEventsRule) SetupWebhookWithManager(mgr ctrl.Manager) error {
+func (r *Rule) SetupWebhookWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewWebhookManagedBy(mgr).
 		For(r).
 		Complete()
@@ -73,13 +73,13 @@ func (r *KubeEventsRule) SetupWebhookWithManager(mgr ctrl.Manager) error {
 
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 
-// +kubebuilder:webhook:path=/mutate-logging-kubesphere-io-v1alpha1-kubeeventsrule,mutating=true,failurePolicy=fail,groups=logging.kubesphere.io,resources=kubeeventsrules,verbs=create;update,versions=v1alpha1,name=mkubeeventsrule.kb.io
+// +kubebuilder:webhook:path=/mutate-events-kubesphere-io-v1alpha1-rule,mutating=true,failurePolicy=fail,groups=events.kubesphere.io,resources=rules,verbs=create;update,versions=v1alpha1,name=mrule.kb.io
 
-var _ webhook.Defaulter = &KubeEventsRule{}
+var _ webhook.Defaulter = &Rule{}
 
 // Default implements webhook.Defaulter so a webhook will be registered for the type
-func (r *KubeEventsRule) Default() {
-	kubeeventsrulelog.Info("default", "name", r.Name)
+func (r *Rule) Default() {
+	rulelog.Info("default", "name", r.Name)
 
 	switch r.Namespace {
 	case _ruleScopeConfig.NamespaceScopeCluster, _ruleScopeConfig.NamespaceScopeWorkspace:
@@ -87,38 +87,40 @@ func (r *KubeEventsRule) Default() {
 		if r.Labels == nil {
 			r.Labels = make(map[string]string)
 		}
-		r.Labels[_ruleScopeConfig.ScopeLabelKey] = "namespace"
+		if _, ok := r.Labels[_ruleScopeConfig.ScopeLabelKey]; !ok {
+			r.Labels[_ruleScopeConfig.ScopeLabelKey] = "namespace"
+		}
 	}
 }
 
 // TODO(user): change verbs to "verbs=create;update;delete" if you want to enable deletion validation.
-// +kubebuilder:webhook:verbs=create;update,path=/validate-logging-kubesphere-io-v1alpha1-kubeeventsrule,mutating=false,failurePolicy=fail,groups=logging.kubesphere.io,resources=kubeeventsrules,versions=v1alpha1,name=vkubeeventsrule.kb.io
+// +kubebuilder:webhook:path=/validate-events-kubesphere-io-v1alpha1-rule,mutating=false,failurePolicy=fail,groups=events.kubesphere.io,resources=rules,verbs=create;update,versions=v1alpha1,name=vrule.kb.io
 
-var _ webhook.Validator = &KubeEventsRule{}
+var _ webhook.Validator = &Rule{}
 
 // ValidateCreate implements webhook.Validator so a webhook will be registered for the type
-func (r *KubeEventsRule) ValidateCreate() error {
-	kubeeventsrulelog.Info("validate create", "name", r.Name)
+func (r *Rule) ValidateCreate() error {
+	rulelog.Info("validate create", "name", r.Name)
 
-	return r.validateKubeEventsRule()
+	return r.validateRule()
 }
 
 // ValidateUpdate implements webhook.Validator so a webhook will be registered for the type
-func (r *KubeEventsRule) ValidateUpdate(old runtime.Object) error {
-	kubeeventsrulelog.Info("validate update", "name", r.Name)
+func (r *Rule) ValidateUpdate(old runtime.Object) error {
+	rulelog.Info("validate update", "name", r.Name)
 
-	return r.validateKubeEventsRule()
+	return r.validateRule()
 }
 
 // ValidateDelete implements webhook.Validator so a webhook will be registered for the type
-func (r *KubeEventsRule) ValidateDelete() error {
-	kubeeventsrulelog.Info("validate delete", "name", r.Name)
+func (r *Rule) ValidateDelete() error {
+	rulelog.Info("validate delete", "name", r.Name)
 
 	// TODO(user): fill in your validation logic upon object deletion.
 	return nil
 }
 
-func (r *KubeEventsRule) validateKubeEventsRule() error {
+func (r *Rule) validateRule() error {
 
 	var allErrs field.ErrorList
 	if err := r.validateRuleScope(); err != nil {
@@ -129,11 +131,11 @@ func (r *KubeEventsRule) validateKubeEventsRule() error {
 	}
 
 	return apierrs.NewInvalid(
-		schema.GroupKind{Group: GroupVersion.Group, Kind: "KubeEventsRule"},
+		schema.GroupKind{Group: GroupVersion.Group, Kind: "Rule"},
 		r.Name, allErrs)
 }
 
-func (r *KubeEventsRule) validateRuleScope() *field.Error {
+func (r *Rule) validateRuleScope() *field.Error {
 
 	rs, ok := r.Labels[_ruleScopeConfig.ScopeLabelKey]
 	labelsFieldPath := field.NewPath("metadata").Child("labels", _ruleScopeConfig.ScopeLabelKey)

@@ -1,10 +1,10 @@
 namespace:
 - path: spec/sinks/webhooks/service/namespace
-  kind: KubeEventsExporter
+  kind: Exporter
 
 namePrefix:
 - path: spec/sinks/webhooks/service/name
-  kind: KubeEventsExporter
+  kind: Exporter
 
 varReference:
 - path: webhooks/clientConfig/service
@@ -17,9 +17,3 @@ varReference:
   kind: Deployment
 - path: spec/selector
   kind: Service
-
-images:
-- path: spec/image
-  kind: KubeEventsExporter
-- path: spec/image
-  kind: KubeEventsRuler

@@ -1,6 +1,6 @@
 {{- if .Values.exporter.enabled }}
-apiVersion: logging.kubesphere.io/v1alpha1
-kind: KubeEventsExporter
+apiVersion: events.kubesphere.io/v1alpha1
+kind: Exporter
 metadata:
   name: {{ template "kube-events.exporter.fullname" . }}
   namespace: {{ .Release.Namespace }}

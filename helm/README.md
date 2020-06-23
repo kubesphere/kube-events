@@ -19,7 +19,7 @@ To install the chart with the release name `kube-events` into the namespace `kub
 helm install kube-events ./ --namespace kubesphere-logging-system
 ```
 
-The command deploys kube-events on the Kubernetes cluster in the default configuration. The [configuration](#configuration) section lists the parameters that can be configured during installation.
+The command deploys kube-events on the Kubernetes cluster with the default configuration. The [configuration](#configuration) section lists the parameters that can be configured during installation.
 
 The default installation includes kube-events-operator, kube-events-exporter, kube-events-ruler, and default rules in cluster scope.
 
@@ -36,19 +36,20 @@ The command removes all the Kubernetes components associated with the chart and 
 CRDs created by this chart are not removed and should be manually cleaned up:
 
 ```console
-kubectl delete crd kubeeventsrulers.logging.kubesphere.io
-kubectl delete crd kubeeventsexporters.logging.kubesphere.io
-kubectl delete crd kubeeventsrules.logging.kubesphere.io
+kubectl delete crd rulers.events.kubesphere.io
+kubectl delete crd exporters.events.kubesphere.io
+kubectl delete crd rules.events.kubesphere.io
 ```
 
 ## Configuration
 
 The following tables list the configurable parameters of the kube-events chart and their default values.
 
-### General
+### Rule
 | Parameter | Description | Default |
 | ----- | ----------- | ------ |
-| defaultRules.create | Create default rules for filtering events | `true` |
+| rule.createDefaults | Whether to create default rules for filtering events | `true` |
+| rule.overrideDefaults | Whether to override default rules when upgrade release | `false` |
 
 ### Operator
 | Parameter | Description | Default |
@@ -60,6 +61,7 @@ The following tables list the configurable parameters of the kube-events chart a
 | operator.configReloader.image | Image for config reloader | `jimmidyson/configmap-reload:v0.3.0` |
 | operator.serviceAccount.create | Create a service account for kube-events-operator | `true` |
 | operator.serviceAccount.name | Kube-events-operator service account name | `""` |
+| operator.cleanupAllCustomResources | Whether to clean up all custom resources(not crds) when uninstall release | `false` |
 
 ### Exporter
 | Parameter | Description | Default |
@@ -80,8 +82,8 @@ The following tables list the configurable parameters of the kube-events chart a
 | ruler.image.tag | Tag for kube-events-ruler image | `v0.1.0` |
 | ruler.image.pullPolicy | Pull policy for kube-events-ruler image | `IfNotPresent` |
 | ruler.resources | Define resources requests and limits for single Pods | `{}` |
-| ruler.ruleNamespaceSelector | Namespaces to be selected for KubeEventsRules discovery. If nil, select all namespaces | `{}` |
-| ruler.ruleSelector | A selector to select which KubeEventsRules to use for ruler | `{}` |
+| ruler.ruleNamespaceSelector | Namespaces to be selected for Rules discovery. If nil, select all namespaces | `{}` |
+| ruler.ruleSelector | A selector to select which Rules to use for ruler | `{}` |
 | ruler.sinks.alertmanager.namespace | Namespace of alertmanager service | `kubesphere-monitoring-system` |
 | ruler.sinks.alertmanager.name | Name of alertmanager service | `alertmanager-main` |
 | ruler.sinks.webhooks | List of webhook sinks for events notification or alerting | `[]` |

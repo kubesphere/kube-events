@@ -7,7 +7,7 @@ import (
 	"sync"
 
 	amkit "github.com/kubesphere/alertmanager-kit"
-	loggingv1alpha1 "github.com/kubesphere/kube-events/pkg/apis/v1alpha1"
+	eventsv1alpha1 "github.com/kubesphere/kube-events/pkg/apis/v1alpha1"
 	"github.com/kubesphere/kube-events/pkg/ruler/visitor"
 	"github.com/kubesphere/kube-events/pkg/util"
 	corev1 "k8s.io/api/core/v1"
@@ -26,7 +26,7 @@ func (evt *Event) Flat() map[string]interface{} {
 	return evt.flatEvt
 }
 
-func (evt *Event) EvalByRule(rule *loggingv1alpha1.Rule) (ok bool, err error) {
+func (evt *Event) EvalByRule(rule *eventsv1alpha1.EventRule) (ok bool, err error) {
 	defer func() {
 		if p := recover(); p != nil {
 			err = fmt.Errorf("eval error: %v. event[%s/%s], rule[name:%s, condition:%s]",
@@ -39,10 +39,10 @@ func (evt *Event) EvalByRule(rule *loggingv1alpha1.Rule) (ok bool, err error) {
 	return visitor.EventRuleEvaluate(evt.Flat(), rule.Condition), nil
 }
 
-func (evt *Event) EvalToNotification(evtRules []*loggingv1alpha1.KubeEventsRule) (*EventNotification, error) {
+func (evt *Event) EvalToNotification(evtRules []*eventsv1alpha1.Rule) (*EventNotification, error) {
 	for _, er := range evtRules {
 		for _, rule := range er.Spec.Rules {
-			if rule.Enable && rule.Type == loggingv1alpha1.RuleTypeNotification {
+			if rule.Enable && rule.Type == eventsv1alpha1.RuleTypeNotification {
 				ok, e := evt.EvalByRule(&rule)
 				if e != nil {
 					return nil, e
@@ -56,10 +56,10 @@ func (evt *Event) EvalToNotification(evtRules []*loggingv1alpha1.KubeEventsRule)
 	return nil, nil
 }
 
-func (evt *Event) EvalToAlert(evtRules []*loggingv1alpha1.KubeEventsRule) (*EventAlert, error) {
+func (evt *Event) EvalToAlert(evtRules []*eventsv1alpha1.Rule) (*EventAlert, error) {
 	for _, er := range evtRules {
 		for _, rule := range er.Spec.Rules {
-			if rule.Enable && rule.Type == loggingv1alpha1.RuleTypeAlert {
+			if rule.Enable && rule.Type == eventsv1alpha1.RuleTypeAlert {
 				ok, e := evt.EvalByRule(&rule)
 				if e != nil {
 					return nil, e
@@ -73,7 +73,7 @@ func (evt *Event) EvalToAlert(evtRules []*loggingv1alpha1.KubeEventsRule) (*Even
 	return nil, nil
 }
 
-func generateAlert(evt *Event, rule *loggingv1alpha1.Rule) *EventAlert {
+func generateAlert(evt *Event, rule *eventsv1alpha1.EventRule) *EventAlert {
 	alert := &amkit.RawAlert{
 		Annotations: map[string]string{},
 		Labels: map[string]string{

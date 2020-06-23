@@ -1,5 +1,5 @@
-apiVersion: logging.kubesphere.io/v1alpha1
-kind: KubeEventsRuler
+apiVersion: events.kubesphere.io/v1alpha1
+kind: Ruler
 metadata:
   name: ruler
   namespace: system

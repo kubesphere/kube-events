@@ -1,5 +1,0 @@
-resources:
-- cluster-rules-default.yaml
-- exporter.yaml
-- ruler.yaml
-

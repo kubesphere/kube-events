@@ -1,5 +1,5 @@
 resources:
-- bases/logging.kubesphere.io_kubeeventsrulers.yaml
-- bases/logging.kubesphere.io_kubeeventsexporters.yaml
-- bases/logging.kubesphere.io_kubeeventsrules.yaml
+- bases/events.kubesphere.io_rulers.yaml
+- bases/events.kubesphere.io_exporters.yaml
+- bases/events.kubesphere.io_rules.yaml
 

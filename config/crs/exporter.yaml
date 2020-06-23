@@ -1,17 +1,17 @@
-apiVersion: logging.kubesphere.io/v1alpha1
-kind: KubeEventsExporter
+apiVersion: events.kubesphere.io/v1alpha1
+kind: Exporter
 metadata:
   name: exporter
   namespace: system
 spec:
   image: exporter
-  resources:
-    limits:
-      cpu: 200m
-      memory: 500Mi
-    requests:
-      cpu: 20m
-      memory: 50Mi
+  resources: {}
+#    limits:
+#      cpu: 200m
+#      memory: 500Mi
+#    requests:
+#      cpu: 20m
+#      memory: 50Mi
   sinks:
     stdout: {}
     webhooks:

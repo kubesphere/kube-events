@@ -24,30 +24,30 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
-	loggingv1alpha1 "github.com/kubesphere/kube-events/pkg/apis/v1alpha1"
+	eventsv1alpha1 "github.com/kubesphere/kube-events/pkg/apis/v1alpha1"
 )
 
-// KubeEventsRuleReconciler reconciles a KubeEventsRule object
-type KubeEventsRuleReconciler struct {
+// RuleReconciler reconciles a Rule object
+type RuleReconciler struct {
 	client.Client
 	Log    logr.Logger
 	Scheme *runtime.Scheme
 }
 
-// +kubebuilder:rbac:groups=logging.kubesphere.io,resources=kubeeventsrules,verbs=get;list;watch;create;update;patch;delete
-// +kubebuilder:rbac:groups=logging.kubesphere.io,resources=kubeeventsrules/status,verbs=get;update;patch
+// +kubebuilder:rbac:groups=events.kubesphere.io,resources=rules,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=events.kubesphere.io,resources=rules/status,verbs=get;update;patch
 
-func (r *KubeEventsRuleReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
+func (r *RuleReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	_ = context.Background()
-	_ = r.Log.WithValues("kubeeventsrule", req.NamespacedName)
+	_ = r.Log.WithValues("rule", req.NamespacedName)
 
 	// your logic here
 
 	return ctrl.Result{}, nil
 }
 
-func (r *KubeEventsRuleReconciler) SetupWithManager(mgr ctrl.Manager) error {
+func (r *RuleReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&loggingv1alpha1.KubeEventsRule{}).
+		For(&eventsv1alpha1.Rule{}).
 		Complete(r)
 }

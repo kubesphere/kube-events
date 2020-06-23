@@ -6,23 +6,46 @@ This Document documents the types introduced by the Kube-Events to be consumed b
 > Note this document is generated from code comments. When contributing a change to this document please do so by changing the code comments.
 
 ## Table of Contents
+* [Exporter](#exporter)
+* [ExporterList](#exporterlist)
 * [ExporterSinks](#exportersinks)
+* [ExporterSpec](#exporterspec)
 * [ExporterWebhookSink](#exporterwebhooksink)
-* [KubeEventsExporter](#kubeeventsexporter)
-* [KubeEventsExporterList](#kubeeventsexporterlist)
-* [KubeEventsExporterSpec](#kubeeventsexporterspec)
-* [KubeEventsRuler](#kubeeventsruler)
-* [KubeEventsRulerList](#kubeeventsrulerlist)
-* [KubeEventsRulerSpec](#kubeeventsrulerspec)
+* [Ruler](#ruler)
 * [RulerAlertmanagerSink](#ruleralertmanagersink)
+* [RulerList](#rulerlist)
 * [RulerSinks](#rulersinks)
+* [RulerSpec](#rulerspec)
 * [RulerStdoutSink](#rulerstdoutsink)
 * [RulerWebhookSink](#rulerwebhooksink)
 * [ServiceReference](#servicereference)
-* [KubeEventsRule](#kubeeventsrule)
-* [KubeEventsRuleList](#kubeeventsrulelist)
-* [KubeEventsRuleSpec](#kubeeventsrulespec)
+* [EventRule](#eventrule)
 * [Rule](#rule)
+* [RuleList](#rulelist)
+* [RuleSpec](#rulespec)
+
+## Exporter
+
+Exporter is the Schema for the exporter API
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| metadata |  | [metav1.ObjectMeta](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#objectmeta-v1-meta) | false |
+| spec | Spec defines the specification of the desired behavior of the Exporter. | [ExporterSpec](#exporterspec) | true |
+| status |  | [ExporterStatus](#exporterstatus) | false |
+
+[Back to TOC](#table-of-contents)
+
+## ExporterList
+
+ExporterList contains a list of Exporter
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| metadata |  | [metav1.ListMeta](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#listmeta-v1-meta) | false |
+| items | List of Exporters | [][Exporter](#exporter) | true |
+
+[Back to TOC](#table-of-contents)
 
 ## ExporterSinks
 
@@ -32,6 +55,19 @@ ExporterSinks defines a set of sinks for Events Exporter
 | ----- | ----------- | ------ | -------- |
 | webhooks | Webhooks is a list of ExporterWebhookSink | []*[ExporterWebhookSink](#exporterwebhooksink) | false |
 | stdout | Stdout represents whether to write events to stdout. Output when configure an empty struct `{}`, but do nothing when no configuration | *[ExporterStdoutSink](#exporterstdoutsink) | false |
+
+[Back to TOC](#table-of-contents)
+
+## ExporterSpec
+
+ExporterSpec defines the desired state of Exporter
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| image | Docker image of events exporter | string | true |
+| imagePullPolicy | Image pull policy. One of Always, Never, IfNotPresent. | [corev1.PullPolicy](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#container-v1-core) | false |
+| resources | Resources defines resources requests and limits for single Pod. | [corev1.ResourceRequirements](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#resourcerequirements-v1-core) | false |
+| sinks | Sinks defines details of events sinks | *[ExporterSinks](#exportersinks) | false |
 
 [Back to TOC](#table-of-contents)
 
@@ -46,78 +82,15 @@ ExporterWebhookSink defines parameters for webhook sink of Events Exporter.
 
 [Back to TOC](#table-of-contents)
 
-## KubeEventsExporter
+## Ruler
 
-KubeEventsExporter is the Schema for the kubeeventsexporters API
-
-| Field | Description | Scheme | Required |
-| ----- | ----------- | ------ | -------- |
-| metadata |  | [metav1.ObjectMeta](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#objectmeta-v1-meta) | false |
-| spec | Spec defines the specification of the desired behavior of the KubeEventsExporter. | [KubeEventsExporterSpec](#kubeeventsexporterspec) | true |
-| status |  | [KubeEventsExporterStatus](#kubeeventsexporterstatus) | false |
-
-[Back to TOC](#table-of-contents)
-
-## KubeEventsExporterList
-
-KubeEventsExporterList contains a list of KubeEventsExporter
-
-| Field | Description | Scheme | Required |
-| ----- | ----------- | ------ | -------- |
-| metadata |  | [metav1.ListMeta](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#listmeta-v1-meta) | false |
-| items | List of KubeEventsExporters | [][KubeEventsExporter](#kubeeventsexporter) | true |
-
-[Back to TOC](#table-of-contents)
-
-## KubeEventsExporterSpec
-
-KubeEventsExporterSpec defines the desired state of KubeEventsExporter
-
-| Field | Description | Scheme | Required |
-| ----- | ----------- | ------ | -------- |
-| image | Docker image of kube-events-exporter | string | true |
-| imagePullPolicy | Image pull policy. One of Always, Never, IfNotPresent. | [corev1.PullPolicy](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#container-v1-core) | false |
-| resources | Resources defines resources requests and limits for single Pod. | [corev1.ResourceRequirements](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#resourcerequirements-v1-core) | false |
-| sinks | Sinks defines details of events sinks | *[ExporterSinks](#exportersinks) | false |
-
-[Back to TOC](#table-of-contents)
-
-## KubeEventsRuler
-
-KubeEventsRuler is the Schema for the kubeeventsrulers API
+Ruler is the Schema for the ruler API
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | metadata |  | [metav1.ObjectMeta](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#objectmeta-v1-meta) | false |
-| spec | Spec defines the specification of the desired behavior of the KubeEventsRuler. | [KubeEventsRulerSpec](#kubeeventsrulerspec) | true |
-| status |  | [KubeEventsRulerStatus](#kubeeventsrulerstatus) | false |
-
-[Back to TOC](#table-of-contents)
-
-## KubeEventsRulerList
-
-KubeEventsRulerList contains a list of KubeEventsRuler
-
-| Field | Description | Scheme | Required |
-| ----- | ----------- | ------ | -------- |
-| metadata |  | [metav1.ListMeta](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#listmeta-v1-meta) | false |
-| items | List of KubeEventsRulers | [][KubeEventsRuler](#kubeeventsruler) | true |
-
-[Back to TOC](#table-of-contents)
-
-## KubeEventsRulerSpec
-
-KubeEventsRulerSpec defines the desired state of KubeEventsRuler
-
-| Field | Description | Scheme | Required |
-| ----- | ----------- | ------ | -------- |
-| replicas | Number of desired pods. Defaults to 1. | *int32 | false |
-| image | Docker image of kube-events-exporter | string | true |
-| imagePullPolicy | Image pull policy. One of Always, Never, IfNotPresent. | [corev1.PullPolicy](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#container-v1-core) | false |
-| resources | Resources defines resources requests and limits for single Pod. | [corev1.ResourceRequirements](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#resourcerequirements-v1-core) | false |
-| ruleNamespaceSelector | Namespaces to be selected for KubeEventsRules discovery. If unspecified, discover KubeEventsRule instances from all namespaces. | *[metav1.LabelSelector](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#labelselector-v1-meta) | false |
-| ruleSelector | A selector to select KubeEventsRules instances. | *[metav1.LabelSelector](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#labelselector-v1-meta) | false |
-| sinks | Sinks defines sinks detail of this ruler | *[RulerSinks](#rulersinks) | false |
+| spec | Spec defines the specification of the desired behavior of the Ruler. | [RulerSpec](#rulerspec) | true |
+| status |  | [RulerStatus](#rulerstatus) | false |
 
 [Back to TOC](#table-of-contents)
 
@@ -134,6 +107,17 @@ RulerAlertmanagerSink is a sink to alertmanager service on k8s
 
 [Back to TOC](#table-of-contents)
 
+## RulerList
+
+RulerList contains a list of Ruler
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| metadata |  | [metav1.ListMeta](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#listmeta-v1-meta) | false |
+| items | List of Rulers | [][Ruler](#ruler) | true |
+
+[Back to TOC](#table-of-contents)
+
 ## RulerSinks
 
 RulerSinks defines a set of sinks for Events Ruler
@@ -143,6 +127,22 @@ RulerSinks defines a set of sinks for Events Ruler
 | alertmanager | Alertmanager is an alertmanager sink to which only alerts can sink. | *[RulerAlertmanagerSink](#ruleralertmanagersink) | false |
 | webhooks | Webhooks is a list of RulerWebhookSink to which notifications or alerts can sink | []*[RulerWebhookSink](#rulerwebhooksink) | false |
 | stdout | Stdout can config write notifications or alerts to stdout; do nothing when no configuration | *[RulerStdoutSink](#rulerstdoutsink) | false |
+
+[Back to TOC](#table-of-contents)
+
+## RulerSpec
+
+RulerSpec defines the desired state of Ruler
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| replicas | Number of desired pods. Defaults to 1. | *int32 | false |
+| image | Docker image of events ruler | string | true |
+| imagePullPolicy | Image pull policy. One of Always, Never, IfNotPresent. | [corev1.PullPolicy](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#container-v1-core) | false |
+| resources | Resources defines resources requests and limits for single Pod. | [corev1.ResourceRequirements](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#resourcerequirements-v1-core) | false |
+| ruleNamespaceSelector | Namespaces to be selected for Rules discovery. If unspecified, discover Rule instances from all namespaces. | *[metav1.LabelSelector](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#labelselector-v1-meta) | false |
+| ruleSelector | A selector to select Rules instances. | *[metav1.LabelSelector](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#labelselector-v1-meta) | false |
+| sinks | Sinks defines sinks detail of this ruler | *[RulerSinks](#rulersinks) | false |
 
 [Back to TOC](#table-of-contents)
 
@@ -181,42 +181,9 @@ ServiceReference holds a reference to k8s Service
 
 [Back to TOC](#table-of-contents)
 
-## KubeEventsRule
+## EventRule
 
-KubeEventsRule is the Schema for the kubeeventsrules API
-
-| Field | Description | Scheme | Required |
-| ----- | ----------- | ------ | -------- |
-| metadata |  | [metav1.ObjectMeta](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#objectmeta-v1-meta) | false |
-| spec |  | [KubeEventsRuleSpec](#kubeeventsrulespec) | true |
-| status |  | [KubeEventsRuleStatus](#kubeeventsrulestatus) | false |
-
-[Back to TOC](#table-of-contents)
-
-## KubeEventsRuleList
-
-KubeEventsRuleList contains a list of KubeEventsRule
-
-| Field | Description | Scheme | Required |
-| ----- | ----------- | ------ | -------- |
-| metadata |  | [metav1.ListMeta](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#listmeta-v1-meta) | false |
-| items |  | [][KubeEventsRule](#kubeeventsrule) | true |
-
-[Back to TOC](#table-of-contents)
-
-## KubeEventsRuleSpec
-
-KubeEventsRuleSpec defines the desired state of KubeEventsRule
-
-| Field | Description | Scheme | Required |
-| ----- | ----------- | ------ | -------- |
-| rules |  | [][Rule](#rule) | false |
-
-[Back to TOC](#table-of-contents)
-
-## Rule
-
-Rule describes a notification or alert rule
+EventRule describes a notification or alert rule
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
@@ -226,5 +193,38 @@ Rule describes a notification or alert rule
 | annotations | Values of Annotations can use format string with the fields of the event. For example: `{"message": "%event.message"}` | map[string]string | false |
 | enable | Enable is whether to enable the rule | bool | false |
 | type | Type represents that the rule is for notification or alert. Available values are `notification` and `alert` | RuleType | false |
+
+[Back to TOC](#table-of-contents)
+
+## Rule
+
+Rule is the Schema for the Rule API
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| metadata |  | [metav1.ObjectMeta](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#objectmeta-v1-meta) | false |
+| spec |  | [RuleSpec](#rulespec) | true |
+| status |  | [RuleStatus](#rulestatus) | false |
+
+[Back to TOC](#table-of-contents)
+
+## RuleList
+
+RuleList contains a list of Rule
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| metadata |  | [metav1.ListMeta](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#listmeta-v1-meta) | false |
+| items |  | [][Rule](#rule) | true |
+
+[Back to TOC](#table-of-contents)
+
+## RuleSpec
+
+RuleSpec defines the desired state of Rule
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| rules |  | [][EventRule](#eventrule) | false |
 
 [Back to TOC](#table-of-contents)

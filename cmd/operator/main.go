@@ -27,7 +27,7 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	loggingv1alpha1 "github.com/kubesphere/kube-events/pkg/apis/v1alpha1"
+	eventsv1alpha1 "github.com/kubesphere/kube-events/pkg/apis/v1alpha1"
 	"github.com/kubesphere/kube-events/pkg/controllers"
 	// +kubebuilder:scaffold:imports
 )
@@ -40,7 +40,7 @@ var (
 func init() {
 	_ = clientgoscheme.AddToScheme(scheme)
 
-	_ = loggingv1alpha1.AddToScheme(scheme)
+	_ = eventsv1alpha1.AddToScheme(scheme)
 	// +kubebuilder:scaffold:scheme
 }
 
@@ -58,10 +58,10 @@ func main() {
 	flag.Parse()
 
 	{
-		if ns, rsc := os.Getenv("POD_NAMESPACE"), loggingv1alpha1.DefaultRuleScopeConfig(); ns != "" && ns != rsc.NamespaceScopeCluster {
+		if ns, rsc := os.Getenv("POD_NAMESPACE"), eventsv1alpha1.DefaultRuleScopeConfig(); ns != "" && ns != rsc.NamespaceScopeCluster {
 			rsc.NamespaceScopeCluster = ns
 			rsc.NamespaceScopeWorkspace = ns
-			loggingv1alpha1.SetRuleScopeConfig(rsc)
+			eventsv1alpha1.SetRuleScopeConfig(rsc)
 		}
 	}
 
@@ -72,41 +72,41 @@ func main() {
 		MetricsBindAddress: metricsAddr,
 		Port:               9443,
 		LeaderElection:     enableLeaderElection,
-		LeaderElectionID:   "events-operator.kubesphere.io",
+		LeaderElectionID:   "operator.events.kubesphere.io",
 	})
 	if err != nil {
 		setupLog.Error(err, "unable to start manager")
 		os.Exit(1)
 	}
 
-	if err = (&controllers.KubeEventsRulerReconciler{
+	if err = (&controllers.RulerReconciler{
 		Conf:   &cfg,
 		Client: mgr.GetClient(),
-		Log:    ctrl.Log.WithName("controllers").WithName("KubeEventsRuler"),
+		Log:    ctrl.Log.WithName("controllers").WithName("Ruler"),
 		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "KubeEventsRuler")
+		setupLog.Error(err, "unable to create controller", "controller", "Ruler")
 		os.Exit(1)
 	}
-	if err = (&controllers.KubeEventsExporterReconciler{
+	if err = (&controllers.ExporterReconciler{
 		Conf:   &cfg,
 		Client: mgr.GetClient(),
-		Log:    ctrl.Log.WithName("controllers").WithName("KubeEventsExporter"),
+		Log:    ctrl.Log.WithName("controllers").WithName("Exporter"),
 		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "KubeEventsExporter")
+		setupLog.Error(err, "unable to create controller", "controller", "Exporter")
 		os.Exit(1)
 	}
-	if err = (&controllers.KubeEventsRuleReconciler{
+	if err = (&controllers.RuleReconciler{
 		Client: mgr.GetClient(),
-		Log:    ctrl.Log.WithName("controllers").WithName("KubeEventsRule"),
+		Log:    ctrl.Log.WithName("controllers").WithName("Rule"),
 		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "KubeEventsRule")
+		setupLog.Error(err, "unable to create controller", "controller", "Rule")
 		os.Exit(1)
 	}
-	if err = (&loggingv1alpha1.KubeEventsRule{}).SetupWebhookWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create webhook", "webhook", "KubeEventsRule")
+	if err = (&eventsv1alpha1.Rule{}).SetupWebhookWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create webhook", "webhook", "Rule")
 		os.Exit(1)
 	}
 	// +kubebuilder:scaffold:builder

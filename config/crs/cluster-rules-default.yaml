@@ -1,5 +1,5 @@
-apiVersion: logging.kubesphere.io/v1alpha1
-kind: KubeEventsRule
+apiVersion: events.kubesphere.io/v1alpha1
+kind: Rule
 metadata:
   name: cluster-rules-default
   namespace: system
