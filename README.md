@@ -7,7 +7,7 @@ Kube-events contains two major business components, Exporter and Ruler. Exporter
 Another component called Operator is responsible for the desired state of the previous business components. This relies on the following three crds to achieve:
 - **`Exporter`**, which defines a desired Exporter deployment. Operator ensures at all times that a Exporter matching the resource definition is running.
 - **`Ruler`**, which defines a desired Ruler deployment. The Operator ensures at all times that a Ruler matching the resource definition is running.
-- **`Rules`**, which defines a desired Rule set, which will be used to filter events by Ruler. 
+- **`Rule`**, which defines a desired Rule set, which will be used to filter events by Ruler. 
 
 To learn more about the CRDs introduced by the kube-events have a look at the [design doc](doc/api.md).
 

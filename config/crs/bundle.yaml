@@ -65,7 +65,7 @@ spec:
       summary: Container back-off
       summaryCn: 容器回退
     condition: |
-      event.type="Warning" and event.involvedObject.kind="Pod" and reason="BackOff" and not event.involvedObject.fieldPath="" and event.count>3
+      event.type="Warning" and event.involvedObject.kind="Pod" and event.reason="BackOff" and not event.involvedObject.fieldPath="" and event.count>3
     enable: true
     labels:
       severity: warning
@@ -394,7 +394,7 @@ spec:
       summary: Failed to free disk space
       summaryCn: 磁盘空间释放失败
     condition: |
-      type="Warning" and reason="FreeDiskSpaceFailed"
+      event.type="Warning" and event.reason="FreeDiskSpaceFailed"
     enable: true
     labels:
       severity: warning
@@ -609,7 +609,7 @@ spec:
     type: notification
   - annotations:
       message: '%event.message'
-      summary: Failed to provision volume
+      summary: Failed to clean up provision volume
       summaryCn: 清理存储失败
     condition: |
       event.type="Warning" and event.reason="ProvisioningCleanupFailed"
