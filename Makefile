@@ -62,20 +62,23 @@ $(KE_DOCGEN_BINARY): cmd/docgen/kube-events-docgen.go
 
 image-push: image
 	docker push $(REPO_OPERATOR):$(TAG)
+	docker push $(REPO_OPERATOR):latest
 	docker push $(REPO_EXPORTER):$(TAG)
+	docker push $(REPO_EXPORTER):latest
 	docker push $(REPO_RULER):$(TAG)
+	docker push $(REPO_RULER):latest
 
 .PHONY: image
 image: operator-image exporter-image ruler-image
 
 operator-image: cmd/operator/Dockerfile
-	docker build -t $(REPO_OPERATOR):$(TAG) -f cmd/operator/Dockerfile .
+	docker build -t $(REPO_OPERATOR):$(TAG) -t $(REPO_OPERATOR):latest -f cmd/operator/Dockerfile .
 
 exporter-image: cmd/exporter/Dockerfile
-	docker build -t $(REPO_EXPORTER):$(TAG) -f cmd/exporter/Dockerfile .
+	docker build -t $(REPO_EXPORTER):$(TAG) -t $(REPO_EXPORTER):latest -f cmd/exporter/Dockerfile .
 
 ruler-image: cmd/ruler/Dockerfile
-	docker build -t $(REPO_RULER):$(TAG) -f cmd/ruler/Dockerfile .
+	docker build -t $(REPO_RULER):$(TAG) -t $(REPO_RULER):latest -f cmd/ruler/Dockerfile .
 
 
 ca-secret:
