@@ -18,6 +18,8 @@ import (
 	"k8s.io/klog"
 )
 
+var maxBatchSize = 500
+
 type K8sEventSource struct {
 	workqueue workqueue.RateLimitingInterface
 	inf       cache.SharedIndexInformer
@@ -76,20 +78,26 @@ func (s *K8sEventSource) waitForCacheSync(stopc <-chan struct{}) error {
 	return nil
 }
 
-func (s *K8sEventSource) drainEvents() ([]*corev1.Event, bool) {
-	l := s.workqueue.Len()
-	if l <= 0 {
-		return nil, s.workqueue.ShuttingDown()
+func (s *K8sEventSource) drainEvents() (evts []*corev1.Event, shutdown bool) {
+	var (
+		i = 0
+		m = s.workqueue.Len()
+	)
+	if m > maxBatchSize {
+		m = maxBatchSize
 	}
-	var evts []*corev1.Event
-	for i := 0; i < l; i++ {
-		obj, sd := s.workqueue.Get()
-		if sd {
-			return evts, sd
+	for {
+		var obj interface{}
+		obj, shutdown = s.workqueue.Get()
+		if obj != nil {
+			evts = append(evts, obj.(*corev1.Event))
 		}
-		evts = append(evts, obj.(*corev1.Event))
+		i++
+		if i >= m {
+			break
+		}
 	}
-	return evts, false
+	return
 }
 
 func (s *K8sEventSource) sinkEvents(ctx context.Context) {
@@ -100,10 +108,10 @@ func (s *K8sEventSource) sinkEvents(ctx context.Context) {
 		default:
 		}
 		evts, shutdown := s.drainEvents()
-		if shutdown {
-			return
-		}
 		if len(evts) == 0 {
+			if shutdown {
+				return
+			}
 			continue
 		}
 

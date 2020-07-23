@@ -15,6 +15,8 @@ import (
 	"k8s.io/klog"
 )
 
+var maxBatchSize = 500
+
 type KubeEventsRuler struct {
 	kcfg *rest.Config
 
@@ -109,52 +111,69 @@ func (r *KubeEventsRuler) AddEvents(evts []*types.Event) {
 }
 
 func (r *KubeEventsRuler) drainEvents() (evts []*types.Event, shutdown bool) {
-	l := r.evtQueue.Len()
-	if l <= 0 {
-		shutdown = r.evtQueue.ShuttingDown()
-		return
+	var (
+		i = 0
+		m = r.evtQueue.Len()
+	)
+	if m > maxBatchSize {
+		m = maxBatchSize
 	}
-	for i := 0; i < l; i++ {
-		obj, sd := r.evtQueue.Get()
-		if sd {
-			shutdown = sd
+	for {
+		var obj interface{}
+		obj, shutdown = r.evtQueue.Get()
+		if obj != nil {
+			evts = append(evts, obj.(*types.Event))
+		}
+		i++
+		if i >= m {
 			break
 		}
-		evts = append(evts, obj.(*types.Event))
 	}
 	return
 }
 
-func (r *KubeEventsRuler) drainNotifications() ([]*types.EventNotification, bool) {
-	l := r.notificaQueue.Len()
-	if l <= 0 {
-		return nil, r.notificaQueue.ShuttingDown()
+func (r *KubeEventsRuler) drainNotifications() (evtNotifications []*types.EventNotification, shutdown bool) {
+	var (
+		i = 0
+		m = r.notificaQueue.Len()
+	)
+	if m > maxBatchSize {
+		m = maxBatchSize
 	}
-	var evtNotifications []*types.EventNotification
-	for i := 0; i < l; i++ {
-		obj, sd := r.notificaQueue.Get()
-		if sd {
-			return evtNotifications, sd
+	for {
+		var obj interface{}
+		obj, shutdown = r.notificaQueue.Get()
+		if obj != nil {
+			evtNotifications = append(evtNotifications, obj.(*types.EventNotification))
 		}
-		evtNotifications = append(evtNotifications, obj.(*types.EventNotification))
+		i++
+		if i >= m {
+			break
+		}
 	}
-	return evtNotifications, false
+	return
 }
 
-func (r *KubeEventsRuler) drainAlerts() ([]*types.EventAlert, bool) {
-	l := r.alertQueue.Len()
-	if l <= 0 {
-		return nil, r.alertQueue.ShuttingDown()
+func (r *KubeEventsRuler) drainAlerts() (evtAlerts []*types.EventAlert, shutdown bool) {
+	var (
+		i = 0
+		m = r.alertQueue.Len()
+	)
+	if m > maxBatchSize {
+		m = maxBatchSize
 	}
-	var evtAlerts []*types.EventAlert
-	for i := 0; i < l; i++ {
-		obj, sd := r.alertQueue.Get()
-		if sd {
-			return evtAlerts, sd
+	for {
+		var obj interface{}
+		obj, shutdown = r.alertQueue.Get()
+		if obj != nil {
+			evtAlerts = append(evtAlerts, obj.(*types.EventAlert))
 		}
-		evtAlerts = append(evtAlerts, obj.(*types.EventAlert))
+		i++
+		if i >= m {
+			break
+		}
 	}
-	return evtAlerts, false
+	return
 }
 
 func (r *KubeEventsRuler) evalEvents(ctx context.Context) {
@@ -165,10 +184,10 @@ func (r *KubeEventsRuler) evalEvents(ctx context.Context) {
 		default:
 		}
 		evts, shutdown := r.drainEvents()
-		if shutdown {
-			return
-		}
 		if len(evts) == 0 {
+			if shutdown {
+				return
+			}
 			continue
 		}
 		rc := r.getRulerConds()
@@ -218,10 +237,10 @@ func (r *KubeEventsRuler) sinkNotifications(ctx context.Context) {
 		default:
 		}
 		notificas, shutdown := r.drainNotifications()
-		if shutdown {
-			return
-		}
 		if len(notificas) == 0 {
+			if shutdown {
+				return
+			}
 			continue
 		}
 
@@ -256,12 +275,13 @@ func (r *KubeEventsRuler) sinkAlerts(ctx context.Context) {
 		default:
 		}
 		alerts, shutdown := r.drainAlerts()
-		if shutdown {
-			return
-		}
 		if len(alerts) == 0 {
+			if shutdown {
+				return
+			}
 			continue
 		}
+
 		func() {
 			postFunc := r.alertQueue.Forget
 			defer func() {
