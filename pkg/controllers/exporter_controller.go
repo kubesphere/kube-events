@@ -347,8 +347,16 @@ func (r *ExporterReconciler) deployMutate(deploy *appsv1.Deployment,
 				}
 			}
 		}
+		hostTimeV := corev1.Volume{
+			Name: "host-time",
+			VolumeSource: corev1.VolumeSource{
+				HostPath: &corev1.HostPathVolumeSource{
+					Path: "/etc/localtime",
+				},
+			},
+		}
 		if !reflect.DeepEqual(expcConfV, confV) {
-			deploy.Spec.Template.Spec.Volumes = []corev1.Volume{expcConfV}
+			deploy.Spec.Template.Spec.Volumes = []corev1.Volume{expcConfV, hostTimeV}
 		}
 
 		reloaderRes := corev1.ResourceRequirements{Limits: corev1.ResourceList{}}
@@ -371,6 +379,10 @@ func (r *ExporterReconciler) deployMutate(deploy *appsv1.Deployment,
 					Name:      expcConfV.Name,
 					MountPath: configDirEventsExporter,
 				},
+				{
+					Name:      hostTimeV.Name,
+					MountPath: hostTimeV.HostPath.Path,
+				},
 			},
 		}
 		expcReloaderC := corev1.Container{
@@ -385,6 +397,10 @@ func (r *ExporterReconciler) deployMutate(deploy *appsv1.Deployment,
 				{
 					Name:      expcConfV.Name,
 					MountPath: configDirEventsExporter,
+				},
+				{
+					Name:      hostTimeV.Name,
+					MountPath: hostTimeV.HostPath.Path,
 				},
 			},
 		}

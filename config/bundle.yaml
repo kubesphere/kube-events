@@ -759,11 +759,16 @@ spec:
         - mountPath: /tmp/k8s-webhook-server/serving-certs
           name: cert
           readOnly: true
+        - mountPath: /etc/localtime
+          name: host-time
       serviceAccountName: kube-events-operator
       volumes:
       - name: cert
         secret:
           secretName: kube-events-admission
+      - hostPath:
+          path: /etc/localtime
+        name: host-time
 ---
 apiVersion: admissionregistration.k8s.io/v1beta1
 kind: ValidatingWebhookConfiguration
