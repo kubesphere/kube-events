@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/kubesphere/kube-events/pkg/util"
 	"net/http"
 
 	"github.com/kubesphere/kube-events/pkg/ruler/types"
@@ -35,8 +36,9 @@ func (s *WebhookSinker) SinkNotifications(ctx context.Context, evtNotifications 
 	if err != nil {
 		return fmt.Errorf("error sinking to webhook(%s): %v", s.Url, err)
 	}
+	util.DrainResponse(resp)
 	if resp.StatusCode/100 != 2 {
-		err = fmt.Errorf("error sinking to webhook(%s): bad response status: %s", s.Url, resp.Status)
+		return fmt.Errorf("error sinking to webhook(%s): bad response status: %s", s.Url, resp.Status)
 	}
 	return nil
 }

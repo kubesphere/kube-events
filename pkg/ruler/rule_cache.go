@@ -115,7 +115,6 @@ func (c *RuleCache) GetRules(ctx context.Context, evt *types.Event) (rules []*v1
 	}
 
 	return
-
 }
 
 func (c *RuleCache) ruleAdd(obj interface{}) {
@@ -130,7 +129,6 @@ func (c *RuleCache) ruleAdd(obj interface{}) {
 			m, _ := c.namespaceRules.LoadOrStore(rule.Namespace, &sync.Map{})
 			m.(*sync.Map).Store(c.ruleNameFromNamespaceRule(rule), rule)
 		}
-
 	}
 }
 

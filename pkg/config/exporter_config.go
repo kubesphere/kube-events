@@ -1,8 +1,9 @@
 package config
 
 import (
-	"github.com/pkg/errors"
 	"io/ioutil"
+
+	"github.com/pkg/errors"
 	"sigs.k8s.io/yaml"
 )
 

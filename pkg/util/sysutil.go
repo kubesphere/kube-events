@@ -1,10 +1,11 @@
 package util
 
 import (
-	"k8s.io/klog"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"k8s.io/klog"
 )
 
 // SignalHandler setups a signal hander to gracefully exit

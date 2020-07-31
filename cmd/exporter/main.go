@@ -66,9 +66,7 @@ func main() {
 		klog.Info("Config reloaded")
 	})
 	server := &http.Server{Addr: ":8443", Handler: router}
-	wg.Go(func() error {
-		return server.ListenAndServe()
-	})
+	wg.Go(server.ListenAndServe)
 
 	stopCh := util.SignalHandler()
 	go func() {

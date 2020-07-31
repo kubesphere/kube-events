@@ -21,20 +21,20 @@ func NewVisitor(m map[string]interface{}) *Visitor {
 	}
 }
 
-func (l *Visitor) pushValue(i bool) {
-	l.valueStack = append(l.valueStack, i)
+func (v *Visitor) pushValue(i bool) {
+	v.valueStack = append(v.valueStack, i)
 }
 
-func (l *Visitor) popValue() bool {
-	if len(l.valueStack) < 1 {
+func (v *Visitor) popValue() bool {
+	if len(v.valueStack) < 1 {
 		panic("valueStack is empty unable to pop")
 	}
 
 	// Get the last value from the stack.
-	result := l.valueStack[len(l.valueStack)-1]
+	result := v.valueStack[len(v.valueStack)-1]
 
 	// Remove the last element from the stack.
-	l.valueStack = l.valueStack[:len(l.valueStack)-1]
+	v.valueStack = v.valueStack[:len(v.valueStack)-1]
 
 	return result
 }

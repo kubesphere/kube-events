@@ -19,6 +19,9 @@ package controllers
 import (
 	"context"
 	"fmt"
+	"path"
+	"reflect"
+
 	"github.com/go-logr/logr"
 	"github.com/kubesphere/kube-events/pkg/config"
 	appsv1 "k8s.io/api/apps/v1"
@@ -31,8 +34,6 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/client-go/util/workqueue"
-	"path"
-	"reflect"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"

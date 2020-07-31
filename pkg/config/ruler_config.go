@@ -2,11 +2,9 @@ package config
 
 import (
 	"io/ioutil"
-	"k8s.io/apimachinery/pkg/labels"
-)
 
-import (
 	"github.com/pkg/errors"
+	"k8s.io/apimachinery/pkg/labels"
 	"sigs.k8s.io/yaml"
 )
 

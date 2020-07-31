@@ -6,10 +6,11 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	v1 "k8s.io/api/core/v1"
 	"net/http"
 	"runtime"
 	"time"
+
+	v1 "k8s.io/api/core/v1"
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/kubesphere/kube-events/pkg/config"
@@ -77,9 +78,7 @@ func main() {
 		}
 	})
 	server := &http.Server{Addr: ":8443", Handler: router}
-	wg.Go(func() error {
-		return server.ListenAndServe()
-	})
+	wg.Go(server.ListenAndServe)
 
 	stopCh := util.SignalHandler()
 	go func() {

@@ -13,9 +13,9 @@ type AlertmanagerSinker struct {
 }
 
 func (s *AlertmanagerSinker) SinkAlerts(ctx context.Context, evtAlerts []*types.EventAlert) error {
-	var alerts []*amkit.RawAlert
-	for _, ea := range evtAlerts {
-		alerts = append(alerts, ea.Alert)
+	alerts := make([]*amkit.RawAlert, len(evtAlerts))
+	for i, ea := range evtAlerts {
+		alerts[i] = ea.Alert
 	}
 	if len(alerts) == 0 {
 		return nil
