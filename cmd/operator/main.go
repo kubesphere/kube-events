@@ -18,8 +18,9 @@ package main
 
 import (
 	"flag"
-	"github.com/kubesphere/kube-events/pkg/config"
 	"os"
+
+	"github.com/kubesphere/kube-events/pkg/config"
 
 	"k8s.io/apimachinery/pkg/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"

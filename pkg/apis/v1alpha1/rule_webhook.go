@@ -18,6 +18,7 @@ package v1alpha1
 
 import (
 	"fmt"
+
 	apierrs "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -121,7 +122,6 @@ func (r *Rule) ValidateDelete() error {
 }
 
 func (r *Rule) validateRule() error {
-
 	var allErrs field.ErrorList
 	if err := r.validateRuleScope(); err != nil {
 		allErrs = append(allErrs, err)
@@ -136,7 +136,6 @@ func (r *Rule) validateRule() error {
 }
 
 func (r *Rule) validateRuleScope() *field.Error {
-
 	rs, ok := r.Labels[_ruleScopeConfig.ScopeLabelKey]
 	labelsFieldPath := field.NewPath("metadata").Child("labels", _ruleScopeConfig.ScopeLabelKey)
 	if !ok {

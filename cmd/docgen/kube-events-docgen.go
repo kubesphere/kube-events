@@ -70,7 +70,7 @@ func printAPIDocs(paths []string) {
 
 			fmt.Println("| Field | Description | Scheme | Required |")
 			fmt.Println("| ----- | ----------- | ------ | -------- |")
-			fields := t[1:(len(t))]
+			fields := t[1:]
 			for _, f := range fields {
 				fmt.Println("|", f.Name, "|", f.Doc, "|", f.Type, "|", f.Mandatory, "|")
 			}
@@ -227,20 +227,18 @@ func fieldRequired(field *ast.Field) bool {
 }
 
 func fieldType(typ ast.Expr) string {
-	switch typ.(type) {
+	switch t := typ.(type) {
 	case *ast.Ident:
-		return toLink(typ.(*ast.Ident).Name)
+		return toLink(t.Name)
 	case *ast.StarExpr:
-		return "*" + toLink(fieldType(typ.(*ast.StarExpr).X))
+		return "*" + toLink(fieldType(t.X))
 	case *ast.SelectorExpr:
-		e := typ.(*ast.SelectorExpr)
-		pkg := e.X.(*ast.Ident)
-		t := e.Sel
-		return toLink(pkg.Name + "." + t.Name)
+		pkg := t.X.(*ast.Ident)
+		return toLink(pkg.Name + "." + t.Sel.Name)
 	case *ast.ArrayType:
-		return "[]" + toLink(fieldType(typ.(*ast.ArrayType).Elt))
+		return "[]" + toLink(fieldType(t.Elt))
 	case *ast.MapType:
-		mapType := typ.(*ast.MapType)
+		mapType := t
 		return "map[" + toLink(fieldType(mapType.Key)) + "]" + toLink(fieldType(mapType.Value))
 	default:
 		return ""

@@ -2,6 +2,7 @@ package exporter
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"sync"
 	"time"
@@ -72,7 +73,7 @@ func (s *K8sEventSource) Run(ctx context.Context) error {
 
 func (s *K8sEventSource) waitForCacheSync(stopc <-chan struct{}) error {
 	if !cache.WaitForCacheSync(stopc, s.inf.HasSynced) {
-		return fmt.Errorf("Failed to sync events cache")
+		return errors.New("failed to sync events cache")
 	}
 	klog.Info("Successfully synced events cache")
 	return nil
