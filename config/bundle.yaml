@@ -20,20 +20,15 @@ spec:
       description: Exporter is the Schema for the exporter API
       properties:
         apiVersion:
-          description: 'APIVersion defines the versioned schema of this representation
-            of an object. Servers should convert recognized schemas to the latest
-            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+          description: 'APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
           type: string
         kind:
-          description: 'Kind is a string value representing the REST resource this
-            object represents. Servers may infer this from the endpoint the client
-            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+          description: 'Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
           type: string
         metadata:
           type: object
         spec:
-          description: Spec defines the specification of the desired behavior of the
-            Exporter.
+          description: Spec defines the specification of the desired behavior of the Exporter.
           properties:
             image:
               description: Docker image of events exporter
@@ -42,8 +37,7 @@ spec:
               description: Image pull policy. One of Always, Never, IfNotPresent.
               type: string
             resources:
-              description: Resources defines resources requests and limits for single
-                Pod.
+              description: Resources defines resources requests and limits for single Pod.
               properties:
                 limits:
                   additionalProperties:
@@ -52,8 +46,7 @@ spec:
                     - type: string
                     pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                     x-kubernetes-int-or-string: true
-                  description: 'Limits describes the maximum amount of compute resources
-                    allowed. More info: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/'
+                  description: 'Limits describes the maximum amount of compute resources allowed. More info: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/'
                   type: object
                 requests:
                   additionalProperties:
@@ -62,31 +55,22 @@ spec:
                     - type: string
                     pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                     x-kubernetes-int-or-string: true
-                  description: 'Requests describes the minimum amount of compute resources
-                    required. If Requests is omitted for a container, it defaults
-                    to Limits if that is explicitly specified, otherwise to an implementation-defined
-                    value. More info: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/'
+                  description: 'Requests describes the minimum amount of compute resources required. If Requests is omitted for a container, it defaults to Limits if that is explicitly specified, otherwise to an implementation-defined value. More info: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/'
                   type: object
               type: object
             sinks:
               description: Sinks defines details of events sinks
               properties:
                 stdout:
-                  description: Stdout represents whether to write events to stdout.
-                    Output when configure an empty struct `{}`, but do nothing when
-                    no configuration
+                  description: Stdout represents whether to write events to stdout. Output when configure an empty struct `{}`, but do nothing when no configuration
                   type: object
                 webhooks:
                   description: Webhooks is a list of ExporterWebhookSink
                   items:
-                    description: ExporterWebhookSink defines parameters for webhook
-                      sink of Events Exporter.
+                    description: ExporterWebhookSink defines parameters for webhook sink of Events Exporter.
                     properties:
                       service:
-                        description: '`service` is a reference to the service for
-                          this webhook. Either `service` or `url` must be specified.
-                          If the webhook is running within the cluster, then you should
-                          use `service`.'
+                        description: '`service` is a reference to the service for this webhook. Either `service` or `url` must be specified. If the webhook is running within the cluster, then you should use `service`.'
                         properties:
                           name:
                             description: '`name` is the name of the service.'
@@ -95,21 +79,17 @@ spec:
                             description: '`namespace` is the namespace of the service.'
                             type: string
                           path:
-                            description: '`path` is an optional URL path which will
-                              be sent in any request to this service.'
+                            description: '`path` is an optional URL path which will be sent in any request to this service.'
                             type: string
                           port:
-                            description: '`port` is the port on the service and should
-                              be a valid port number (1-65535, inclusive).'
+                            description: '`port` is the port on the service and should be a valid port number (1-65535, inclusive).'
                             type: integer
                         required:
                         - name
                         - namespace
                         type: object
                       url:
-                        description: '`url` gives the location of the webhook, in
-                          standard URL form (`scheme://host:port/path`). Exactly one
-                          of `url` or `service` must be specified.'
+                        description: '`url` gives the location of the webhook, in standard URL form (`scheme://host:port/path`). Exactly one of `url` or `service` must be specified.'
                         type: string
                     type: object
                   type: array
@@ -157,20 +137,15 @@ spec:
       description: Ruler is the Schema for the ruler API
       properties:
         apiVersion:
-          description: 'APIVersion defines the versioned schema of this representation
-            of an object. Servers should convert recognized schemas to the latest
-            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+          description: 'APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
           type: string
         kind:
-          description: 'Kind is a string value representing the REST resource this
-            object represents. Servers may infer this from the endpoint the client
-            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+          description: 'Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
           type: string
         metadata:
           type: object
         spec:
-          description: Spec defines the specification of the desired behavior of the
-            Ruler.
+          description: Spec defines the specification of the desired behavior of the Ruler.
           properties:
             image:
               description: Docker image of events ruler
@@ -183,8 +158,7 @@ spec:
               format: int32
               type: integer
             resources:
-              description: Resources defines resources requests and limits for single
-                Pod.
+              description: Resources defines resources requests and limits for single Pod.
               properties:
                 limits:
                   additionalProperties:
@@ -193,8 +167,7 @@ spec:
                     - type: string
                     pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                     x-kubernetes-int-or-string: true
-                  description: 'Limits describes the maximum amount of compute resources
-                    allowed. More info: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/'
+                  description: 'Limits describes the maximum amount of compute resources allowed. More info: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/'
                   type: object
                 requests:
                   additionalProperties:
@@ -203,38 +176,25 @@ spec:
                     - type: string
                     pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                     x-kubernetes-int-or-string: true
-                  description: 'Requests describes the minimum amount of compute resources
-                    required. If Requests is omitted for a container, it defaults
-                    to Limits if that is explicitly specified, otherwise to an implementation-defined
-                    value. More info: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/'
+                  description: 'Requests describes the minimum amount of compute resources required. If Requests is omitted for a container, it defaults to Limits if that is explicitly specified, otherwise to an implementation-defined value. More info: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/'
                   type: object
               type: object
             ruleNamespaceSelector:
-              description: Namespaces to be selected for Rules discovery. If unspecified,
-                discover Rule instances from all namespaces.
+              description: Namespaces to be selected for Rules discovery. If unspecified, discover Rule instances from all namespaces.
               properties:
                 matchExpressions:
-                  description: matchExpressions is a list of label selector requirements.
-                    The requirements are ANDed.
+                  description: matchExpressions is a list of label selector requirements. The requirements are ANDed.
                   items:
-                    description: A label selector requirement is a selector that contains
-                      values, a key, and an operator that relates the key and values.
+                    description: A label selector requirement is a selector that contains values, a key, and an operator that relates the key and values.
                     properties:
                       key:
-                        description: key is the label key that the selector applies
-                          to.
+                        description: key is the label key that the selector applies to.
                         type: string
                       operator:
-                        description: operator represents a key's relationship to a
-                          set of values. Valid operators are In, NotIn, Exists and
-                          DoesNotExist.
+                        description: operator represents a key's relationship to a set of values. Valid operators are In, NotIn, Exists and DoesNotExist.
                         type: string
                       values:
-                        description: values is an array of string values. If the operator
-                          is In or NotIn, the values array must be non-empty. If the
-                          operator is Exists or DoesNotExist, the values array must
-                          be empty. This array is replaced during a strategic merge
-                          patch.
+                        description: values is an array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. This array is replaced during a strategic merge patch.
                         items:
                           type: string
                         type: array
@@ -246,38 +206,25 @@ spec:
                 matchLabels:
                   additionalProperties:
                     type: string
-                  description: matchLabels is a map of {key,value} pairs. A single
-                    {key,value} in the matchLabels map is equivalent to an element
-                    of matchExpressions, whose key field is "key", the operator is
-                    "In", and the values array contains only "value". The requirements
-                    are ANDed.
+                  description: matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of matchExpressions, whose key field is "key", the operator is "In", and the values array contains only "value". The requirements are ANDed.
                   type: object
               type: object
             ruleSelector:
               description: A selector to select Rules instances.
               properties:
                 matchExpressions:
-                  description: matchExpressions is a list of label selector requirements.
-                    The requirements are ANDed.
+                  description: matchExpressions is a list of label selector requirements. The requirements are ANDed.
                   items:
-                    description: A label selector requirement is a selector that contains
-                      values, a key, and an operator that relates the key and values.
+                    description: A label selector requirement is a selector that contains values, a key, and an operator that relates the key and values.
                     properties:
                       key:
-                        description: key is the label key that the selector applies
-                          to.
+                        description: key is the label key that the selector applies to.
                         type: string
                       operator:
-                        description: operator represents a key's relationship to a
-                          set of values. Valid operators are In, NotIn, Exists and
-                          DoesNotExist.
+                        description: operator represents a key's relationship to a set of values. Valid operators are In, NotIn, Exists and DoesNotExist.
                         type: string
                       values:
-                        description: values is an array of string values. If the operator
-                          is In or NotIn, the values array must be non-empty. If the
-                          operator is Exists or DoesNotExist, the values array must
-                          be empty. This array is replaced during a strategic merge
-                          patch.
+                        description: values is an array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. This array is replaced during a strategic merge patch.
                         items:
                           type: string
                         type: array
@@ -289,64 +236,47 @@ spec:
                 matchLabels:
                   additionalProperties:
                     type: string
-                  description: matchLabels is a map of {key,value} pairs. A single
-                    {key,value} in the matchLabels map is equivalent to an element
-                    of matchExpressions, whose key field is "key", the operator is
-                    "In", and the values array contains only "value". The requirements
-                    are ANDed.
+                  description: matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of matchExpressions, whose key field is "key", the operator is "In", and the values array contains only "value". The requirements are ANDed.
                   type: object
               type: object
             sinks:
               description: Sinks defines sinks detail of this ruler
               properties:
                 alertmanager:
-                  description: Alertmanager is an alertmanager sink to which only
-                    alerts can sink.
+                  description: Alertmanager is an alertmanager sink to which only alerts can sink.
                   properties:
                     name:
                       description: '`name` is the name of the alertmanager service.'
                       type: string
                     namespace:
-                      description: '`namespace` is the namespace of the alertmanager
-                        service.'
+                      description: '`namespace` is the namespace of the alertmanager service.'
                       type: string
                     port:
-                      description: '`port` is the port on the alertmanager service.
-                        Default to 9093. `port` should be a valid port number (1-65535,
-                        inclusive).'
+                      description: '`port` is the port on the alertmanager service. Default to 9093. `port` should be a valid port number (1-65535, inclusive).'
                       type: integer
                     targetPort:
-                      description: TargetPort is the port to access on the backend
-                        instances targeted by the alertmanager service. If this is
-                        not specified, the value of the 'port' field is used.
+                      description: TargetPort is the port to access on the backend instances targeted by the alertmanager service. If this is not specified, the value of the 'port' field is used.
                       type: integer
                   required:
                   - name
                   - namespace
                   type: object
                 stdout:
-                  description: Stdout can config write notifications or alerts to
-                    stdout; do nothing when no configuration
+                  description: Stdout can config write notifications or alerts to stdout; do nothing when no configuration
                   properties:
                     type:
-                      description: Type represents that the sink is for notification
-                        or alert. Available values are `notification` and `alert`
+                      description: Type represents that the sink is for notification or alert. Available values are `notification` and `alert`
                       type: string
                   required:
                   - type
                   type: object
                 webhooks:
-                  description: Webhooks is a list of RulerWebhookSink to which notifications
-                    or alerts can sink
+                  description: Webhooks is a list of RulerWebhookSink to which notifications or alerts can sink
                   items:
-                    description: RulerWebhookSink defines parameters for webhook sink
-                      of Events Ruler.
+                    description: RulerWebhookSink defines parameters for webhook sink of Events Ruler.
                     properties:
                       service:
-                        description: '`service` is a reference to the service for
-                          this webhook. Either `service` or `url` must be specified.
-                          If the webhook is running within the cluster, then you should
-                          use `service`.'
+                        description: '`service` is a reference to the service for this webhook. Either `service` or `url` must be specified. If the webhook is running within the cluster, then you should use `service`.'
                         properties:
                           name:
                             description: '`name` is the name of the service.'
@@ -355,25 +285,20 @@ spec:
                             description: '`namespace` is the namespace of the service.'
                             type: string
                           path:
-                            description: '`path` is an optional URL path which will
-                              be sent in any request to this service.'
+                            description: '`path` is an optional URL path which will be sent in any request to this service.'
                             type: string
                           port:
-                            description: '`port` is the port on the service and should
-                              be a valid port number (1-65535, inclusive).'
+                            description: '`port` is the port on the service and should be a valid port number (1-65535, inclusive).'
                             type: integer
                         required:
                         - name
                         - namespace
                         type: object
                       type:
-                        description: Type represents that the sink is for notification
-                          or alert. Available values are `notification` and `alert`
+                        description: Type represents that the sink is for notification or alert. Available values are `notification` and `alert`
                         type: string
                       url:
-                        description: '`url` gives the location of the webhook, in
-                          standard URL form (`scheme://host:port/path`). Exactly one
-                          of `url` or `service` must be specified.'
+                        description: '`url` gives the location of the webhook, in standard URL form (`scheme://host:port/path`). Exactly one of `url` or `service` must be specified.'
                         type: string
                     required:
                     - type
@@ -423,14 +348,10 @@ spec:
       description: Rule is the Schema for the Rule API
       properties:
         apiVersion:
-          description: 'APIVersion defines the versioned schema of this representation
-            of an object. Servers should convert recognized schemas to the latest
-            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+          description: 'APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
           type: string
         kind:
-          description: 'Kind is a string value representing the REST resource this
-            object represents. Servers may infer this from the endpoint the client
-            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+          description: 'Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
           type: string
         metadata:
           type: object
@@ -444,17 +365,13 @@ spec:
                   annotations:
                     additionalProperties:
                       type: string
-                    description: 'Values of Annotations can use format string with
-                      the fields of the event. For example: `{"message": "%event.message"}`'
+                    description: 'Values of Annotations can use format string with the fields of the event. For example: `{"message": "%message"}`'
                     type: object
                   condition:
-                    description: 'Condition is a string similar with the where part
-                      of sql (please use double quotation to mark a string). For example:
-                      `event.type="Warning" and event.involvedObject.kind="Pod" and
-                      event.reason="FailedMount"`'
+                    description: 'Condition is a string similar with the where part of sql. See supported grammar details on https://github.com/kubesphere/event-rule-engine#supported-grammer . For example: `type="Warning" and involvedObject.kind="Pod" and reason="FailedMount"`'
                     type: string
                   enable:
-                    description: Enable is whether to enable the rule
+                    description: Enable is whether to enable the rule, default to `false`
                     type: boolean
                   labels:
                     additionalProperties:
@@ -465,8 +382,7 @@ spec:
                     description: Name is simple name of rule
                     type: string
                   type:
-                    description: Type represents that the rule is for notification
-                      or alert. Available values are `notification` and `alert`
+                    description: Type represents that the rule is for notification or alert. Available values are `notification` and `alert`
                     type: string
                 type: object
               type: array
@@ -488,30 +404,6 @@ status:
     plural: ""
   conditions: []
   storedVersions: []
----
-apiVersion: admissionregistration.k8s.io/v1beta1
-kind: MutatingWebhookConfiguration
-metadata:
-  name: kube-events-admission-mutate
-webhooks:
-- clientConfig:
-    caBundle: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURaRENDQWt5Z0F3SUJBZ0lKQUpxYlYrTnBjeW5OTUEwR0NTcUdTSWIzRFFFQkN3VUFNRWN4Q3pBSkJnTlYKQkFZVEFrTk9NUXN3Q1FZRFZRUUlEQUpJUWpFTE1Ba0dBMVVFQ2d3Q1VVTXhIakFjQmdOVkJBTU1GV3QxWW1VdApaWFpsYm5SekxXRmtiV2x6YzJsdmJqQWVGdzB5TURBME1qUXdPRE16TUROYUZ3MDBOekE1TVRBd09ETXpNRE5hCk1FY3hDekFKQmdOVkJBWVRBa05PTVFzd0NRWURWUVFJREFKSVFqRUxNQWtHQTFVRUNnd0NVVU14SGpBY0JnTlYKQkFNTUZXdDFZbVV0WlhabGJuUnpMV0ZrYldsemMybHZiakNDQVNJd0RRWUpLb1pJaHZjTkFRRUJCUUFEZ2dFUApBRENDQVFvQ2dnRUJBT29pRXp5ZUtxRnhwQ1czWEVQaHpud2pJS0I0ekRQd01qaDdjR3pyMUo2VFY5bitYSVpVCkpxcm1lSWZkelloejBhQVpMM2tVenZERVZ0TWVUNExiUG14V0V1VUkvRHdjcExGUjBZQzVkWnRHeFpEQk9IakUKa1NndXA2enJPUTFEa1FtamZ5cTVialpFSzJnd1YxZk5FZTc0SXlyUmsreWlHTzJmT0lETWJ0cndnZy9nckVIWAo5cnFqUk1BQVhoQkdCUjFpUzhhellUM2RkaHNvajdwQlM2WnFONjRIR2JTYXg1QVViQy9vbS9IaEZvVDlPSWNnClQvdXVYVVZqTFlHVVowRzEyZi9SM3BuL09waGUrTDNjbWdibUp1VXEwQit6RTByQTNTYmNzbWxMQ1JoS2htVlYKZ29WK0wraU1Xdzh3bHdNd0poRnVVY1BtRjhEaEkvL1RiRnNDQXdFQUFhTlRNRkV3SFFZRFZSME9CQllFRkxJNwo3K1JxNHRJOVQyeCsxektmTFZ4RmJPQUNNQjhHQTFVZEl3UVlNQmFBRkxJNzcrUnE0dEk5VDJ4KzF6S2ZMVnhGCmJPQUNNQThHQTFVZEV3RUIvd1FGTUFNQkFmOHdEUVlKS29aSWh2Y05BUUVMQlFBRGdnRUJBTGJEUFhaOUpOTFAKSGVOdDJCc3VSMWFGMGpYTWRMUC9GWHFqN01IWnV0c3B2RWFXNDh1bU14a1Y2c0sxOHB5Z2QvVWZ6S3NTOEFidApOQ0Q2K3p4clZ6bTVmalF6c2JUWEtXcDdseHNnZ0VuQXFWTlo0Qm1yNHpJYVRySE95R1dVNHRmL2czT2F1YjJxCnprd05yRGFEWi8yWDZIT1pONHFKSitXMEZqakxkNmJ3M3B6bGgyZlFTNFBIdlZFVTZ5UHlBV2dLb2FpZ0hnTmMKd2h5ZEJZenFSeWFVZWJsSzZOVEFKczJaMkd2ZVZjUS92V1paYzJQU2lhMVQ5bjNBelBVQWtBVTQ3UzVmaEJGVAptMjhkeHIxQVIzbVdMYjVqZDNkQkJiS2FMWDBoeENJeU5ndzVhdHpLTjR6QXlTOTBVanppWm42S1h6ekxLZ0dqCm02MWM2VVQyT1NVPQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
-    service:
-      name: kube-events-admission
-      namespace: kubesphere-logging-system
-      path: /mutate-events-kubesphere-io-v1alpha1-rule
-  failurePolicy: Fail
-  name: mrule.kb.io
-  rules:
-  - apiGroups:
-    - events.kubesphere.io
-    apiVersions:
-    - v1alpha1
-    operations:
-    - CREATE
-    - UPDATE
-    resources:
-    - rules
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -759,11 +651,40 @@ spec:
         - mountPath: /tmp/k8s-webhook-server/serving-certs
           name: cert
           readOnly: true
+        - mountPath: /etc/localtime
+          name: host-time
       serviceAccountName: kube-events-operator
       volumes:
       - name: cert
         secret:
           secretName: kube-events-admission
+      - hostPath:
+          path: /etc/localtime
+        name: host-time
+---
+apiVersion: admissionregistration.k8s.io/v1beta1
+kind: MutatingWebhookConfiguration
+metadata:
+  name: kube-events-admission-mutate
+webhooks:
+- clientConfig:
+    caBundle: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURaRENDQWt5Z0F3SUJBZ0lKQUpxYlYrTnBjeW5OTUEwR0NTcUdTSWIzRFFFQkN3VUFNRWN4Q3pBSkJnTlYKQkFZVEFrTk9NUXN3Q1FZRFZRUUlEQUpJUWpFTE1Ba0dBMVVFQ2d3Q1VVTXhIakFjQmdOVkJBTU1GV3QxWW1VdApaWFpsYm5SekxXRmtiV2x6YzJsdmJqQWVGdzB5TURBME1qUXdPRE16TUROYUZ3MDBOekE1TVRBd09ETXpNRE5hCk1FY3hDekFKQmdOVkJBWVRBa05PTVFzd0NRWURWUVFJREFKSVFqRUxNQWtHQTFVRUNnd0NVVU14SGpBY0JnTlYKQkFNTUZXdDFZbVV0WlhabGJuUnpMV0ZrYldsemMybHZiakNDQVNJd0RRWUpLb1pJaHZjTkFRRUJCUUFEZ2dFUApBRENDQVFvQ2dnRUJBT29pRXp5ZUtxRnhwQ1czWEVQaHpud2pJS0I0ekRQd01qaDdjR3pyMUo2VFY5bitYSVpVCkpxcm1lSWZkelloejBhQVpMM2tVenZERVZ0TWVUNExiUG14V0V1VUkvRHdjcExGUjBZQzVkWnRHeFpEQk9IakUKa1NndXA2enJPUTFEa1FtamZ5cTVialpFSzJnd1YxZk5FZTc0SXlyUmsreWlHTzJmT0lETWJ0cndnZy9nckVIWAo5cnFqUk1BQVhoQkdCUjFpUzhhellUM2RkaHNvajdwQlM2WnFONjRIR2JTYXg1QVViQy9vbS9IaEZvVDlPSWNnClQvdXVYVVZqTFlHVVowRzEyZi9SM3BuL09waGUrTDNjbWdibUp1VXEwQit6RTByQTNTYmNzbWxMQ1JoS2htVlYKZ29WK0wraU1Xdzh3bHdNd0poRnVVY1BtRjhEaEkvL1RiRnNDQXdFQUFhTlRNRkV3SFFZRFZSME9CQllFRkxJNwo3K1JxNHRJOVQyeCsxektmTFZ4RmJPQUNNQjhHQTFVZEl3UVlNQmFBRkxJNzcrUnE0dEk5VDJ4KzF6S2ZMVnhGCmJPQUNNQThHQTFVZEV3RUIvd1FGTUFNQkFmOHdEUVlKS29aSWh2Y05BUUVMQlFBRGdnRUJBTGJEUFhaOUpOTFAKSGVOdDJCc3VSMWFGMGpYTWRMUC9GWHFqN01IWnV0c3B2RWFXNDh1bU14a1Y2c0sxOHB5Z2QvVWZ6S3NTOEFidApOQ0Q2K3p4clZ6bTVmalF6c2JUWEtXcDdseHNnZ0VuQXFWTlo0Qm1yNHpJYVRySE95R1dVNHRmL2czT2F1YjJxCnprd05yRGFEWi8yWDZIT1pONHFKSitXMEZqakxkNmJ3M3B6bGgyZlFTNFBIdlZFVTZ5UHlBV2dLb2FpZ0hnTmMKd2h5ZEJZenFSeWFVZWJsSzZOVEFKczJaMkd2ZVZjUS92V1paYzJQU2lhMVQ5bjNBelBVQWtBVTQ3UzVmaEJGVAptMjhkeHIxQVIzbVdMYjVqZDNkQkJiS2FMWDBoeENJeU5ndzVhdHpLTjR6QXlTOTBVanppWm42S1h6ekxLZ0dqCm02MWM2VVQyT1NVPQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
+    service:
+      name: kube-events-admission
+      namespace: kubesphere-logging-system
+      path: /mutate-events-kubesphere-io-v1alpha1-rule
+  failurePolicy: Fail
+  name: mrule.kb.io
+  rules:
+  - apiGroups:
+    - events.kubesphere.io
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - rules
 ---
 apiVersion: admissionregistration.k8s.io/v1beta1
 kind: ValidatingWebhookConfiguration

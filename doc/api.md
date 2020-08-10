@@ -1,4 +1,3 @@
-<br>
 # API Docs
 
 This Document documents the types introduced by the Kube-Events to be consumed by users.
@@ -188,10 +187,10 @@ EventRule describes a notification or alert rule
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | name | Name is simple name of rule | string | false |
-| condition | Condition is a string similar with the where part of sql (please use double quotation to mark a string). For example: `event.type="Warning" and event.involvedObject.kind="Pod" and event.reason="FailedMount"` | string | false |
+| condition | Condition is a string similar with the where part of sql. See supported grammar details on https://github.com/kubesphere/event-rule-engine#supported-grammer . For example: `type="Warning" and involvedObject.kind="Pod" and reason="FailedMount"` | string | false |
 | labels | Labels | map[string]string | false |
-| annotations | Values of Annotations can use format string with the fields of the event. For example: `{"message": "%event.message"}` | map[string]string | false |
-| enable | Enable is whether to enable the rule | bool | false |
+| annotations | Values of Annotations can use format string with the fields of the event. For example: `{"message": "%message"}` | map[string]string | false |
+| enable | Enable is whether to enable the rule, default to `false` | bool | false |
 | type | Type represents that the rule is for notification or alert. Available values are `notification` and `alert` | RuleType | false |
 
 [Back to TOC](#table-of-contents)

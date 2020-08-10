@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"sync"
-	"time"
 
 	"github.com/kubesphere/kube-events/pkg/config"
 	"github.com/kubesphere/kube-events/pkg/exporter/sinks"
@@ -155,7 +154,7 @@ func NewKubeEventSource(client *kubernetes.Clientset) *K8sEventSource {
 	}
 	lw := cache.NewListWatchFromClient(client.CoreV1().RESTClient(),
 		"events", metav1.NamespaceAll, fields.Everything())
-	s.inf = cache.NewSharedIndexInformer(lw, &corev1.Event{}, time.Minute*30, cache.Indexers{})
+	s.inf = cache.NewSharedIndexInformer(lw, &corev1.Event{}, 0, cache.Indexers{})
 	s.inf.AddEventHandler(cache.ResourceEventHandlerFuncs{
 		AddFunc: s.enqueueEvent,
 		UpdateFunc: func(old, new interface{}) {

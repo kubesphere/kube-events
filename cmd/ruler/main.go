@@ -10,8 +10,6 @@ import (
 	"runtime"
 	"time"
 
-	v1 "k8s.io/api/core/v1"
-
 	"github.com/julienschmidt/httprouter"
 	"github.com/kubesphere/kube-events/pkg/config"
 	"github.com/kubesphere/kube-events/pkg/ruler"
@@ -19,6 +17,7 @@ import (
 	"github.com/kubesphere/kube-events/pkg/util"
 	"github.com/panjf2000/ants/v2"
 	"golang.org/x/sync/errgroup"
+	"k8s.io/api/core/v1"
 	"k8s.io/klog"
 	ctrlconfig "sigs.k8s.io/controller-runtime/pkg/client/config"
 )
@@ -32,7 +31,7 @@ func init() {
 }
 
 func main() {
-	klog.InitFlags(nil)
+	//klog.InitFlags(nil)
 	flag.Parse()
 
 	kcfg, e := ctrlconfig.GetConfig()
