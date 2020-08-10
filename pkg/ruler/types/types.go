@@ -7,8 +7,8 @@ import (
 	"sync"
 
 	amkit "github.com/kubesphere/alertmanager-kit"
+	visitor "github.com/kubesphere/event-rule-engine/visitor"
 	eventsv1alpha1 "github.com/kubesphere/kube-events/pkg/apis/v1alpha1"
-	"github.com/kubesphere/kube-events/pkg/ruler/visitor"
 	"github.com/kubesphere/kube-events/pkg/util"
 	corev1 "k8s.io/api/core/v1"
 )
@@ -21,7 +21,7 @@ type Event struct {
 
 func (evt *Event) Flat() map[string]interface{} {
 	evt.once.Do(func() {
-		evt.flatEvt = util.StructToFlatMap(evt.Event, "event", ".")
+		evt.flatEvt = util.StructToFlatMap(evt.Event, "", ".")
 	})
 	return evt.flatEvt
 }
@@ -33,10 +33,10 @@ func (evt *Event) EvalByRule(rule *eventsv1alpha1.EventRule) (ok bool, err error
 				p, evt.Event.Namespace, evt.Event.Name, rule.Name, rule.Condition)
 		}
 	}()
-	if rule.Condition == "" {
-		return false, nil
+	if rule.Condition != "" {
+		err, ok = visitor.EventRuleEvaluate(evt.Flat(), rule.Condition)
 	}
-	return visitor.EventRuleEvaluate(evt.Flat(), rule.Condition), nil
+	return
 }
 
 func (evt *Event) EvalToNotification(evtRules []*eventsv1alpha1.Rule) (*EventNotification, error) {

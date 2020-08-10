@@ -11,6 +11,9 @@ Another component called Operator is responsible for the desired state of the pr
 
 To learn more about the CRDs introduced by the kube-events have a look at the [design doc](doc/api.md).
 
+The architecture diagram is as follows:  
+![Architecture](doc/images/architecture.png)
+
 # Quickstart
 
 Install quickly kube-events into your kubernetes cluster with the following commands:

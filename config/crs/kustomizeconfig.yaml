@@ -1,3 +1,11 @@
+namespace:
+- path: spec/sinks/webhooks/service/namespace
+  kind: Exporter
+
+namePrefix:
+- path: spec/sinks/webhooks/service/name
+  kind: Exporter
+
 images:
 - path: spec/image
   kind: Exporter

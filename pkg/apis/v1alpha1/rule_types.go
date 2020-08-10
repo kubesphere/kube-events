@@ -56,15 +56,16 @@ type RuleList struct {
 type EventRule struct {
 	// Name is simple name of rule
 	Name string `json:"name,omitempty"`
-	// Condition is a string similar with the where part of sql (please use double quotation to mark a string).
-	// For example: `event.type="Warning" and event.involvedObject.kind="Pod" and event.reason="FailedMount"`
+	// Condition is a string similar with the where part of sql.
+	// See supported grammar details on https://github.com/kubesphere/event-rule-engine#supported-grammer .
+	// For example: `type="Warning" and involvedObject.kind="Pod" and reason="FailedMount"`
 	Condition string `json:"condition,omitempty"`
 	// Labels
 	Labels map[string]string `json:"labels,omitempty"`
 	// Values of Annotations can use format string with the fields of the event.
-	// For example: `{"message": "%event.message"}`
+	// For example: `{"message": "%message"}`
 	Annotations map[string]string `json:"annotations,omitempty"`
-	// Enable is whether to enable the rule
+	// Enable is whether to enable the rule, default to `false`
 	Enable bool `json:"enable,omitempty"`
 	// Type represents that the rule is for notification or alert.
 	// Available values are `notification` and `alert`
