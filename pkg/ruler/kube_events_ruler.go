@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/hashicorp/go-multierror"
 	"github.com/kubesphere/kube-events/pkg/config"
 	"github.com/kubesphere/kube-events/pkg/ruler/sinks/alert"
 	"github.com/kubesphere/kube-events/pkg/ruler/sinks/notification"
@@ -13,6 +14,15 @@ import (
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/util/workqueue"
 	"k8s.io/klog"
+)
+
+const (
+	// maxRetries is the number of times an object will be retried before it is dropped out of the queue.
+	// With the current rate-limiter in use (5ms*2^(maxRetries-1)) the following numbers represent the times
+	// an object is going to be requeued:
+	//
+	// 5ms, 10ms, 20ms, 40ms, 80ms, 160ms, 320ms, 640ms, 1.3s, 2.6s, 5.1s, 10.2s, 20.4s, 41s, 82s
+	maxRetries = 15
 )
 
 var maxBatchSize = 500
@@ -193,37 +203,55 @@ func (r *KubeEventsRuler) evalEvents(ctx context.Context) {
 		rc := r.getRulerConds()
 		evalNotifica := len(rc.notificationSinkers) > 0
 		evalAlert := len(rc.alertSinkers) > 0
+		handle := func(evt *types.Event, err error) {
+			if err == nil {
+				r.evtQueue.Forget(evt)
+			} else if numRequeues := r.evtQueue.NumRequeues(evt); numRequeues >= maxRetries {
+				r.evtQueue.Forget(evt)
+				klog.Infof("Dropping event %s/%s out of the queue because of failing %d times: %v\n",
+					evt.Event.Namespace, evt.Event.Name, numRequeues, err)
+			} else {
+				r.evtQueue.AddRateLimited(evt)
+			}
+			r.evtQueue.Done(evt)
+		}
 		for _, evt := range evts {
 			if err := r.taskPool.Submit(func() {
-				defer r.evtQueue.Done(evt)
+				var err error
+				defer func() {
+					handle(evt, err)
+				}()
 				rules := rc.ruleCache.GetRules(ctx, evt)
-				if evalNotifica {
-					n, err := evt.EvalToNotification(rules)
+				if evalNotifica && !evt.EnqueueNotificaion {
+					var n *types.EventNotification
+					n, err = evt.EvalToNotification(rules)
 					if err != nil {
-						klog.Error("error evaluating event", err)
-						r.evtQueue.AddRateLimited(evt)
-						return
-					}
-					if n != nil {
+						err = fmt.Errorf("error evaluating event: %v", err)
+						klog.Error(err)
+					} else if n != nil {
 						r.notificaQueue.Add(n)
+						evt.EnqueueNotificaion = true
 					}
 				}
-				if evalAlert {
-					a, err := evt.EvalToAlert(rules)
-					if err != nil {
-						klog.Error("error evaluating event", err)
-						r.evtQueue.AddRateLimited(evt)
-						return
-					}
-					if a != nil {
+				if evalAlert && !evt.EnqueueAlert {
+					a, e := evt.EvalToAlert(rules)
+					if e != nil {
+						e = fmt.Errorf("error evaluating event: %v", e)
+						klog.Error(e)
+						if err == nil {
+							err = e
+						} else {
+							err = multierror.Append(err, e)
+						}
+					} else if a != nil {
 						r.alertQueue.Add(a)
+						evt.EnqueueAlert = true
 					}
 				}
-				r.evtQueue.Forget(evt)
 			}); err != nil {
-				klog.Error("error submitting task", err)
-				r.evtQueue.AddRateLimited(evt)
-				r.evtQueue.Done(evt)
+				err = fmt.Errorf("error submitting task: %v", err)
+				klog.Error(err)
+				handle(evt, err)
 			}
 		}
 	}
@@ -245,10 +273,18 @@ func (r *KubeEventsRuler) sinkNotifications(ctx context.Context) {
 		}
 
 		func() {
-			postFunc := r.notificaQueue.Forget
+			var err error
 			defer func() {
 				for _, n := range notificas {
-					postFunc(n)
+					if err == nil {
+						r.notificaQueue.Forget(n)
+					} else if numRequeues := r.notificaQueue.NumRequeues(n); numRequeues >= maxRetries {
+						r.notificaQueue.Forget(n)
+						klog.Infof("Dropping notification of event %s/%s out of the queue because of failing %d times: %v\n",
+							n.Event.Namespace, n.Event.Name, numRequeues, err)
+					} else {
+						r.notificaQueue.AddRateLimited(n)
+					}
 					r.notificaQueue.Done(n)
 				}
 			}()
@@ -257,10 +293,10 @@ func (r *KubeEventsRuler) sinkNotifications(ctx context.Context) {
 				return
 			}
 			for _, sinker := range notificaSinkers {
-				if e := sinker.SinkNotifications(ctx, notificas); e != nil {
-					klog.Error("Error sinking notifications: ", e)
-					postFunc = r.notificaQueue.AddRateLimited
-					break
+				if err = sinker.SinkNotifications(ctx, notificas); err != nil {
+					err = fmt.Errorf("error sinking notifications: %v", err)
+					klog.Error(err)
+					return
 				}
 			}
 		}()
@@ -283,10 +319,18 @@ func (r *KubeEventsRuler) sinkAlerts(ctx context.Context) {
 		}
 
 		func() {
-			postFunc := r.alertQueue.Forget
+			var err error
 			defer func() {
 				for _, a := range alerts {
-					postFunc(a)
+					if err == nil {
+						r.alertQueue.Forget(a)
+					} else if numRequeues := r.alertQueue.NumRequeues(a); numRequeues >= maxRetries {
+						r.alertQueue.Forget(a)
+						klog.Infof("Dropping alert with labels %v out of the queue because of failing %d times: %v\n",
+							a.Alert.Labels, numRequeues, err)
+					} else {
+						r.alertQueue.AddRateLimited(a)
+					}
 					r.alertQueue.Done(a)
 				}
 			}()
@@ -295,9 +339,9 @@ func (r *KubeEventsRuler) sinkAlerts(ctx context.Context) {
 				return
 			}
 			for _, sinker := range alertSinkers {
-				if e := sinker.SinkAlerts(ctx, alerts); e != nil {
-					klog.Error("Error sinking alerts: ", e)
-					postFunc = r.alertQueue.AddRateLimited
+				if err = sinker.SinkAlerts(ctx, alerts); err != nil {
+					err = fmt.Errorf("error sinking alerts: %v", err)
+					klog.Error(err)
 					return
 				}
 			}
