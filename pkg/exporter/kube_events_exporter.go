@@ -18,6 +18,15 @@ import (
 	"k8s.io/klog"
 )
 
+const (
+	// maxRetries is the number of times an object will be retried before it is dropped out of the queue.
+	// With the current rate-limiter in use (5ms*2^(maxRetries-1)) the following numbers represent the times
+	// an object is going to be requeued:
+	//
+	// 5ms, 10ms, 20ms, 40ms, 80ms, 160ms, 320ms, 640ms, 1.3s, 2.6s, 5.1s, 10.2s, 20.4s, 41s, 82s
+	maxRetries = 15
+)
+
 var maxBatchSize = 500
 
 type K8sEventSource struct {
@@ -116,10 +125,18 @@ func (s *K8sEventSource) sinkEvents(ctx context.Context) {
 		}
 
 		func() {
-			postFunc := s.workqueue.Forget
+			var err error
 			defer func() {
 				for _, evt := range evts {
-					postFunc(evt)
+					if err == nil {
+						s.workqueue.Forget(evt)
+					} else if numRequeues := s.workqueue.NumRequeues(evt); numRequeues >= maxRetries {
+						s.workqueue.Forget(evt)
+						klog.Infof("Dropping event %s/%s out of the queue because of failing %d times: %v\n",
+							evt.Namespace, evt.Name, numRequeues, err)
+					} else {
+						s.workqueue.AddRateLimited(evt)
+					}
 					s.workqueue.Done(evt)
 				}
 			}()
@@ -128,9 +145,9 @@ func (s *K8sEventSource) sinkEvents(ctx context.Context) {
 				return
 			}
 			for _, sinker := range evtSinkers {
-				if e := sinker.Sink(ctx, evts); e != nil {
-					klog.Error("Error sinking events: ", e)
-					postFunc = s.workqueue.AddRateLimited
+				if err = sinker.Sink(ctx, evts); err != nil {
+					err = fmt.Errorf("error sinking events: %v", err)
+					klog.Error(err)
 					return
 				}
 			}
