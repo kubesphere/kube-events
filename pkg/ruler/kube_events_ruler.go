@@ -222,18 +222,20 @@ func (r *KubeEventsRuler) evalEvents(ctx context.Context) {
 					handle(evt, err)
 				}()
 				rules := rc.ruleCache.GetRules(ctx, evt)
-				if evalNotifica && !evt.EnqueueNotificaion {
+				if evalNotifica && !evt.NotificationEvaluated {
 					var n *types.EventNotification
 					n, err = evt.EvalToNotification(rules)
 					if err != nil {
 						err = fmt.Errorf("error evaluating event: %v", err)
 						klog.Error(err)
-					} else if n != nil {
-						r.notificaQueue.Add(n)
-						evt.EnqueueNotificaion = true
+					} else {
+						evt.NotificationEvaluated = true
+						if n != nil {
+							r.notificaQueue.Add(n)
+						}
 					}
 				}
-				if evalAlert && !evt.EnqueueAlert {
+				if evalAlert && !evt.AlertEvaluated {
 					a, e := evt.EvalToAlert(rules)
 					if e != nil {
 						e = fmt.Errorf("error evaluating event: %v", e)
@@ -243,9 +245,11 @@ func (r *KubeEventsRuler) evalEvents(ctx context.Context) {
 						} else {
 							err = multierror.Append(err, e)
 						}
-					} else if a != nil {
-						r.alertQueue.Add(a)
-						evt.EnqueueAlert = true
+					} else {
+						evt.AlertEvaluated = true
+						if a != nil {
+							r.alertQueue.Add(a)
+						}
 					}
 				}
 			}); err != nil {

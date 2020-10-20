@@ -18,8 +18,8 @@ type Event struct {
 	once    sync.Once
 	flatEvt map[string]interface{}
 
-	EnqueueAlert       bool
-	EnqueueNotificaion bool
+	AlertEvaluated        bool
+	NotificationEvaluated bool
 }
 
 func (evt *Event) Flat() map[string]interface{} {
