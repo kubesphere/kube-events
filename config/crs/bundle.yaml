@@ -4,7 +4,7 @@ metadata:
   name: kube-events-exporter
   namespace: kubesphere-logging-system
 spec:
-  image: kubespheredev/kube-events-exporter:v0.1.0
+  image: kubesphere/kube-events-exporter:latest
   resources: {}
   sinks:
     stdout: {}
@@ -893,7 +893,7 @@ metadata:
   name: kube-events-ruler
   namespace: kubesphere-logging-system
 spec:
-  image: kubespheredev/kube-events-ruler:v0.1.0
+  image: kubesphere/kube-events-ruler:latest
   replicas: 2
   sinks:
     alertmanager:
