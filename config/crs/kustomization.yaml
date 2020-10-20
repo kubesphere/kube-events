@@ -10,12 +10,10 @@ patchesStrategicMerge:
 - ruler_patch.yaml
 images:
 - name: exporter
-  newName: kubespheredev/kube-events-exporter
-  newTag: v0.1.0
-- name: operator=exporter=kubespheredev/kube-events-exporter
+  newName: kubesphere/kube-events-exporter
   newTag: v0.1.0
 - name: ruler
-  newName: kubespheredev/kube-events-ruler
-  newTag: v0.1.0
+  newName: kubesphere/kube-events-ruler
+  newTag: v0.2.0
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
