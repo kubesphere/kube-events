@@ -24,6 +24,9 @@ kubectl apply -f config/crs/bundle.yaml
 
 Or install it  by [helm chart](./helm/README.md).
 
+# Videos & blogs
+[K8s events exporting, filtering, alerting and notification in multi-tenant env](https://v.qq.com/x/page/v3130vg5lme.html)
+
 # Usage
 
 ## Rule
