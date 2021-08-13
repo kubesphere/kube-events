@@ -408,10 +408,12 @@ func (r *RulerReconciler) deployMutate(deploy *appsv1.Deployment,
 				{
 					Name:      expcConfV.Name,
 					MountPath: configDirEventsRuler,
+					ReadOnly:  true,
 				},
 				{
 					Name:      hostTimeV.Name,
 					MountPath: hostTimeV.HostPath.Path,
+					ReadOnly:  true,
 				},
 			},
 		}
@@ -427,10 +429,12 @@ func (r *RulerReconciler) deployMutate(deploy *appsv1.Deployment,
 				{
 					Name:      expcConfV.Name,
 					MountPath: configDirEventsRuler,
+					ReadOnly:  true,
 				},
 				{
 					Name:      hostTimeV.Name,
 					MountPath: hostTimeV.HostPath.Path,
+					ReadOnly:  true,
 				},
 			},
 		}

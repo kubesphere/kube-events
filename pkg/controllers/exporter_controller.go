@@ -378,10 +378,12 @@ func (r *ExporterReconciler) deployMutate(deploy *appsv1.Deployment,
 				{
 					Name:      expcConfV.Name,
 					MountPath: configDirEventsExporter,
+					ReadOnly:  true,
 				},
 				{
 					Name:      hostTimeV.Name,
 					MountPath: hostTimeV.HostPath.Path,
+					ReadOnly:  true,
 				},
 			},
 		}
@@ -397,10 +399,12 @@ func (r *ExporterReconciler) deployMutate(deploy *appsv1.Deployment,
 				{
 					Name:      expcConfV.Name,
 					MountPath: configDirEventsExporter,
+					ReadOnly:  true,
 				},
 				{
 					Name:      hostTimeV.Name,
 					MountPath: hostTimeV.HostPath.Path,
+					ReadOnly:  true,
 				},
 			},
 		}
