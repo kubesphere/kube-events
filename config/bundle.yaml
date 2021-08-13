@@ -650,6 +650,7 @@ spec:
           readOnly: true
         - mountPath: /etc/localtime
           name: host-time
+          readOnly: true
       serviceAccountName: kube-events-operator
       volumes:
       - name: cert

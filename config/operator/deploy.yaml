@@ -42,6 +42,7 @@ spec:
             readOnly: true
           - mountPath: /etc/localtime
             name: host-time
+            readOnly: true
       volumes:
         - name: cert
           secret:
