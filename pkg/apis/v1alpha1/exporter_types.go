@@ -27,6 +27,12 @@ type ExporterSpec struct {
 	Image string `json:"image"`
 	// Image pull policy. One of Always, Never, IfNotPresent.
 	ImagePullPolicy corev1.PullPolicy `json:"imagePullPolicy,omitempty"`
+	// If specified, the pod's scheduling constraints.
+	Affinity *corev1.Affinity `json:"affinity,omitempty"`
+	// Define which Nodes the Pods are scheduled on.
+	NodeSelector map[string]string `json:"nodeSelector,omitempty"`
+	// If specified, the pod's tolerations.
+	Tolerations []corev1.Toleration `json:"tolerations,omitempty"`
 	// Resources defines resources requests and limits for single Pod.
 	Resources corev1.ResourceRequirements `json:"resources,omitempty"`
 	// Sinks defines details of events sinks

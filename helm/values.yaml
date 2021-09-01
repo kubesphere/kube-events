@@ -6,6 +6,9 @@ operator:
     pullPolicy: IfNotPresent
   configReloader:
     image: jimmidyson/configmap-reload:v0.3.0
+  affinity: {}
+  nodeSelector: {}
+  tolerations: {}
   resources: {}
 #    limits:
 #      cpu: 200m
@@ -26,6 +29,9 @@ exporter:
     repository: kubesphere/kube-events-exporter
     tag: latest
     pullPolicy: IfNotPresent
+  affinity: {}
+  nodeSelector: {}
+  tolerations: {}
   resources: {}
 #    limits:
 #      cpu: 200m
@@ -51,6 +57,9 @@ ruler:
     repository: kubesphere/kube-events-ruler
     tag: latest
     pullPolicy: IfNotPresent
+  affinity: {}
+  nodeSelector: {}
+  tolerations: {}
   resources: {}
 #    limits:
 #      cpu: 500m
