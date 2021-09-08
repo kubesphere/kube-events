@@ -324,6 +324,10 @@ func (r *ExporterReconciler) deployMutate(deploy *appsv1.Deployment,
 		deploy.Spec.Template.Labels = podLabels
 		deploy.Spec.Template.Spec.ServiceAccountName = sa.Name
 
+		deploy.Spec.Template.Spec.Affinity = kee.Spec.Affinity
+		deploy.Spec.Template.Spec.NodeSelector = kee.Spec.NodeSelector
+		deploy.Spec.Template.Spec.Tolerations = kee.Spec.Tolerations
+
 		expcConfV := corev1.Volume{
 			Name: "config",
 			VolumeSource: corev1.VolumeSource{

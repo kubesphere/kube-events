@@ -354,6 +354,10 @@ func (r *RulerReconciler) deployMutate(deploy *appsv1.Deployment,
 		deploy.Spec.Template.Labels = podLabels
 		deploy.Spec.Template.Spec.ServiceAccountName = sa.Name
 
+		deploy.Spec.Template.Spec.Affinity = ker.Spec.Affinity
+		deploy.Spec.Template.Spec.NodeSelector = ker.Spec.NodeSelector
+		deploy.Spec.Template.Spec.Tolerations = ker.Spec.Tolerations
+
 		expcConfV := corev1.Volume{
 			Name: "config",
 			VolumeSource: corev1.VolumeSource{

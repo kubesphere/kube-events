@@ -1,3 +1,4 @@
+<br>
 # API Docs
 
 This Document documents the types introduced by the Kube-Events to be consumed by users.
@@ -65,6 +66,9 @@ ExporterSpec defines the desired state of Exporter
 | ----- | ----------- | ------ | -------- |
 | image | Docker image of events exporter | string | true |
 | imagePullPolicy | Image pull policy. One of Always, Never, IfNotPresent. | [corev1.PullPolicy](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#container-v1-core) | false |
+| affinity | If specified, the pod's scheduling constraints. | *corev1.Affinity | false |
+| nodeSelector | Define which Nodes the Pods are scheduled on. | map[string]string | false |
+| tolerations | If specified, the pod's tolerations. | []corev1.Toleration | false |
 | resources | Resources defines resources requests and limits for single Pod. | [corev1.ResourceRequirements](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#resourcerequirements-v1-core) | false |
 | sinks | Sinks defines details of events sinks | *[ExporterSinks](#exportersinks) | false |
 
@@ -138,6 +142,9 @@ RulerSpec defines the desired state of Ruler
 | replicas | Number of desired pods. Defaults to 1. | *int32 | false |
 | image | Docker image of events ruler | string | true |
 | imagePullPolicy | Image pull policy. One of Always, Never, IfNotPresent. | [corev1.PullPolicy](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#container-v1-core) | false |
+| affinity | If specified, the pod's scheduling constraints. | *corev1.Affinity | false |
+| nodeSelector | Define which Nodes the Pods are scheduled on. | map[string]string | false |
+| tolerations | If specified, the pod's tolerations. | []corev1.Toleration | false |
 | resources | Resources defines resources requests and limits for single Pod. | [corev1.ResourceRequirements](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#resourcerequirements-v1-core) | false |
 | ruleNamespaceSelector | Namespaces to be selected for Rules discovery. If unspecified, discover Rule instances from all namespaces. | *[metav1.LabelSelector](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#labelselector-v1-meta) | false |
 | ruleSelector | A selector to select Rules instances. | *[metav1.LabelSelector](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#labelselector-v1-meta) | false |
