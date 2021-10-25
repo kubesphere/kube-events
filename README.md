@@ -18,8 +18,8 @@ The architecture diagram is as follows:
 
 Install quickly kube-events into your kubernetes cluster with the following commands:
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/kubesphere/kube-events/master/config/bundle.yaml
-kubectl apply -f https://raw.githubusercontent.com/kubesphere/kube-events/master/config/crs/bundle.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubesphere/kube-events/release-0.3/config/bundle.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubesphere/kube-events/release-0.3/config/crs/bundle.yaml
 ```
 
 Or install it  by [helm chart](./helm/README.md).
