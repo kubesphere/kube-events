@@ -215,7 +215,8 @@ func (r *KubeEventsRuler) evalEvents(ctx context.Context) {
 			}
 			r.evtQueue.Done(evt)
 		}
-		for _, evt := range evts {
+		for _, event := range evts {
+			evt := event
 			if err := r.taskPool.Submit(func() {
 				var err error
 				defer func() {
