@@ -16,4 +16,4 @@ spec:
   sinks:
     alertmanager:
       namespace: kubesphere-monitoring-system
-      name: alertmanager-main
+      name: alertmanager-operated

@@ -15,6 +15,8 @@ type RulerConfig struct {
 }
 
 type RulerSinks struct {
+	Alertmanagers []*RulerAlertmanagerSink `json:"alertmanagers,omitempty"`
+	// Alertmanager will be deprecated, please use Alertmanagers instead.
 	Alertmanager *RulerAlertmanagerSink `json:"alertmanager,omitempty"`
 	Webhooks     []*RulerWebhookSink    `json:"webhooks,omitempty"`
 	Stdout       *RulerStdoutSink       `json:"stdout,omitempty"`

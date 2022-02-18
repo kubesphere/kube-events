@@ -298,6 +298,16 @@ func (r *RulerReconciler) configMutate(cm *corev1.ConfigMap,
 					TargetPort: ss.Alertmanager.TargetPort,
 				}
 			}
+			if len(ss.Alertmanagers) > 0 {
+				for _, am := range ss.Alertmanagers {
+					c.Sinks.Alertmanagers = append(c.Sinks.Alertmanagers, &config.RulerAlertmanagerSink{
+						Namespace:  am.Namespace,
+						Name:       am.Name,
+						Port:       am.Port,
+						TargetPort: am.TargetPort,
+					})
+				}
+			}
 			if ss.Stdout != nil {
 				c.Sinks.Stdout = &config.RulerStdoutSink{
 					Type: config.RulerSinkType(ss.Stdout.Type),
