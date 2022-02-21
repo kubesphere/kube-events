@@ -33,10 +33,10 @@ spec:
   ruleSelector:
 {{ toYaml .Values.ruler.ruleSelector | indent 4 }}
   sinks:
-    alertmanager:
-    {{- range $name, $value := .Values.ruler.sinks.alertmanager }}
-      {{ $name }}: {{ $value }}
-    {{- end }}
+    {{- if not (empty .Values.ruler.sinks.alertmanagers) }}
+    alertmanagers:
+{{ toYaml .Values.ruler.sinks.alertmanagers | indent 4 }}
+    {{- end}}
     {{- if not (empty .Values.ruler.sinks.webhooks) }}
     {{- with .Values.ruler.sinks.webhooks }}
     webhooks:

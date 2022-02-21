@@ -895,6 +895,7 @@ metadata:
 spec:
   image: kubesphere/kube-events-ruler:latest
   replicas: 2
+  resources: {}
   sinks:
     alertmanager:
       name: alertmanager-main

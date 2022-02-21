@@ -79,7 +79,10 @@ type RulerList struct {
 
 // RulerSinks defines a set of sinks for Events Ruler
 type RulerSinks struct {
-	// Alertmanager is an alertmanager sink to which only alerts can sink.
+	// Alertmanager sinks to which events alerts will be sent.
+	Alertmanagers []*RulerAlertmanagerSink `json:"alertmanagers,omitempty"`
+	// An alertmanager sink to which events alerts will be sent.
+	// Deprecated, please use alertmanagers instead.
 	Alertmanager *RulerAlertmanagerSink `json:"alertmanager,omitempty"`
 	// Webhooks is a list of RulerWebhookSink to which notifications or alerts can sink
 	Webhooks []*RulerWebhookSink `json:"webhooks,omitempty"`

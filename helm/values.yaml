@@ -70,9 +70,9 @@ ruler:
   ruleNamespaceSelector: {}
   ruleSelector: {}
   sinks:
-    alertmanager:
-      namespace: kubesphere-monitoring-system
-      name: alertmanager-main
+    alertmanagers:
+    - namespace: kubesphere-monitoring-system
+      name: alertmanager-operated
     webhooks: []
     # - type:
     #   url:

@@ -17,7 +17,7 @@ import (
 	"github.com/kubesphere/kube-events/pkg/util"
 	"github.com/panjf2000/ants/v2"
 	"golang.org/x/sync/errgroup"
-	"k8s.io/api/core/v1"
+	v1 "k8s.io/api/core/v1"
 	"k8s.io/klog"
 	ctrlconfig "sigs.k8s.io/controller-runtime/pkg/client/config"
 )
@@ -63,6 +63,8 @@ func main() {
 		reloadCh <- errc
 		if e := <-errc; e != nil {
 			http.Error(writer, fmt.Sprintf("failed to reload config: %s", e), http.StatusInternalServerError)
+			klog.Errorf("failed to reload config: %s", e)
+			return
 		}
 		klog.Info("Config reloaded")
 	})

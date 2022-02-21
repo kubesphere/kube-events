@@ -77,6 +77,16 @@ exporter-image: cmd/exporter/Dockerfile
 ruler-image: cmd/ruler/Dockerfile
 	docker build -t $(REPO_RULER):$(TAG) -f cmd/ruler/Dockerfile .
 
+cross-build: cross-build-operator cross-build-exporter cross-build-ruler
+
+cross-build-operator: cmd/operator/Dockerfile
+	docker buildx build --push --platform linux/amd64,linux/arm64 -t $(REPO_OPERATOR):$(TAG) -f cmd/operator/Dockerfile .
+
+cross-build-exporter: cmd/exporter/Dockerfile
+	docker buildx build --push --platform linux/amd64,linux/arm64 -t $(REPO_EXPORTER):$(TAG) -f cmd/exporter/Dockerfile .
+
+cross-build-ruler: cmd/ruler/Dockerfile
+	docker buildx build --push --platform linux/amd64,linux/arm64 -t $(REPO_RULER):$(TAG) -f cmd/ruler/Dockerfile .
 
 ca-secret:
 	./hack/certs.sh --service kube-events-admission --namespace $(NAMESPACE)

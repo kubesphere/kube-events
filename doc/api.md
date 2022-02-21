@@ -127,7 +127,8 @@ RulerSinks defines a set of sinks for Events Ruler
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
-| alertmanager | Alertmanager is an alertmanager sink to which only alerts can sink. | *[RulerAlertmanagerSink](#ruleralertmanagersink) | false |
+| alertmanagers | Alertmanager sinks to which events alerts will be sent. | []*[RulerAlertmanagerSink](#ruleralertmanagersink) | false |
+| alertmanager | An alertmanager sink to which events alerts will be sent. Deprecated, please use alertmanagers instead. | *[RulerAlertmanagerSink](#ruleralertmanagersink) | false |
 | webhooks | Webhooks is a list of RulerWebhookSink to which notifications or alerts can sink | []*[RulerWebhookSink](#rulerwebhooksink) | false |
 | stdout | Stdout can config write notifications or alerts to stdout; do nothing when no configuration | *[RulerStdoutSink](#rulerstdoutsink) | false |
 

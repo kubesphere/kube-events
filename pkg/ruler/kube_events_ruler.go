@@ -73,6 +73,16 @@ func (r *KubeEventsRuler) ReloadConfig(c *config.RulerConfig) error {
 			}
 			alertSinkers = append(alertSinkers, amsinker)
 		}
+		if ams := c.Sinks.Alertmanagers; len(ams) > 0 {
+			for _, am := range ams {
+				a := am
+				amsinker, e := alert.NewAlertmanagerSinker(a)
+				if e != nil {
+					return e
+				}
+				alertSinkers = append(alertSinkers, amsinker)
+			}
+		}
 		if so := c.Sinks.Stdout; so != nil {
 			switch so.Type {
 			case config.RulerSinkTypeNotification:
