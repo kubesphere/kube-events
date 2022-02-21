@@ -765,9 +765,8 @@ spec:
                 description: Sinks defines sinks detail of this ruler
                 properties:
                   alertmanager:
-                    description: Alertmanager is an alertmanager sink to which only
-                      alerts can sink. Will be deprecated, please use alertmanagers
-                      instead.
+                    description: An alertmanager sink to which events alerts will
+                      be sent. Deprecated, please use alertmanagers instead.
                     properties:
                       name:
                         description: '`name` is the name of the alertmanager service.'
@@ -791,8 +790,8 @@ spec:
                     - namespace
                     type: object
                   alertmanagers:
-                    description: Alertmanagers are alertmanager sinks to which alerts
-                      can sink.
+                    description: Alertmanager sinks to which events alerts will be
+                      sent.
                     items:
                       description: RulerAlertmanagerSink is a sink to alertmanager
                         service on k8s
