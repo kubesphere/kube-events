@@ -80,12 +80,15 @@ ruler-image: cmd/ruler/Dockerfile
 cross-build: cross-build-operator cross-build-exporter cross-build-ruler
 
 cross-build-operator: cmd/operator/Dockerfile
+	docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 	docker buildx build --push --platform linux/amd64,linux/arm64 -t $(REPO_OPERATOR):$(TAG) -f cmd/operator/Dockerfile .
 
 cross-build-exporter: cmd/exporter/Dockerfile
+	docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 	docker buildx build --push --platform linux/amd64,linux/arm64 -t $(REPO_EXPORTER):$(TAG) -f cmd/exporter/Dockerfile .
 
 cross-build-ruler: cmd/ruler/Dockerfile
+	docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 	docker buildx build --push --platform linux/amd64,linux/arm64 -t $(REPO_RULER):$(TAG) -f cmd/ruler/Dockerfile .
 
 ca-secret:

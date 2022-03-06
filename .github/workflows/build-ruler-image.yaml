@@ -1,0 +1,52 @@
+name: Building kube-events-ruler image
+
+on:
+  push:
+    branches:
+      - 'master'
+    tags:
+      - 'v*'
+    paths:
+      - ".github/workflows/build-ruler-image.yaml"
+      - "cmd/ruler/**"
+      - "hack/**"
+      - "pkg/**"
+      - "Makefile"
+
+env:
+  REPO_RULER: 'kubesphere'
+
+jobs:
+  ruler-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    name: Build Image for kube-events-ruler
+    steps:
+      - name: Install Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.16.x
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.REGISTRY_USER }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Build and Push Image for kube-events-ruler
+        run: |
+          make cross-build-ruler -e REPO_RULER=${{ env.REPO_RULER }}/kube-events-ruler

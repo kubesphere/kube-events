@@ -1,0 +1,52 @@
+name: Building kube-events-operator image
+
+on:
+  push:
+    branches:
+      - 'master'
+    tags:
+      - 'v*'
+    paths:
+      - ".github/workflows/build-op-image.yaml"
+      - "cmd/operator/**"
+      - "hack/**"
+      - "pkg/**"
+      - "Makefile"
+
+env:
+  REPO_OPERATOR: 'kubesphere'
+
+jobs:
+  operator-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    name: Build Image for kube-events-operator
+    steps:
+      - name: Install Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.16.x
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.REGISTRY_USER }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Build and Push Image for kube-events-operator
+        run: |
+          make cross-build-operator -e REPO_OPERATOR=${{ env.REPO_OPERATOR }}/kube-events-operator
