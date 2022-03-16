@@ -1,6 +1,7 @@
 FROM golang:1.13.5 as builder
 WORKDIR /workspace
 COPY . .
+ENV GOPROXY=https://goproxy.cn,direct
 RUN CGO_ENABLED=0 GO111MODULE=on go build -a -o ./bin/kube-events-operator ./cmd/operator/main.go
 
 FROM alpine:3.9
