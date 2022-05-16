@@ -35,6 +35,8 @@ type ExporterSpec struct {
 	Tolerations []corev1.Toleration `json:"tolerations,omitempty"`
 	// Resources defines resources requests and limits for single Pod.
 	Resources corev1.ResourceRequirements `json:"resources,omitempty"`
+	// List of environment variable
+	Env []corev1.EnvVar `json:"env,omitempty"`
 	// Sinks defines details of events sinks
 	Sinks *ExporterSinks `json:"sinks,omitempty"`
 }

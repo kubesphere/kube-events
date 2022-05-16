@@ -28,6 +28,11 @@ spec:
   resources:
 {{ toYaml .Values.ruler.resources | indent 4 }}
   {{- end }}
+{{- if .Values.timezone }}
+  env:
+  - name: TZ
+    value: {{ .Values.timezone }}
+{{- end }}
   ruleNamespaceSelector:
 {{ toYaml .Values.ruler.ruleNamespaceSelector | indent 4 }}
   ruleSelector:

@@ -41,6 +41,10 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
+        {{- if .Values.timezone }}
+        - name: TZ
+          value: {{ .Values.timezone }}
+        {{- end }}
         ports:
         - containerPort: 9443
           name: webhook-server
@@ -53,9 +57,6 @@ spec:
         - mountPath: /tmp/k8s-webhook-server/serving-certs
           name: cert
           readOnly: true
-        - mountPath: /etc/localtime
-          name: host-time
-          readOnly: true
       serviceAccountName: {{ template "kube-events.operator.fullname" . }}
       terminationGracePeriodSeconds: 10
       volumes:
@@ -63,8 +64,5 @@ spec:
         secret:
           defaultMode: 420
           secretName: {{ template "kube-events.admission.fullname" . }}
-      - hostPath:
-          path: /etc/localtime
-        name: host-time
 
 {{- end }}

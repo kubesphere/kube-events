@@ -37,6 +37,8 @@ type RulerSpec struct {
 	Tolerations []corev1.Toleration `json:"tolerations,omitempty"`
 	// Resources defines resources requests and limits for single Pod.
 	Resources corev1.ResourceRequirements `json:"resources,omitempty"`
+	// List of environment variable
+	Env []corev1.EnvVar `json:"env,omitempty"`
 	// Namespaces to be selected for Rules discovery.
 	// If unspecified, discover Rule instances from all namespaces.
 	RuleNamespaceSelector *metav1.LabelSelector `json:"ruleNamespaceSelector,omitempty"`
