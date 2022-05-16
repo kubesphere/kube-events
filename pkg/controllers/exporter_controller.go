@@ -67,6 +67,7 @@ type ExporterReconciler struct {
 
 // +kubebuilder:rbac:groups=events.kubesphere.io,resources=exporters,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=events.kubesphere.io,resources=exporters/status,verbs=get;update;patch
+// +kubebuilder:rbac:groups=events.kubesphere.io,resources=exporters/finalizers,verbs=update
 // +kubebuilder:rbac:groups=apps,resources=deployments,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=apps,resources=deployments/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups=core,resources=configmaps,verbs=get;list;watch;create;update;patch;delete
@@ -312,7 +313,7 @@ func (r *ExporterReconciler) deployMutate(deploy *appsv1.Deployment,
 	kee *eventsv1alpha1.Exporter) controllerutil.MutateFn {
 	return func() error {
 		deploy.Labels = r.relativeResourcesShareLabels(kee)
-		
+
 		replicas := int32(1)
 		deploy.Spec.Replicas = &replicas
 
