@@ -126,7 +126,6 @@ func (r *ExporterReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	cr.Name = fmt.Sprintf("%s-%s", kee.Namespace, kee.Name)
 	if _, e = controllerutil.CreateOrUpdate(ctx, r.Client, cr, r.clusterRoleMutate(cr, kee)); e != nil {
 		if apierrs.IsConflict(e) {
-			log.V(1).Info("Conflict while updating status", "namespace", cr.Namespace, "cr_name", cr.Name)
 			return reconcile.Result{Requeue: true}, nil
 		}
 		return ctrl.Result{}, e
@@ -135,7 +134,6 @@ func (r *ExporterReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	crb.Name = fmt.Sprintf("%s-%s", kee.Namespace, kee.Name)
 	if _, e = controllerutil.CreateOrUpdate(ctx, r.Client, crb, r.clusterRoleBindingMutate(crb, cr, sa, kee)); e != nil {
 		if apierrs.IsConflict(e) {
-			log.V(1).Info("Conflict while updating status", "namespace", crb.Namespace, "crb_name", crb.Name)
 			return reconcile.Result{Requeue: true}, nil
 		}
 		return ctrl.Result{}, e
@@ -145,7 +143,6 @@ func (r *ExporterReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	cm.Name = kee.Name
 	if _, e = controllerutil.CreateOrUpdate(ctx, r.Client, cm, r.configMutate(cm, kee)); e != nil {
 		if apierrs.IsConflict(e) {
-			log.V(1).Info("Conflict while updating status", "namespace", cm.Namespace, "cm_name", cm.Name)
 			return reconcile.Result{Requeue: true}, nil
 		}
 		return ctrl.Result{}, e
@@ -154,14 +151,11 @@ func (r *ExporterReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	deploy.Name = kee.Name
 	deploy.Namespace = kee.Namespace
 	if _, e = controllerutil.CreateOrUpdate(ctx, r.Client, deploy, r.deployMutate(deploy, cm, sa, kee)); e != nil {
-		log.V(1).Info("deploy nodeSelect", "nodeSelect", deploy.Spec.Template.Spec.NodeSelector)
 		if apierrs.IsConflict(e) {
-			log.V(1).Info("Conflict while updating status", "namespace", deploy.Namespace, "deploy_name", deploy.Name)
 			return reconcile.Result{Requeue: true}, nil
 		}
 		return ctrl.Result{}, e
 	}
-	log.V(1).Info("deploy nodeSelect", "nodeSelect", deploy.Spec.Template.Spec.NodeSelector)
 	return ctrl.Result{}, nil
 }
 
