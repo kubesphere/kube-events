@@ -125,26 +125,37 @@ func (r *ExporterReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	cr := &rbacv1.ClusterRole{}
 	cr.Name = fmt.Sprintf("%s-%s", kee.Namespace, kee.Name)
 	if _, e = controllerutil.CreateOrUpdate(ctx, r.Client, cr, r.clusterRoleMutate(cr, kee)); e != nil {
+		if apierrs.IsConflict(e) {
+			return reconcile.Result{Requeue: true}, nil
+		}
 		return ctrl.Result{}, e
 	}
 	crb := &rbacv1.ClusterRoleBinding{}
 	crb.Name = fmt.Sprintf("%s-%s", kee.Namespace, kee.Name)
 	if _, e = controllerutil.CreateOrUpdate(ctx, r.Client, crb, r.clusterRoleBindingMutate(crb, cr, sa, kee)); e != nil {
+		if apierrs.IsConflict(e) {
+			return reconcile.Result{Requeue: true}, nil
+		}
 		return ctrl.Result{}, e
 	}
 	cm := &corev1.ConfigMap{}
 	cm.Namespace = kee.Namespace
 	cm.Name = kee.Name
 	if _, e = controllerutil.CreateOrUpdate(ctx, r.Client, cm, r.configMutate(cm, kee)); e != nil {
+		if apierrs.IsConflict(e) {
+			return reconcile.Result{Requeue: true}, nil
+		}
 		return ctrl.Result{}, e
 	}
 	deploy := &appsv1.Deployment{}
 	deploy.Name = kee.Name
 	deploy.Namespace = kee.Namespace
 	if _, e = controllerutil.CreateOrUpdate(ctx, r.Client, deploy, r.deployMutate(deploy, cm, sa, kee)); e != nil {
+		if apierrs.IsConflict(e) {
+			return reconcile.Result{Requeue: true}, nil
+		}
 		return ctrl.Result{}, e
 	}
-
 	return ctrl.Result{}, nil
 }
 
