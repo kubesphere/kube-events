@@ -32,9 +32,9 @@ type RuleCache struct {
 }
 
 func (c *RuleCache) Run(ctx context.Context) error {
-	go c.resCache.Start(ctx.Done())
+	go c.resCache.Start(ctx)
 
-	nsInf, e := c.resCache.GetInformer(&corev1.Namespace{})
+	nsInf, e := c.resCache.GetInformer(ctx, &corev1.Namespace{})
 	if e != nil {
 		return e
 	}
@@ -59,7 +59,7 @@ func (c *RuleCache) Run(ctx context.Context) error {
 		return fmt.Errorf("namespace cache failed")
 	}
 
-	ruleInf, e := c.resCache.GetInformer(&v1alpha1.Rule{})
+	ruleInf, e := c.resCache.GetInformer(ctx, &v1alpha1.Rule{})
 	if e != nil {
 		return e
 	}
