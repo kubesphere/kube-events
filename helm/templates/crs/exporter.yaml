@@ -27,6 +27,11 @@ spec:
   resources:
 {{ toYaml .Values.exporter.resources | indent 4 }}
   {{- end }}
+{{- if .Values.timezone }}
+  env:
+  - name: TZ
+    value: {{ .Values.timezone }}
+{{- end }}
   sinks:
     {{- if .Values.exporter.sinks.stdout.enabled }}
     stdout: {}

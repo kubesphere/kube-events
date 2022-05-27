@@ -67,6 +67,7 @@ type ExporterReconciler struct {
 
 // +kubebuilder:rbac:groups=events.kubesphere.io,resources=exporters,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=events.kubesphere.io,resources=exporters/status,verbs=get;update;patch
+// +kubebuilder:rbac:groups=events.kubesphere.io,resources=exporters/finalizers,verbs=update
 // +kubebuilder:rbac:groups=apps,resources=deployments,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=apps,resources=deployments/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups=core,resources=configmaps,verbs=get;list;watch;create;update;patch;delete
@@ -362,16 +363,8 @@ func (r *ExporterReconciler) deployMutate(deploy *appsv1.Deployment,
 				}
 			}
 		}
-		hostTimeV := corev1.Volume{
-			Name: "host-time",
-			VolumeSource: corev1.VolumeSource{
-				HostPath: &corev1.HostPathVolumeSource{
-					Path: "/etc/localtime",
-				},
-			},
-		}
 		if !reflect.DeepEqual(expcConfV, confV) {
-			deploy.Spec.Template.Spec.Volumes = []corev1.Volume{expcConfV, hostTimeV}
+			deploy.Spec.Template.Spec.Volumes = []corev1.Volume{expcConfV}
 		}
 
 		reloaderRes := corev1.ResourceRequirements{Limits: corev1.ResourceList{}}
@@ -395,11 +388,6 @@ func (r *ExporterReconciler) deployMutate(deploy *appsv1.Deployment,
 					MountPath: configDirEventsExporter,
 					ReadOnly:  true,
 				},
-				{
-					Name:      hostTimeV.Name,
-					MountPath: hostTimeV.HostPath.Path,
-					ReadOnly:  true,
-				},
 			},
 		}
 		expcReloaderC := corev1.Container{
@@ -416,13 +404,14 @@ func (r *ExporterReconciler) deployMutate(deploy *appsv1.Deployment,
 					MountPath: configDirEventsExporter,
 					ReadOnly:  true,
 				},
-				{
-					Name:      hostTimeV.Name,
-					MountPath: hostTimeV.HostPath.Path,
-					ReadOnly:  true,
-				},
 			},
 		}
+
+		if kee.Spec.Env != nil {
+			expcExporterC.Env = kee.Spec.Env
+			expcReloaderC.Env = kee.Spec.Env
+		}
+
 		var exporterC, reloaderC corev1.Container
 		for _, c := range deploy.Spec.Template.Spec.Containers {
 			simplec := corev1.Container{

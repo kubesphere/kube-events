@@ -23,6 +23,8 @@ KE_DOCGEN_BINARY:=$(GOBIN)/kube-events-docgen
 TYPES_V1ALPHA1_TARGET := pkg/apis/v1alpha1/exporter_types.go pkg/apis/v1alpha1/ruler_types.go pkg/apis/v1alpha1/rule_types.go
 DEEPCOPY_TARGET := pkg/apis/v1alpha1/zz_generated.deepcopy.go
 
+.PHONY: helm
+
 deploy:
 	kubectl apply -f config/bundle.yaml
 
@@ -35,6 +37,10 @@ generate: $(DEEPCOPY_TARGET) manifests
 # Generate manifests e.g. CRD, RBAC etc.
 manifests: $(CONTROLLER_GEN) $(TYPES_V1ALPHA1_TARGET)
 	$(CONTROLLER_GEN) $(CRD_OPTIONS) rbac:roleName=operator paths="./pkg/..." output:crd:artifacts:config=config/crd/bases
+
+helm: $(CONTROLLER_GEN)
+	kustomize build config/helm | sed -e '/creationTimestamp/d' > helm/crds/bundle.yaml
+	tar zcvf kube-events.tgz helm
 
 doc/api.md: $(KE_DOCGEN_BINARY) $(TYPES_V1ALPHA1_TARGET)
 	$(KE_DOCGEN_BINARY) $(TYPES_V1ALPHA1_TARGET) > doc/api.md

@@ -5,7 +5,7 @@ operator:
     tag: latest
     pullPolicy: IfNotPresent
   configReloader:
-    image: jimmidyson/configmap-reload:v0.3.0
+    image: jimmidyson/configmap-reload:v0.7.1
   affinity: {}
   nodeSelector: {}
   tolerations: {}
@@ -27,7 +27,7 @@ exporter:
   enabled: true
   image:
     repository: kubesphere/kube-events-exporter
-    tag: latest
+    tag: 0.4.0
     pullPolicy: IfNotPresent
   affinity: {}
   nodeSelector: {}
@@ -55,7 +55,7 @@ ruler:
   replicas: 2
   image:
     repository: kubesphere/kube-events-ruler
-    tag: latest
+    tag: 0.4.0
     pullPolicy: IfNotPresent
   affinity: {}
   nodeSelector: {}
@@ -90,3 +90,6 @@ ruler:
 rule:
   createDefaults: true
   overrideDefaults: false
+
+# Set timezone env variable to be set in containers
+# timezone: "America/Toronto"

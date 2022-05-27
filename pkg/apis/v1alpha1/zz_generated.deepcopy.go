@@ -169,6 +169,13 @@ func (in *ExporterSpec) DeepCopyInto(out *ExporterSpec) {
 		}
 	}
 	in.Resources.DeepCopyInto(&out.Resources)
+	if in.Env != nil {
+		in, out := &in.Env, &out.Env
+		*out = make([]v1.EnvVar, len(*in))
+		for i := range *in {
+			(*in)[i].DeepCopyInto(&(*out)[i])
+		}
+	}
 	if in.Sinks != nil {
 		in, out := &in.Sinks, &out.Sinks
 		*out = new(ExporterSinks)
@@ -491,6 +498,13 @@ func (in *RulerSpec) DeepCopyInto(out *RulerSpec) {
 		}
 	}
 	in.Resources.DeepCopyInto(&out.Resources)
+	if in.Env != nil {
+		in, out := &in.Env, &out.Env
+		*out = make([]v1.EnvVar, len(*in))
+		for i := range *in {
+			(*in)[i].DeepCopyInto(&(*out)[i])
+		}
+	}
 	if in.RuleNamespaceSelector != nil {
 		in, out := &in.RuleNamespaceSelector, &out.RuleNamespaceSelector
 		*out = new(metav1.LabelSelector)
