@@ -70,6 +70,7 @@ ExporterSpec defines the desired state of Exporter
 | nodeSelector | Define which Nodes the Pods are scheduled on. | map[string]string | false |
 | tolerations | If specified, the pod's tolerations. | []corev1.Toleration | false |
 | resources | Resources defines resources requests and limits for single Pod. | [corev1.ResourceRequirements](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#resourcerequirements-v1-core) | false |
+| env | List of environment variable | []corev1.EnvVar | false |
 | sinks | Sinks defines details of events sinks | *[ExporterSinks](#exportersinks) | false |
 
 [Back to TOC](#table-of-contents)
@@ -147,6 +148,7 @@ RulerSpec defines the desired state of Ruler
 | nodeSelector | Define which Nodes the Pods are scheduled on. | map[string]string | false |
 | tolerations | If specified, the pod's tolerations. | []corev1.Toleration | false |
 | resources | Resources defines resources requests and limits for single Pod. | [corev1.ResourceRequirements](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#resourcerequirements-v1-core) | false |
+| env | List of environment variable | []corev1.EnvVar | false |
 | ruleNamespaceSelector | Namespaces to be selected for Rules discovery. If unspecified, discover Rule instances from all namespaces. | *[metav1.LabelSelector](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#labelselector-v1-meta) | false |
 | ruleSelector | A selector to select Rules instances. | *[metav1.LabelSelector](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#labelselector-v1-meta) | false |
 | sinks | Sinks defines sinks detail of this ruler | *[RulerSinks](#rulersinks) | false |
