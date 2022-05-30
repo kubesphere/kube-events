@@ -1809,7 +1809,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
-        image: kubesphere/kube-events-operator:latest
+        image: kubesphere/kube-events-operator:v0.5.0
         name: events-operator
         ports:
         - containerPort: 9443
