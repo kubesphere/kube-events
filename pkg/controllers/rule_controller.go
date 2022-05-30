@@ -37,8 +37,7 @@ type RuleReconciler struct {
 // +kubebuilder:rbac:groups=events.kubesphere.io,resources=rules,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=events.kubesphere.io,resources=rules/status,verbs=get;update;patch
 
-func (r *RuleReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
-	_ = context.Background()
+func (r *RuleReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	_ = r.Log.WithValues("rule", req.NamespacedName)
 
 	// your logic here

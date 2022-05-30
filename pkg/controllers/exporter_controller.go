@@ -76,8 +76,7 @@ type ExporterReconciler struct {
 // +kubebuilder:rbac:groups=rbac.authorization.k8s.io,resources=clusterrolebindings,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=core,resources=events,verbs=get;list;watch
 
-func (r *ExporterReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
-	ctx := context.Background()
+func (r *ExporterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	log := r.Log.WithValues("exporter", req.NamespacedName)
 
 	kee := &eventsv1alpha1.Exporter{}
@@ -92,7 +91,7 @@ func (r *ExporterReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 
 	if kee.ObjectMeta.DeletionTimestamp.IsZero() {
 		if !hasFinalizer(&kee.ObjectMeta, finalizerNameEventsExporter) {
-			controllerutil.AddFinalizer(&kee.ObjectMeta, finalizerNameEventsExporter)
+			controllerutil.AddFinalizer(kee, finalizerNameEventsExporter)
 			if e = r.Update(ctx, kee); e != nil {
 				return ctrl.Result{}, e
 			}
@@ -109,7 +108,7 @@ func (r *ExporterReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 			if e = r.Delete(ctx, cr); e != nil && !apierrs.IsNotFound(e) {
 				return ctrl.Result{}, e
 			}
-			controllerutil.RemoveFinalizer(&kee.ObjectMeta, finalizerNameEventsExporter)
+			controllerutil.RemoveFinalizer(kee, finalizerNameEventsExporter)
 			if e = r.Update(ctx, kee); e != nil {
 				return ctrl.Result{}, e
 			}
@@ -161,21 +160,21 @@ func (r *ExporterReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 }
 
 func (r *ExporterReconciler) SetupWithManager(mgr ctrl.Manager) error {
-	meets := func(meta metav1.Object, obj runtime.Object) bool {
-		if meta == nil || obj == nil {
+	meets := func(obj client.Object) bool {
+		if obj == nil {
 			return false
 		}
 		switch obj.(type) {
 		case *eventsv1alpha1.Exporter:
 			return true
 		case *appsv1.Deployment, *corev1.Service, *corev1.ConfigMap, *corev1.ServiceAccount:
-			if ls := meta.GetLabels(); ls != nil {
+			if ls := obj.GetLabels(); ls != nil {
 				_, ok := ls[labelKeyEventsExporter]
 				return ok
 			}
 			return false
 		case *rbacv1.ClusterRole, *rbacv1.ClusterRoleBinding:
-			if ls := meta.GetLabels(); ls != nil {
+			if ls := obj.GetLabels(); ls != nil {
 				_, ok1 := ls[labelKeyEventsExporter]
 				_, ok2 := ls[labelKeyEventsExporterNamespace]
 				return ok1 && ok2
@@ -186,22 +185,22 @@ func (r *ExporterReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	}
 	preficateFuncs := predicate.Funcs{
 		CreateFunc: func(event event.CreateEvent) bool {
-			return meets(event.Meta, event.Object)
+			return meets(event.Object)
 		},
 		UpdateFunc: func(event event.UpdateEvent) bool {
-			if meets(event.MetaOld, event.ObjectOld) {
-				if event.MetaOld != nil && event.MetaNew != nil {
-					return event.MetaOld.GetResourceVersion() != event.MetaNew.GetResourceVersion()
+			if meets(event.ObjectOld) {
+				if event.ObjectOld != nil && event.ObjectNew != nil {
+					return event.ObjectOld.GetResourceVersion() != event.ObjectNew.GetResourceVersion()
 				}
 			}
 			return false
 		},
 		DeleteFunc: func(event event.DeleteEvent) bool {
-			return meets(event.Meta, event.Object)
+			return meets(event.Object)
 		},
 	}
-	enq := func(meta metav1.Object, q workqueue.RateLimitingInterface) {
-		if ls := meta.GetLabels(); ls != nil {
+	enq := func(obj client.Object, q workqueue.RateLimitingInterface) {
+		if ls := obj.GetLabels(); ls != nil {
 			name, ok1 := ls[labelKeyEventsRuler]
 			ns, ok2 := ls[labelKeyEventsRulerNamespace]
 			if ok1 && ok2 {
@@ -214,16 +213,17 @@ func (r *ExporterReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	}
 	chandler := handler.Funcs{
 		CreateFunc: func(createEvent event.CreateEvent, limitingInterface workqueue.RateLimitingInterface) {
-			if meta := createEvent.Meta; meta != nil {
-				enq(meta, limitingInterface)
+			if obj := createEvent.Object; obj != nil {
+				enq(obj, limitingInterface)
 			}
 		},
 		UpdateFunc: func(updateEvent event.UpdateEvent, limitingInterface workqueue.RateLimitingInterface) {
-			if meta := updateEvent.MetaOld; meta != nil {
-				enq(meta, limitingInterface)
+			if oldObj := updateEvent.ObjectOld; oldObj != nil {
+				enq(oldObj, limitingInterface)
 			}
 		},
 	}
+
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&eventsv1alpha1.Exporter{}).
 		Owns(&appsv1.Deployment{}).
