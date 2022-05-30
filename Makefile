@@ -4,7 +4,7 @@ REGISTRY?=kubesphere
 REPO_OPERATOR?=$(REGISTRY)/kube-events-operator
 REPO_EXPORTER?=$(REGISTRY)/kube-events-exporter
 REPO_RULER?=$(REGISTRY)/kube-events-ruler
-TAG?=0.5.0
+TAG?=v0.5.0
 
 GO_PKG?=github.com/kubesphere/kube-events
 
