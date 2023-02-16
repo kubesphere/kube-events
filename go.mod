@@ -6,7 +6,7 @@ require (
 	github.com/antlr/antlr4 v0.0.0-20200225173536-225249fdaef5 // indirect
 	github.com/go-logr/logr v1.2.3
 	github.com/go-openapi/spec v0.20.3 // indirect
-	github.com/hashicorp/go-multierror v1.1.0
+	github.com/hashicorp/go-multierror v1.1.1
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/kubesphere/alertmanager-kit v0.0.0-20201019060038-52e1f8a13968
 	github.com/kubesphere/event-rule-engine v0.0.0-20200808103159-763922656585
