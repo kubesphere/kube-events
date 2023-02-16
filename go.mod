@@ -12,10 +12,10 @@ require (
 	github.com/kubesphere/event-rule-engine v0.0.0-20200808103159-763922656585
 	github.com/onsi/ginkgo v1.16.4
 	github.com/onsi/gomega v1.23.0
-	github.com/panjf2000/ants/v2 v2.2.2
+	github.com/panjf2000/ants/v2 v2.7.1
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.11.1 // indirect
-	golang.org/x/sync v0.0.0-20201207232520-09787c993a3a
+	golang.org/x/sync v0.1.0
 	k8s.io/api v0.21.4
 	k8s.io/apimachinery v0.26.1
 	k8s.io/client-go v0.21.4
