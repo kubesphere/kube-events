@@ -161,6 +161,7 @@ func (s *K8sEventSource) enqueueEvent(obj interface{}) {
 	}
 	evt, ok := obj.(*corev1.Event)
 	if ok {
+		evt.SetManagedFields(nil) // set it nil because it is quite verbose
 		s.workqueue.Add(evt)
 	}
 }
