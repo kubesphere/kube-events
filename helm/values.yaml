@@ -2,7 +2,7 @@ operator:
   enabled: true
   image:
     repository: kubesphere/kube-events-operator
-    tag: latest
+    tag: "" # If unset use v+ .Chart.appVersion
     pullPolicy: IfNotPresent
   configReloader:
     image: jimmidyson/configmap-reload:v0.7.1
@@ -31,7 +31,7 @@ exporter:
   enabled: true
   image:
     repository: kubesphere/kube-events-exporter
-    tag: 0.4.0
+    tag: "" # If unset use v+ .Chart.appVersion
     pullPolicy: IfNotPresent
   affinity: {}
   nodeSelector: {}
@@ -63,7 +63,7 @@ ruler:
   replicas: 2
   image:
     repository: kubesphere/kube-events-ruler
-    tag: 0.4.0
+    tag: "" # If unset use v+ .Chart.appVersion
     pullPolicy: IfNotPresent
   affinity: {}
   nodeSelector: {}
@@ -82,12 +82,9 @@ ruler:
   ruleNamespaceSelector: {}
   ruleSelector: {}
   sinks:
-    alertmanager:
-      namespace: kubesphere-monitoring-system
+    alertmanagers:
+    - namespace: kubesphere-monitoring-system
       name: alertmanager-operated
-    # alertmanagers:
-    # - namespace: kubesphere-monitoring-system
-    #   name: alertmanager-operated
     # webhooks:
     # - type:
     #   url:

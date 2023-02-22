@@ -1,7 +1,8 @@
 FROM golang:1.20 as builder
 WORKDIR /workspace
 
-ENV GOPROXY=https://goproxy.cn,direct
+ARG GOPROXY
+ENV GOPROXY=${GOPROXY:-https://proxy.golang.org,direct}
 
 # Copy the Go Modules manifests
 COPY go.mod go.mod
