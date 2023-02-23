@@ -16,6 +16,10 @@ operator:
 #    requests:
 #      cpu: 20m
 #      memory: 20Mi
+  # Additional volumes on the Deployment definition.
+  volumes: []
+  # Additional volumeMounts on the Deployment definition.
+  volumeMounts: []
   serviceAccount:
     create: true
     name: ""
@@ -39,6 +43,10 @@ exporter:
 #    requests:
 #      cpu: 20m
 #      memory: 50Mi
+  # Additional volumes on the output Deployment definition.
+  volumes: []
+  # Additional volumeMounts on the output Deployment definition.
+  volumeMounts: []
   sinks:
     stdout:
       enabled: true
@@ -67,6 +75,10 @@ ruler:
 #    requests:
 #      cpu: 50m
 #      memory: 50Mi
+  # Additional volumes on the output Deployment definition.
+  volumes: []
+  # Additional volumeMounts on the output Deployment definition.
+  volumeMounts: []
   ruleNamespaceSelector: {}
   ruleSelector: {}
   sinks:
