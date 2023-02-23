@@ -350,22 +350,8 @@ func (r *ExporterReconciler) deployMutate(deploy *appsv1.Deployment,
 				},
 			},
 		}
-		var confV corev1.Volume
-		for _, v := range deploy.Spec.Template.Spec.Volumes {
-			if v.Name == expcConfV.Name {
-				if v.ConfigMap != nil {
-					confV.Name = v.Name
-					confV.ConfigMap = &corev1.ConfigMapVolumeSource{
-						LocalObjectReference: corev1.LocalObjectReference{
-							Name: v.ConfigMap.Name,
-						},
-					}
-				}
-			}
-		}
-		if !reflect.DeepEqual(expcConfV, confV) {
-			deploy.Spec.Template.Spec.Volumes = []corev1.Volume{expcConfV}
-		}
+
+		deploy.Spec.Template.Spec.Volumes = append([]corev1.Volume{expcConfV}, kee.Spec.Volumes...)
 
 		reloaderRes := corev1.ResourceRequirements{Limits: corev1.ResourceList{}}
 		if r.Conf.ConfigReloaderCPU != "0" {
@@ -390,6 +376,7 @@ func (r *ExporterReconciler) deployMutate(deploy *appsv1.Deployment,
 				},
 			},
 		}
+		expcExporterC.VolumeMounts = append(expcExporterC.VolumeMounts, kee.Spec.VolumeMounts...)
 		expcReloaderC := corev1.Container{
 			Name:      "config-reloader",
 			Image:     r.Conf.ConfigReloaderImage,

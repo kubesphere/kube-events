@@ -39,7 +39,7 @@ manifests: $(CONTROLLER_GEN) $(TYPES_V1ALPHA1_TARGET)
 	$(CONTROLLER_GEN) $(CRD_OPTIONS) rbac:roleName=operator paths="./pkg/..." output:crd:artifacts:config=config/crd/bases
 
 helm: $(CONTROLLER_GEN)
-	kustomize build config/helm | sed -e '/creationTimestamp/d' > helm/crds/bundle.yaml
+	$(GOBIN)/kustomize build config/helm | sed -e '/creationTimestamp/d' > helm/crds/bundle.yaml
 	tar zcvf kube-events.tgz helm
 
 doc/api.md: $(KE_DOCGEN_BINARY) $(TYPES_V1ALPHA1_TARGET)

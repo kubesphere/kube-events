@@ -57,6 +57,9 @@ spec:
         - mountPath: /tmp/k8s-webhook-server/serving-certs
           name: cert
           readOnly: true
+{{- if .Values.operator.volumeMounts }}
+{{ toYaml .Values.operator.volumeMounts | indent 8 }}
+{{- end }}
       serviceAccountName: {{ template "kube-events.operator.fullname" . }}
       terminationGracePeriodSeconds: 10
       volumes:
@@ -64,5 +67,8 @@ spec:
         secret:
           defaultMode: 420
           secretName: {{ template "kube-events.admission.fullname" . }}
+{{- if .Values.operator.volumes }}
+{{ toYaml .Values.operator.volumes | indent 6 }}
+{{- end }}
 
 {{- end }}

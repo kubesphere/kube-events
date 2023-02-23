@@ -28,6 +28,14 @@ spec:
   resources:
 {{ toYaml .Values.ruler.resources | indent 4 }}
   {{- end }}
+{{- if .Values.ruler.volumes }}
+  volumes:
+{{ toYaml .Values.ruler.volumes | indent 2 }}
+{{- end }}
+{{- if .Values.ruler.volumeMounts }}
+  volumeMounts:
+{{ toYaml .Values.ruler.volumeMounts | indent 2 }}
+{{- end }}
 {{- if .Values.timezone }}
   env:
   - name: TZ

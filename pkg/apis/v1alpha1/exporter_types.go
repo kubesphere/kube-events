@@ -37,6 +37,12 @@ type ExporterSpec struct {
 	Resources corev1.ResourceRequirements `json:"resources,omitempty"`
 	// List of environment variable
 	Env []corev1.EnvVar `json:"env,omitempty"`
+	// Volumes allows configuration of additional volumes on the output Deployment definition.
+	// Volumes specified will be appended to other volumes that are generated.
+	Volumes []corev1.Volume `json:"volumes,omitempty"`
+	// VolumeMounts allows configuration of additional VolumeMounts on the output Deployment definition.
+	// VolumeMounts specified will be appended to other VolumeMounts in the events-exporter container.
+	VolumeMounts []corev1.VolumeMount `json:"volumeMounts,omitempty"`
 	// Sinks defines details of events sinks
 	Sinks *ExporterSinks `json:"sinks,omitempty"`
 }
