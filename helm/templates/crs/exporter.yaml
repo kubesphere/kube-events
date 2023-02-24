@@ -8,7 +8,7 @@ metadata:
 {{ include "kube-events.labels" . | indent 4 }}
 spec:
   {{- if .Values.exporter.image }}
-  image: {{ .Values.exporter.image.repository }}:{{ .Values.exporter.image.tag }}
+  image: {{ .Values.exporter.image.repository }}:{{ .Values.exporter.image.tag | default (print "v" .Chart.AppVersion) }}
   imagePullPolicy: {{ .Values.exporter.image.pullPolicy }}
   {{- end }}
   {{- if .Values.exporter.affinity }}

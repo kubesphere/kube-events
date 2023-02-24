@@ -32,7 +32,7 @@ spec:
       {{- end }}
       containers:
       - name: events-operator
-        image: {{ .Values.operator.image.repository }}:{{ .Values.operator.image.tag }}
+        image: {{ .Values.operator.image.repository }}:{{ .Values.operator.image.tag | default (print "v" .Chart.AppVersion) }}
         imagePullPolicy: {{ .Values.operator.image.pullPolicy }}
         args:
         - --config-reloader-image={{ .Values.operator.configReloader.image }}
