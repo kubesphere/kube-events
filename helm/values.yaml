@@ -59,7 +59,7 @@ exporter:
     #     path:
 
 ruler:
-  enabled: true
+  enabled: false
   replicas: 2
   image:
     repository: kubesphere/kube-events-ruler

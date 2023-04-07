@@ -3,7 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ template "kube-events.operator.fullname" . }}
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ template "kube-events.namespace" . }}
   labels:
 {{ include "kube-events.labels" . | indent 4 }}
 spec:
