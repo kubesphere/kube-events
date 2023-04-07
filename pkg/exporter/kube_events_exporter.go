@@ -155,13 +155,24 @@ func (s *K8sEventSource) sinkEvents(ctx context.Context) {
 	}
 }
 
-func (s *K8sEventSource) enqueueEvent(obj interface{}) {
+func (s *K8sEventSource) enqueueEventOnAdd(obj interface{}) {
 	if obj == nil {
 		return
 	}
 	evt, ok := obj.(*corev1.Event)
 	if ok {
 		s.workqueue.Add(evt)
+	}
+}
+
+func (s *K8sEventSource) enqueueEventOnUpdate(objOld interface{}, objNew interface{}) {
+	if objOld == nil || objNew == nil {
+		return
+	}
+	evtOld, okOld := objOld.(*corev1.Event)
+	evtNew, okNew := objNew.(*corev1.Event)
+	if okOld && okNew && evtOld.GetResourceVersion() != evtNew.GetResourceVersion() {
+		s.workqueue.Add(evtNew)
 	}
 }
 
@@ -173,9 +184,9 @@ func NewKubeEventSource(client *kubernetes.Clientset) *K8sEventSource {
 		"events", metav1.NamespaceAll, fields.Everything())
 	s.inf = cache.NewSharedIndexInformer(lw, &corev1.Event{}, 0, cache.Indexers{})
 	s.inf.AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc: s.enqueueEvent,
+		AddFunc: s.enqueueEventOnAdd,
 		UpdateFunc: func(old, new interface{}) {
-			s.enqueueEvent(new)
+			s.enqueueEventOnUpdate(old, new)
 		},
 	})
 
