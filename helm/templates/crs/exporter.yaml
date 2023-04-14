@@ -3,7 +3,7 @@ apiVersion: events.kubesphere.io/v1alpha1
 kind: Exporter
 metadata:
   name: {{ template "kube-events.exporter.fullname" . }}
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ template "kube-events.namespace" . }}
   labels:
 {{ include "kube-events.labels" . | indent 4 }}
 spec:
@@ -48,7 +48,7 @@ spec:
     webhooks:
     {{- if .Values.ruler.enabled }}
     - service:
-        namespace: {{ .Release.Namespace }}
+        namespace: {{ template "kube-events.namespace" . }}
         name: {{ template "kube-events.ruler.fullname" . }}
         port: 8443
         path: /events

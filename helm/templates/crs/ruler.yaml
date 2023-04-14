@@ -3,7 +3,7 @@ apiVersion: events.kubesphere.io/v1alpha1
 kind: Ruler
 metadata:
   name: {{ template "kube-events.ruler.fullname" . }}
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ template "kube-events.namespace" . }}
   labels:
 {{ include "kube-events.labels" . | indent 4 }}
 spec:

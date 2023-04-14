@@ -203,5 +203,5 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: {{ template "kube-events.operator.serviceAccountName" . }}
-    namespace: {{ .Release.Namespace }}
+    namespace: {{ template "kube-events.namespace" . }}
 {{- end }}
