@@ -3,7 +3,7 @@ name: kube-events
 description: provides easy kube-events definitions for event exporting, filtering and alerting.
 icon:
 type: application
-version: 0.4.0
+version: 0.4.2
 appVersion: 0.6.0
 source:
   - https://github.com/kubesphere/kube-events

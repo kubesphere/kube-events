@@ -3,7 +3,7 @@ apiVersion: events.kubesphere.io/v1alpha1
 kind: Rule
 metadata:
   name: {{ template "kube-events.cluster-rules-default.fullname" . }}
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ template "kube-events.namespace" . }}
   labels:
     kubesphere.io/rule-scope: cluster
 {{ include "kube-events.labels" . | indent 4 }}

@@ -64,8 +64,9 @@ func valueIntoFlatMap(val reflect.Value, output map[string]interface{}, name, se
 
 // FormatMap formats the string with the map ( the key name of map must be combination of a-zA-z0-9 and . and _ )
 // eg:  format: "this namespace is %namespace"
-// 		map: 	{"namespace": "ns"}
-// 		return: "this namespace is ns"
+//
+//	map: 	{"namespace": "ns"}
+//	return: "this namespace is ns"
 func FormatMap(format string, m map[string]interface{}) string {
 	var buf bytes.Buffer
 	end := len(format)

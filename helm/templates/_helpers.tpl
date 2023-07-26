@@ -27,6 +27,17 @@ If release name contains chart name it will be used as a full name.
 {{- end -}}
 
 {{/*
+Allow the release namespace to be overridden for multi-namespace deployments in combined charts
+*/}}
+{{- define "kube-events.namespace" -}}
+  {{- if .Values.namespaceOverride -}}
+    {{- .Values.namespaceOverride -}}
+  {{- else -}}
+    {{- .Release.Namespace -}}
+  {{- end -}}
+{{- end -}}
+
+{{/*
 Create chart name and version as used by the chart label.
 */}}
 {{- define "kube-events.chart" -}}
@@ -81,3 +92,28 @@ Create the name of the service account to use
     {{ default "default" .Values.operator.serviceAccount.name }}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Get container runtime. 
+If .Values.fluentbit.containerRuntime is set and not empty, return it.
+If not, return container runtime based on .status.nodeInfo.containerRuntimeVersion of first node found.
+*/}}
+{{- define "kube-events.containerRuntime" }}
+{{- if .Values.fluentbit.containerRuntime }}
+  {{- print .Values.fluentbit.containerRuntime }}
+{{- else }}
+  {{- $nodeList := (lookup "v1" "Node" "" "").items }}
+  {{- if $nodeList }}
+    {{- $containerRuntimeVersion := (index $nodeList 0).status.nodeInfo.containerRuntimeVersion }}
+    {{- if hasPrefix "docker://" $containerRuntimeVersion }}
+      {{- print "docker" -}}
+    {{- else if hasPrefix "containerd://" $containerRuntimeVersion }}
+      {{- print "containerd" -}}
+    {{- else }}
+      {{- print "crio" -}}
+    {{- end }}
+  {{- else }}
+    {{- print "docker" -}}
+  {{- end }}
+  {{- end }}
+{{- end }}

@@ -1,0 +1,106 @@
+{{- if and .Values.exporter.enabled .Values.fluentbit.enabled }}
+
+{{- if .Values.fluentbit.input.enabled }}
+{{- if .Values.fluentbit.useKubeSphereAPI }}
+apiVersion: logging.kubesphere.io/v1alpha2
+kind: Input
+{{- else }}
+apiVersion: fluentbit.fluent.io/v1alpha2
+kind: ClusterInput
+{{- end }}
+metadata:
+  name: {{ template "kube-events.exporter.fullname" . }}-input-tail
+  labels:
+    {{- if .Values.fluentbit.useKubeSphereAPI }}
+    logging.kubesphere.io/enabled: "true"
+    logging.kubesphere.io/component: events
+    {{- else }}
+    fluentbit.fluent.io/enabled: "true"
+    fluentbit.fluent.io/component: events
+    {{- end }}
+{{ include "kube-events.labels" . | indent 4 }}
+spec:
+  tail:
+    {{- if not .Values.fluentbit.input.tail.tag }}
+    tag: {{ include "kube-events.exporter.fullname" . }}
+    {{- end }}
+    {{- if not .Values.fluentbit.input.tail.path }}
+    path: /var/log/containers/*_{{ include "kube-events.namespace" . }}_events-exporter*.log
+    {{- end }}
+    {{- if not .Values.fluentbit.input.tail.db }}
+    db: /fluent-bit/tail/{{ include "kube-events.exporter.fullname" . }}.db
+    {{- end }}
+    {{- if not .Values.fluentbit.input.tail.parser }}
+    {{- if eq (include "kube-events.containerRuntime" .) "containerd" "crio" }}
+    parser: cri
+    {{- else }}
+    parser: docker
+    {{- end }}
+    {{- end }}
+{{ toYaml .Values.fluentbit.input.tail | indent 4 }}
+{{- end }}
+
+{{- if .Values.fluentbit.filter.enabled }}
+---
+{{- if .Values.fluentbit.useKubeSphereAPI }}
+apiVersion: logging.kubesphere.io/v1alpha2
+kind: Filter
+{{- else }}
+apiVersion: fluentbit.fluent.io/v1alpha2
+kind: ClusterFilter
+{{- end }}
+metadata:
+  name: {{ template "kube-events.exporter.fullname" . }}-filter
+  labels:
+    {{- if .Values.fluentbit.useKubeSphereAPI }}
+    logging.kubesphere.io/enabled: "true"
+    logging.kubesphere.io/component: events
+    {{- else }}
+    fluentbit.fluent.io/enabled: "true"
+    fluentbit.fluent.io/component: events
+    {{- end }}
+{{ include "kube-events.labels" . | indent 4 }}
+spec:
+  match: {{ default .Values.fluentbit.filter.match (include "kube-events.exporter.fullname" .) }}
+  filters:
+  - parser:
+      {{- if eq (include "kube-events.containerRuntime" .) "containerd" "crio" }}
+      keyName: message
+      {{- else }}
+      keyName: log
+      {{- end }}
+      parser: json
+  {{- with .Values.fluentbit.filter.additionalFilters }}
+{{ toYaml . | nindent 2 }}
+  {{- end }}
+{{- end }}
+
+{{- if .Values.fluentbit.output.enabled }}
+---
+{{- if .Values.fluentbit.useKubeSphereAPI }}
+apiVersion: logging.kubesphere.io/v1alpha2
+kind: Output
+{{- else }}
+apiVersion: fluentbit.fluent.io/v1alpha2
+kind: ClusterOutput
+{{- end }}
+metadata:
+  name: {{ template "kube-events.exporter.fullname" . }}-output-opensearch
+  labels:
+    {{- if .Values.fluentbit.useKubeSphereAPI }}
+    logging.kubesphere.io/enabled: "true"
+    logging.kubesphere.io/component: events
+    {{- else }}
+    fluentbit.fluent.io/enabled: "true"
+    fluentbit.fluent.io/component: events
+    {{- end }}
+{{ include "kube-events.labels" . | indent 4 }}
+spec:
+  match: {{ default .Values.fluentbit.output.match (include "kube-events.exporter.fullname" .) }}
+  {{- if .Values.fluentbit.output.opensearch }}
+  opensearch:
+{{ toYaml .Values.fluentbit.output.opensearch | indent 4 }}
+  {{- end }}
+{{- end }}
+
+{{- end }}

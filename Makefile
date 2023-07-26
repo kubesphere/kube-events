@@ -51,6 +51,9 @@ fmt:
 vet:
 	go vet ./...
 
+test: fmt vet
+	go test ./...
+	
 # Generate deepcopy etc.
 $(DEEPCOPY_TARGET): $(CONTROLLER_GEN) $(TYPES_V1ALPHA1_TARGET)
 	$(CONTROLLER_GEN) object:headerFile="hack/boilerplate.go.txt" paths="./pkg/..."

@@ -57,9 +57,36 @@ exporter:
     #     name:
     #     port:
     #     path:
+  
+# Configure fluentbit(operated by https://github.com/fluent/fluent-operator) to collect events logs of exporter.
+# These will be applied only when exporter.stdout.enabled=true and fluentbit.enabled=true.
+fluentbit:
+  enabled: false
+  # Set this to containerd or crio if you want fluentbit to collect CRI format logs.
+  # If not set, it will be auto detected.
+  containerRuntime: ""
+  input:
+    enabled: true
+    tail:
+      refreshIntervalSeconds: 10
+      memBufLimit: 5MB
+      skipLongLines: true
+      dbSync: Normal
+  filter:
+    enabled: true
+    additionalFilters: []
+  output:
+    enabled: true
+    opensearch:
+      host: opensearch-cluster-data.kubesphere-logging-system.svc
+      port: 9200
+      logstashPrefix: ks-whizard-events
+      suppressTypeName: true
+      logstashFormat: true
+      generateID: true
 
 ruler:
-  enabled: true
+  enabled: false
   replicas: 2
   image:
     repository: kubesphere/kube-events-ruler

@@ -1,15 +1,15 @@
 {{- if .Values.operator.enabled }}
 {{- $ca := genCA "kube-events-admission-ca" 3650 }}
 {{- $cn := ( include "kube-events.admission.fullname" . ) }}
-{{- $altName1 := printf "%s.%s" ( include "kube-events.admission.fullname" . ) .Release.Namespace }}
-{{- $altName2 := printf "%s.%s.svc" ( include "kube-events.admission.fullname" . ) .Release.Namespace }}
+{{- $altName1 := printf "%s.%s" ( include "kube-events.admission.fullname" . ) (include "kube-events.namespace" .) }}
+{{- $altName2 := printf "%s.%s.svc" ( include "kube-events.admission.fullname" . ) (include "kube-events.namespace" .) }}
 {{- $cert := genSignedCert $cn nil (list $altName1 $altName2) 3650 $ca -}}
 ---
 apiVersion: v1
 kind: Secret
 metadata:
   name: {{ template "kube-events.admission.fullname" . }}
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ template "kube-events.namespace" . }}
   labels:
 {{ include "kube-events.labels" . | indent 4 }}
 type: Opaque
@@ -30,7 +30,7 @@ webhooks:
       caBundle: {{ b64enc $ca.Cert }}
       service:
         name: {{ template "kube-events.admission.fullname" . }}
-        namespace: {{ .Release.Namespace }}
+        namespace: {{ template "kube-events.namespace" . }}
         path: /mutate-events-kubesphere-io-v1alpha1-rule
     failurePolicy: Fail
     name: mrule.kb.io
@@ -59,7 +59,7 @@ webhooks:
       caBundle: {{ b64enc $ca.Cert }}
       service:
         name: {{ template "kube-events.admission.fullname" . }}
-        namespace: {{ .Release.Namespace }}
+        namespace: {{ template "kube-events.namespace" . }}
         path: /validate-events-kubesphere-io-v1alpha1-rule
     failurePolicy: Fail
     name: vrule.kb.io
@@ -79,7 +79,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ template "kube-events.admission.fullname" . }}
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ template "kube-events.namespace" . }}
   labels:
 {{ include "kube-events.labels" . | indent 4 }}
 spec:

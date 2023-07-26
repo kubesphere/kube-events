@@ -99,6 +99,7 @@ func (r *KubeEventsRuler) ReloadConfig(c *config.RulerConfig) error {
 	}
 	ctx, cancel := context.WithCancel(context.Background())
 	if e = ruleCache.Run(ctx); e != nil {
+		cancel()
 		return e
 	}
 
