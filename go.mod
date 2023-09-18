@@ -10,9 +10,9 @@ require (
 	github.com/kubesphere/event-rule-engine v0.0.0-20200808103159-763922656585
 	github.com/onsi/ginkgo/v2 v2.11.0
 	github.com/onsi/gomega v1.27.8
-	github.com/panjf2000/ants/v2 v2.7.1
+	github.com/panjf2000/ants/v2 v2.8.2
 	github.com/pkg/errors v0.9.1
-	golang.org/x/sync v0.2.0
+	golang.org/x/sync v0.3.0
 	k8s.io/api v0.26.1
 	k8s.io/apimachinery v0.27.4
 	k8s.io/client-go v12.0.0+incompatible
