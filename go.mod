@@ -6,7 +6,7 @@ require (
 	github.com/go-logr/logr v1.2.4
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/julienschmidt/httprouter v1.3.0
-	github.com/kubesphere/alertmanager-kit v0.0.0-20201019060038-52e1f8a13968
+	github.com/kubesphere/alertmanager-kit v0.0.0-20231108080847-28b83842d8fc
 	github.com/kubesphere/event-rule-engine v0.0.0-20200808103159-763922656585
 	github.com/onsi/ginkgo/v2 v2.11.0
 	github.com/onsi/gomega v1.27.8
