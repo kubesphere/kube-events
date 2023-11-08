@@ -292,15 +292,6 @@ func (r *KubeEventsRuler) sinkNotifications(ctx context.Context) {
 			var err error
 			defer func() {
 				for _, n := range notificas {
-					if err == nil {
-						r.notificaQueue.Forget(n)
-					} else if numRequeues := r.notificaQueue.NumRequeues(n); numRequeues >= maxRetries {
-						r.notificaQueue.Forget(n)
-						klog.Infof("Dropping notification of event %s/%s out of the queue because of failing %d times: %v\n",
-							n.Event.Namespace, n.Event.Name, numRequeues, err)
-					} else {
-						r.notificaQueue.AddRateLimited(n)
-					}
 					r.notificaQueue.Done(n)
 				}
 			}()
@@ -312,7 +303,6 @@ func (r *KubeEventsRuler) sinkNotifications(ctx context.Context) {
 				if err = sinker.SinkNotifications(ctx, notificas); err != nil {
 					err = fmt.Errorf("error sinking notifications: %v", err)
 					klog.Error(err)
-					return
 				}
 			}
 		}()
@@ -338,15 +328,6 @@ func (r *KubeEventsRuler) sinkAlerts(ctx context.Context) {
 			var err error
 			defer func() {
 				for _, a := range alerts {
-					if err == nil {
-						r.alertQueue.Forget(a)
-					} else if numRequeues := r.alertQueue.NumRequeues(a); numRequeues >= maxRetries {
-						r.alertQueue.Forget(a)
-						klog.Infof("Dropping alert with labels %v out of the queue because of failing %d times: %v\n",
-							a.Alert.Labels, numRequeues, err)
-					} else {
-						r.alertQueue.AddRateLimited(a)
-					}
 					r.alertQueue.Done(a)
 				}
 			}()
@@ -358,7 +339,6 @@ func (r *KubeEventsRuler) sinkAlerts(ctx context.Context) {
 				if err = sinker.SinkAlerts(ctx, alerts); err != nil {
 					err = fmt.Errorf("error sinking alerts: %v", err)
 					klog.Error(err)
-					return
 				}
 			}
 		}()
