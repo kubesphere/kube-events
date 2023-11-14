@@ -12,13 +12,23 @@ import (
 )
 
 type WebhookSinker struct {
-	Url string
+	Url     string
+	Cluster string
+}
+
+type extendedEvent struct {
+	*v1.Event `json:",inline"`
+	Cluster   string `json:"cluster,omitempty"`
 }
 
 func (s *WebhookSinker) Sink(ctx context.Context, evts []*v1.Event) error {
 	var buf bytes.Buffer
 	for _, evt := range evts {
-		if bs, err := json.Marshal(evt); err != nil {
+		extendedEvt := extendedEvent{
+			Event:   evt,
+			Cluster: s.Cluster,
+		}
+		if bs, err := json.Marshal(extendedEvt); err != nil {
 			return err
 		} else if _, err := buf.Write(bs); err != nil {
 			return err
