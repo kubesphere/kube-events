@@ -30,6 +30,7 @@ const (
 var maxBatchSize = 500
 
 type K8sEventSource struct {
+	client    *kubernetes.Clientset
 	workqueue workqueue.RateLimitingInterface
 	inf       cache.SharedIndexInformer
 	sinkers   []types.Sinker
@@ -48,9 +49,9 @@ func (s *K8sEventSource) ReloadConfig(c *config.ExporterConfig) {
 
 	for _, w := range c.Sinks.Webhooks {
 		if w.Url != "" {
-			sinkers = append(sinkers, &sinks.WebhookSinker{Url: w.Url})
+			sinkers = append(sinkers, &sinks.WebhookSinker{Url: w.Url, Cluster: s.getClusterName()})
 		} else if w.Service != nil {
-			sinkers = append(sinkers, &sinks.WebhookSinker{Url: fmt.Sprintf("http://%s.%s.svc:%d/%s",
+			sinkers = append(sinkers, &sinks.WebhookSinker{Cluster: s.getClusterName(), Url: fmt.Sprintf("http://%s.%s.svc:%d/%s",
 				w.Service.Name, w.Service.Namespace, *w.Service.Port, w.Service.Path)})
 		}
 	}
@@ -59,6 +60,20 @@ func (s *K8sEventSource) ReloadConfig(c *config.ExporterConfig) {
 		sinkers = append(sinkers, &sinks.StdoutSinker{})
 	}
 	s.sinkers = sinkers
+}
+
+func (s *K8sEventSource) getClusterName() string {
+	ns, err := s.client.CoreV1().Namespaces().Get(context.Background(), "kubesphere-system", metav1.GetOptions{})
+	if err != nil {
+		klog.Errorf("get namespace kubesphere-system error: %s", err)
+		return ""
+	}
+
+	if ns.Annotations != nil {
+		return ns.Annotations["cluster.kubesphere.io/name"]
+	}
+
+	return ""
 }
 
 func (s *K8sEventSource) getSinkers() []types.Sinker {
@@ -168,6 +183,7 @@ func (s *K8sEventSource) enqueueEvent(obj interface{}) {
 
 func NewKubeEventSource(client *kubernetes.Clientset) *K8sEventSource {
 	s := &K8sEventSource{
+		client:    client,
 		workqueue: workqueue.NewNamedRateLimitingQueue(workqueue.DefaultControllerRateLimiter(), "events"),
 	}
 	lw := cache.NewListWatchFromClient(client.CoreV1().RESTClient(),
