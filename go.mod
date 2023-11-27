@@ -3,12 +3,12 @@ module github.com/kubesphere/kube-events
 go 1.19
 
 require (
-	github.com/go-logr/logr v1.2.4
+	github.com/go-logr/logr v1.3.0
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/kubesphere/alertmanager-kit v0.0.0-20231108080847-28b83842d8fc
 	github.com/kubesphere/event-rule-engine v0.0.0-20200808103159-763922656585
-	github.com/onsi/ginkgo/v2 v2.13.0
+	github.com/onsi/ginkgo/v2 v2.13.1
 	github.com/onsi/gomega v1.30.0
 	github.com/panjf2000/ants/v2 v2.9.0
 	github.com/pkg/errors v0.9.1
@@ -100,11 +100,11 @@ require (
 	golang.org/x/crypto v0.14.0 // indirect
 	golang.org/x/net v0.17.0 // indirect
 	golang.org/x/oauth2 v0.0.0-20220223155221-ee480838109b // indirect
-	golang.org/x/sys v0.13.0 // indirect
+	golang.org/x/sys v0.14.0 // indirect
 	golang.org/x/term v0.13.0 // indirect
 	golang.org/x/text v0.13.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
-	golang.org/x/tools v0.12.0 // indirect
+	golang.org/x/tools v0.14.0 // indirect
 	gomodules.xyz/jsonpatch/v2 v2.2.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
