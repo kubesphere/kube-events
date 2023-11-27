@@ -3,7 +3,7 @@ module github.com/kubesphere/kube-events
 go 1.19
 
 require (
-	github.com/go-logr/logr v1.2.4
+	github.com/go-logr/logr v1.3.0
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/kubesphere/alertmanager-kit v0.0.0-20231108080847-28b83842d8fc
