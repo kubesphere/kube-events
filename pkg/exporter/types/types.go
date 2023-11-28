@@ -7,9 +7,14 @@ import (
 )
 
 type Events struct {
-	KubeEvents []*v1.Event `json:"kubeEvents"`
+	KubeEvents []*ExtendedEvent `json:"kubeEvents"`
+}
+
+type ExtendedEvent struct {
+	*v1.Event `json:",inline"`
+	Cluster   string `json:"cluster,omitempty"`
 }
 
 type Sinker interface {
-	Sink(ctx context.Context, events []*v1.Event) error
+	Sink(ctx context.Context, events Events) error
 }

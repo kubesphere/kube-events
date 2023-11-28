@@ -35,6 +35,8 @@ type K8sEventSource struct {
 	inf       cache.SharedIndexInformer
 	sinkers   []types.Sinker
 	mutex     sync.Mutex
+
+	cluster string
 }
 
 func (s *K8sEventSource) ReloadConfig(c *config.ExporterConfig) {
@@ -49,9 +51,9 @@ func (s *K8sEventSource) ReloadConfig(c *config.ExporterConfig) {
 
 	for _, w := range c.Sinks.Webhooks {
 		if w.Url != "" {
-			sinkers = append(sinkers, &sinks.WebhookSinker{Url: w.Url, Cluster: s.getClusterName()})
+			sinkers = append(sinkers, &sinks.WebhookSinker{Url: w.Url})
 		} else if w.Service != nil {
-			sinkers = append(sinkers, &sinks.WebhookSinker{Cluster: s.getClusterName(), Url: fmt.Sprintf("http://%s.%s.svc:%d/%s",
+			sinkers = append(sinkers, &sinks.WebhookSinker{Url: fmt.Sprintf("http://%s.%s.svc:%d/%s",
 				w.Service.Name, w.Service.Namespace, *w.Service.Port, w.Service.Path)})
 		}
 	}
@@ -155,12 +157,21 @@ func (s *K8sEventSource) sinkEvents(ctx context.Context) {
 					s.workqueue.Done(evt)
 				}
 			}()
+
+			events := types.Events{}
+			for _, e := range evts {
+				events.KubeEvents = append(events.KubeEvents, &types.ExtendedEvent{
+					Event:   e,
+					Cluster: s.cluster,
+				})
+			}
+
 			evtSinkers := s.getSinkers()
 			if len(evtSinkers) == 0 {
 				return
 			}
 			for _, sinker := range evtSinkers {
-				if err = sinker.Sink(ctx, evts); err != nil {
+				if err = sinker.Sink(ctx, events); err != nil {
 					err = fmt.Errorf("error sinking events: %v", err)
 					klog.Error(err)
 					return
@@ -195,6 +206,8 @@ func NewKubeEventSource(client *kubernetes.Clientset) *K8sEventSource {
 			s.enqueueEvent(new)
 		},
 	})
+
+	s.cluster = s.getClusterName()
 
 	return s
 }
