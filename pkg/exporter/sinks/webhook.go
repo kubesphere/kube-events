@@ -7,8 +7,9 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/kubesphere/kube-events/pkg/exporter/types"
+
 	"github.com/kubesphere/kube-events/pkg/util"
-	v1 "k8s.io/api/core/v1"
 )
 
 type WebhookSinker struct {
@@ -16,19 +17,10 @@ type WebhookSinker struct {
 	Cluster string
 }
 
-type extendedEvent struct {
-	*v1.Event `json:",inline"`
-	Cluster   string `json:"cluster,omitempty"`
-}
-
-func (s *WebhookSinker) Sink(ctx context.Context, evts []*v1.Event) error {
+func (s *WebhookSinker) Sink(ctx context.Context, evts types.Events) error {
 	var buf bytes.Buffer
-	for _, evt := range evts {
-		extendedEvt := extendedEvent{
-			Event:   evt,
-			Cluster: s.Cluster,
-		}
-		if bs, err := json.Marshal(extendedEvt); err != nil {
+	for _, evt := range evts.KubeEvents {
+		if bs, err := json.Marshal(evt); err != nil {
 			return err
 		} else if _, err := buf.Write(bs); err != nil {
 			return err

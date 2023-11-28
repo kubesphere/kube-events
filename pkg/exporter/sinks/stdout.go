@@ -5,14 +5,14 @@ import (
 	"encoding/json"
 	"fmt"
 
-	v1 "k8s.io/api/core/v1"
+	"github.com/kubesphere/kube-events/pkg/exporter/types"
 )
 
 type StdoutSinker struct {
 }
 
-func (s *StdoutSinker) Sink(ctx context.Context, evts []*v1.Event) error {
-	for _, evt := range evts {
+func (s *StdoutSinker) Sink(ctx context.Context, evts types.Events) error {
+	for _, evt := range evts.KubeEvents {
 		bs, err := json.Marshal(evt)
 		if err != nil {
 			return err
