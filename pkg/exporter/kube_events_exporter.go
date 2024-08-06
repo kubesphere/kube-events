@@ -4,6 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/kubesphere/kube-events/pkg/util"
+	v1 "k8s.io/api/events/v1"
+	"k8s.io/apimachinery/pkg/runtime"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sync"
 
 	"github.com/kubesphere/kube-events/pkg/config"
@@ -104,7 +108,7 @@ func (s *K8sEventSource) waitForCacheSync(stopc <-chan struct{}) error {
 	return nil
 }
 
-func (s *K8sEventSource) drainEvents() (evts []*corev1.Event, shutdown bool) {
+func (s *K8sEventSource) drainEvents() (evts []client.Object, shutdown bool) {
 	var (
 		i = 0
 		m = s.workqueue.Len()
@@ -116,7 +120,7 @@ func (s *K8sEventSource) drainEvents() (evts []*corev1.Event, shutdown bool) {
 		var obj interface{}
 		obj, shutdown = s.workqueue.Get()
 		if obj != nil {
-			evts = append(evts, obj.(*corev1.Event))
+			evts = append(evts, obj.(client.Object))
 		}
 		i++
 		if i >= m {
@@ -150,7 +154,7 @@ func (s *K8sEventSource) sinkEvents(ctx context.Context) {
 					} else if numRequeues := s.workqueue.NumRequeues(evt); numRequeues >= maxRetries {
 						s.workqueue.Forget(evt)
 						klog.Infof("Dropping event %s/%s out of the queue because of failing %d times: %v\n",
-							evt.Namespace, evt.Name, numRequeues, err)
+							evt.GetNamespace(), evt.GetName(), numRequeues, err)
 					} else {
 						s.workqueue.AddRateLimited(evt)
 					}
@@ -162,7 +166,7 @@ func (s *K8sEventSource) sinkEvents(ctx context.Context) {
 			for _, e := range evts {
 				events.KubeEvents = append(events.KubeEvents, &types.ExtendedEvent{
 					Event:   e,
-					Cluster: s.cluster,
+					Cluster: util.GetCluster(),
 				})
 			}
 
@@ -185,7 +189,8 @@ func (s *K8sEventSource) enqueueEvent(obj interface{}) {
 	if obj == nil {
 		return
 	}
-	evt, ok := obj.(*corev1.Event)
+
+	evt, ok := obj.(client.Object)
 	if ok {
 		evt.SetManagedFields(nil) // set it nil because it is quite verbose
 		s.workqueue.Add(evt)
@@ -197,9 +202,18 @@ func NewKubeEventSource(client *kubernetes.Clientset) *K8sEventSource {
 		client:    client,
 		workqueue: workqueue.NewNamedRateLimitingQueue(workqueue.DefaultControllerRateLimiter(), "events"),
 	}
-	lw := cache.NewListWatchFromClient(client.CoreV1().RESTClient(),
-		"events", metav1.NamespaceAll, fields.Everything())
-	s.inf = cache.NewSharedIndexInformer(lw, &corev1.Event{}, 0, cache.Indexers{})
+	var eventType runtime.Object
+	var lw *cache.ListWatch
+	if util.NewEventType {
+		eventType = &v1.Event{}
+		lw = cache.NewListWatchFromClient(client.EventsV1().RESTClient(),
+			"events", metav1.NamespaceAll, fields.Everything())
+	} else {
+		eventType = &corev1.Event{}
+		lw = cache.NewListWatchFromClient(client.CoreV1().RESTClient(),
+			"events", metav1.NamespaceAll, fields.Everything())
+	}
+	s.inf = cache.NewSharedIndexInformer(lw, eventType, 0, cache.Indexers{})
 	s.inf.AddEventHandler(cache.ResourceEventHandlerFuncs{
 		AddFunc: s.enqueueEvent,
 		UpdateFunc: func(old, new interface{}) {
@@ -207,7 +221,7 @@ func NewKubeEventSource(client *kubernetes.Clientset) *K8sEventSource {
 		},
 	})
 
-	s.cluster = s.getClusterName()
+	s.cluster = util.GetCluster()
 
 	return s
 }

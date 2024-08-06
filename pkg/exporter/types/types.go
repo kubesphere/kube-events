@@ -2,8 +2,7 @@ package types
 
 import (
 	"context"
-
-	v1 "k8s.io/api/core/v1"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 type Events struct {
@@ -11,8 +10,8 @@ type Events struct {
 }
 
 type ExtendedEvent struct {
-	*v1.Event `json:",inline"`
-	Cluster   string `json:"cluster,omitempty"`
+	Event   client.Object `json:",inline"`
+	Cluster string        `json:"cluster,omitempty"`
 }
 
 type Sinker interface {
