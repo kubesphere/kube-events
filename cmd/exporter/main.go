@@ -26,7 +26,7 @@ func init() {
 	flag.StringVar(&kubeconfig, "kubeconfig", "", "Path to a kubeconfig. Only required if out-of-cluster.")
 	flag.StringVar(&masterURL, "master", "", "The address of the Kubernetes API server. Overrides any value in kubeconfig. Only required if out-of-cluster.")
 	flag.StringVar(&configFile, "config.file", "", "Event exporter configuration file path")
-	flag.BoolVar(&util.NewEventType, "newEventType", false, "if true, exporter will use new event type")
+	flag.StringVar(&util.EventVersion, "event.version", util.EventVersionOld, "event version, eventsv1 or corev1")
 }
 
 func main() {

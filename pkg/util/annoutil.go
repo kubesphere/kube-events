@@ -9,15 +9,24 @@ import (
 	"k8s.io/klog/v2"
 )
 
+const (
+	EventVersionOld = "corev1"
+	EventVersionNew = "eventsv1"
+)
+
 var cluster string
-var NewEventType bool
+var EventVersion string
 
 func SetClusterName(client *kubernetes.Clientset) {
 	setCluster(client)
-	c := time.Tick(60 * time.Second)
+	t := time.NewTicker(60 * time.Second)
+	defer t.Stop()
 	for {
 		select {
-		case <-c:
+		case <-t.C:
+			if cluster != "" {
+				return
+			}
 			setCluster(client)
 			klog.Infof("current cluster is [%s]", GetCluster())
 		}
@@ -30,6 +39,7 @@ func setCluster(client *kubernetes.Clientset) {
 	ns, err := client.CoreV1().Namespaces().Get(context.Background(), "kubesphere-system", metav1.GetOptions{})
 	if err != nil {
 		klog.Errorf("get namespace kubesphere-system error: %s", err)
+		return
 	}
 
 	if ns.Annotations != nil {
