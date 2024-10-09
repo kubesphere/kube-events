@@ -26,6 +26,7 @@ func init() {
 	flag.StringVar(&kubeconfig, "kubeconfig", "", "Path to a kubeconfig. Only required if out-of-cluster.")
 	flag.StringVar(&masterURL, "master", "", "The address of the Kubernetes API server. Overrides any value in kubeconfig. Only required if out-of-cluster.")
 	flag.StringVar(&configFile, "config.file", "", "Event exporter configuration file path")
+	flag.StringVar(&util.EventVersion, "event.version", util.EventVersionOld, "event version, eventsv1 or corev1")
 }
 
 func main() {
@@ -41,6 +42,8 @@ func main() {
 	if e != nil {
 		klog.Fatal("Error building kubernetes clientset: ", e)
 	}
+
+	go util.SetClusterName(kclient)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	wg, ctx := errgroup.WithContext(ctx)
