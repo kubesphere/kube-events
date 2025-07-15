@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - 'master'
+      - 'release-*'
     tags:
       - 'v*'
     paths:
@@ -12,7 +13,6 @@ on:
       - "hack/**"
       - "pkg/**"
       - "Makefile"
-
 env:
   REPO_EXPORTER: 'kubesphere'
 
