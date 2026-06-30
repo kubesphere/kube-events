@@ -7,13 +7,14 @@ import (
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
-	"github.com/kubesphere/kube-events/pkg/config"
-	"github.com/kubesphere/kube-events/pkg/exporter"
-	"github.com/kubesphere/kube-events/pkg/util"
 	"golang.org/x/sync/errgroup"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/klog"
+
+	"github.com/kubesphere/kube-events/pkg/config"
+	"github.com/kubesphere/kube-events/pkg/exporter"
+	"github.com/kubesphere/kube-events/pkg/util"
 )
 
 var (
@@ -48,7 +49,11 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	wg, ctx := errgroup.WithContext(ctx)
 
-	kes := exporter.NewKubeEventSource(kclient)
+	var err error
+	kes, err := exporter.NewKubeEventSource(kclient)
+	if err != nil {
+		klog.Fatal("Error creating kube events source: ", err)
+	}
 	if e = reloadConfig(configFile, kes.ReloadConfig); e != nil {
 		klog.Fatal("Error loading config: ", e)
 	}
