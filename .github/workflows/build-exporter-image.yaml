@@ -14,7 +14,7 @@ on:
       - "pkg/**"
       - "Makefile"
 env:
-  REPO_EXPORTER: 'kubesphere'
+  REPO_EXPORTER: 'hub.kubesphere.com.cn'
 
 jobs:
   exporter-build:
