@@ -44,8 +44,6 @@ func main() {
 		klog.Fatal("Error building kubernetes clientset: ", e)
 	}
 
-	go util.SetClusterName(kclient)
-
 	ctx, cancel := context.WithCancel(context.Background())
 	wg, ctx := errgroup.WithContext(ctx)
 

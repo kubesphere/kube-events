@@ -190,7 +190,7 @@ func (s *K8sEventSource) sinkEvents(ctx context.Context) {
 			for _, e := range evts {
 				events.KubeEvents = append(events.KubeEvents, &types.ExtendedEvent{
 					Event:   e,
-					Cluster: util.GetCluster(),
+					Cluster: s.cluster,
 				})
 			}
 
