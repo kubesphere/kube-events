@@ -14,7 +14,7 @@ on:
       - "Makefile"
 
 env:
-  REPO_RULER: 'hub.kubesphere.com.cn'
+  REPO_RULER: 'hub.kubesphere.com.cn/wiztelemetry'
 
 jobs:
   ruler-build:
