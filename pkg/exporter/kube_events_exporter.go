@@ -4,16 +4,15 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"os"
 	"sync"
 
-	"github.com/kubesphere/kube-events/pkg/util"
 	eventsv1 "k8s.io/api/events/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
-	"github.com/kubesphere/kube-events/pkg/config"
-	"github.com/kubesphere/kube-events/pkg/exporter/sinks"
-	"github.com/kubesphere/kube-events/pkg/exporter/types"
+	"github.com/kubesphere/kube-events/pkg/util"
+
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/fields"
@@ -21,6 +20,10 @@ import (
 	"k8s.io/client-go/tools/cache"
 	"k8s.io/client-go/util/workqueue"
 	"k8s.io/klog"
+
+	"github.com/kubesphere/kube-events/pkg/config"
+	"github.com/kubesphere/kube-events/pkg/exporter/sinks"
+	"github.com/kubesphere/kube-events/pkg/exporter/types"
 )
 
 const (
@@ -69,18 +72,38 @@ func (s *K8sEventSource) ReloadConfig(c *config.ExporterConfig) {
 	s.sinkers = sinkers
 }
 
-func (s *K8sEventSource) getClusterName() string {
-	ns, err := s.client.CoreV1().Namespaces().Get(context.Background(), "kubesphere-system", metav1.GetOptions{})
+func (s *K8sEventSource) getClusterName() (string, error) {
+	cluster := os.Getenv("CLUSTER_NAME")
+	if cluster != "" {
+		klog.Infof("Using cluster name %s", cluster)
+		return cluster, nil
+	}
+
+	if cluster, err := s.getClusterNameFromAnnotation("kubesphere-system"); err == nil {
+		klog.Infof("Using kubesphere cluster name: %s", cluster)
+		return cluster, nil
+	}
+
+	if cluster, err := s.getClusterNameFromAnnotation("ufl-system"); err == nil {
+		klog.Infof("Using ufl cluster name: %s", cluster)
+		return cluster, nil
+	}
+
+	return "", fmt.Errorf("cannot find cluster name")
+}
+
+func (s *K8sEventSource) getClusterNameFromAnnotation(name string) (string, error) {
+	ns, err := s.client.CoreV1().Namespaces().Get(context.Background(), name, metav1.GetOptions{})
 	if err != nil {
-		klog.Errorf("get namespace kubesphere-system error: %s", err)
-		return ""
+		klog.Errorf("get namespace %s error: %s", name, err)
+		return "", err
 	}
 
-	if ns.Annotations != nil {
-		return ns.Annotations["cluster.kubesphere.io/name"]
+	if ns.Annotations != nil && ns.Annotations["cluster.kubesphere.io/name"] != "" {
+		return ns.Annotations["cluster.kubesphere.io/name"], nil
 	}
 
-	return ""
+	return "", fmt.Errorf("cannot find cluster name")
 }
 
 func (s *K8sEventSource) getSinkers() []types.Sinker {
@@ -198,7 +221,7 @@ func (s *K8sEventSource) enqueueEvent(obj interface{}) {
 	}
 }
 
-func NewKubeEventSource(client *kubernetes.Clientset) *K8sEventSource {
+func NewKubeEventSource(client *kubernetes.Clientset) (*K8sEventSource, error) {
 	s := &K8sEventSource{
 		client:    client,
 		workqueue: workqueue.NewNamedRateLimitingQueue(workqueue.DefaultControllerRateLimiter(), "events"),
@@ -222,7 +245,11 @@ func NewKubeEventSource(client *kubernetes.Clientset) *K8sEventSource {
 		},
 	})
 
-	s.cluster = util.GetCluster()
+	var err error
+	s.cluster, err = s.getClusterName()
+	if err != nil {
+		return nil, err
+	}
 
-	return s
+	return s, nil
 }
