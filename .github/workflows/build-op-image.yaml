@@ -14,7 +14,7 @@ on:
       - "Makefile"
 
 env:
-  REPO_OPERATOR: 'kubesphere'
+  REPO_OPERATOR: 'hub.kubesphere.com.cn'
 
 jobs:
   operator-build:

@@ -14,7 +14,7 @@ on:
       - "Makefile"
 
 env:
-  REPO_RULER: 'kubesphere'
+  REPO_RULER: 'hub.kubesphere.com.cn'
 
 jobs:
   ruler-build:

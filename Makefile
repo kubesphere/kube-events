@@ -1,6 +1,6 @@
 NAMESPACE ?= kubesphere-logging-system
 
-REGISTRY?=kubesphere
+REGISTRY?=hub.kubesphere.com.cn
 REPO_OPERATOR?=$(REGISTRY)/kube-events-operator
 REPO_EXPORTER?=$(REGISTRY)/kube-events-exporter
 REPO_RULER?=$(REGISTRY)/kube-events-ruler
