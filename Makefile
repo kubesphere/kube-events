@@ -1,6 +1,6 @@
 NAMESPACE ?= kubesphere-logging-system
 
-REGISTRY?=hub.kubesphere.com.cn
+REGISTRY?=hub.kubesphere.com.cn/wiztelemetry
 REPO_OPERATOR?=$(REGISTRY)/kube-events-operator
 REPO_EXPORTER?=$(REGISTRY)/kube-events-exporter
 REPO_RULER?=$(REGISTRY)/kube-events-ruler

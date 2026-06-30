@@ -14,7 +14,7 @@ on:
       - "Makefile"
 
 env:
-  REPO_OPERATOR: 'hub.kubesphere.com.cn'
+  REPO_OPERATOR: 'hub.kubesphere.com.cn/wiztelemetry'
 
 jobs:
   operator-build:
